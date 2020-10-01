@@ -2,8 +2,8 @@
 // Created by JacquesdeH on 2020/10/1.
 //
 
-#ifndef PROJECT_TOKENPAIR_H
-#define PROJECT_TOKENPAIR_H
+#ifndef PROJECT_UTILS_TOKENPAIR_H
+#define PROJECT_UTILS_TOKENPAIR_H
 
 #include <string>
 
@@ -26,4 +26,4 @@ public:
     bool isToken(const config::TokenCode& tkcode) const;
 };
 
-#endif //PROJECT_TOKENPAIR_H
+#endif //PROJECT_UTILS_TOKENPAIR_H

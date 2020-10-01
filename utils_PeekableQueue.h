@@ -2,12 +2,12 @@
 // Created by JacquesdeH on 2020/10/1.
 //
 
-#ifndef PROJECT_PEEKABLEQUEUE_H
-#define PROJECT_PEEKABLEQUEUE_H
+#ifndef PROJECT_UTILS_PEEKABLEQUEUE_H
+#define PROJECT_UTILS_PEEKABLEQUEUE_H
 
 #include <vector>
 
-#include "TokenPair.h"
+#include "utils_TokenPair.h"
 
 using std::vector;
 
@@ -26,4 +26,4 @@ public:
 };
 
 
-#endif //PROJECT_PEEKABLEQUEUE_H
+#endif //PROJECT_UTILS_PEEKABLEQUEUE_H

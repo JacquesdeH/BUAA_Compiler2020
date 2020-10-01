@@ -12,7 +12,7 @@
 
 #include "core_lexic_Reader.h"
 #include "core_lexic_Printer.h"
-#include "PeekableQueue.h"
+#include "utils_PeekableQueue.h"
 
 using std::string;
 
