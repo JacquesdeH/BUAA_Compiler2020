@@ -12,6 +12,7 @@
 
 #include "core_lexic_Reader.h"
 #include "core_lexic_Printer.h"
+#include "PeekableQueue.h"
 
 using std::string;
 
@@ -23,6 +24,7 @@ namespace lexic
         Reader* reader;
         Printer* printer;
         char ch;
+        PeekableQueue* queue;
 
     public:
         Lexic(const string& fIn, const string& fOut);
@@ -41,7 +43,7 @@ namespace lexic
         bool _parseTk();
 
     public:
-        void run();
+        PeekableQueue * run();
     };
 }
 

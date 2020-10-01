@@ -13,6 +13,7 @@ lexic::Lexic::Lexic(const string &fIn, const string &fOut)
     this->reader = new Reader(fIn);
     this->printer = new Printer(fOut);
     ch = '\0';
+    queue = new PeekableQueue();
 }
 
 lexic::Lexic::~Lexic()
@@ -80,6 +81,7 @@ void lexic::Lexic::_skipBlank()
 void lexic::Lexic::_logtoken(const config::TokenCode &tkcode, const string &value)
 {
     // TODO: update SymbolTable
+    this->queue->push(TokenPair(tkcode, value));
     this->printer->print(tkcode, value);
 }
 
@@ -257,7 +259,8 @@ bool lexic::Lexic::_parseTk()
     return true;
 }
 
-void lexic::Lexic::run()
+PeekableQueue * lexic::Lexic::run()
 {
     while (_parseTk());
+    return queue;
 }

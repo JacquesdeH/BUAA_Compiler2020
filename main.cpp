@@ -3,7 +3,11 @@
 
 int main()
 {
+    PeekableQueue* queue;
     lexic::Lexic instance_Lexic("testfile.txt", "output.txt");
-    instance_Lexic.run();
+
+    queue = instance_Lexic.run();
+
+    delete queue;
     return 0;
 }
