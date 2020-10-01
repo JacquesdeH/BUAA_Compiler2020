@@ -8,12 +8,12 @@
 #include "functional_convert.h"
 #include "functional_strext.h"
 
-lexic::Lexic::Lexic(const string &fIn, const string &fOut)
+lexic::Lexic::Lexic(const string &fIn, const string &fOut, PeekableQueue* _queue)
 {
     this->reader = new Reader(fIn);
     this->printer = new Printer(fOut);
-    ch = '\0';
-    queue = new PeekableQueue();
+    this->ch = '\0';
+    this->queue = _queue;
 }
 
 lexic::Lexic::~Lexic()
@@ -259,8 +259,7 @@ bool lexic::Lexic::_parseTk()
     return true;
 }
 
-PeekableQueue * lexic::Lexic::run()
+void lexic::Lexic::run()
 {
     while (_parseTk());
-    return queue;
 }

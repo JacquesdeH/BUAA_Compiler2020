@@ -27,7 +27,7 @@ namespace lexic
         PeekableQueue* queue;
 
     public:
-        Lexic(const string& fIn, const string& fOut);
+        Lexic(const string& fIn, const string& fOut, PeekableQueue* _queue);
         ~Lexic();
 
     private:
@@ -43,7 +43,7 @@ namespace lexic
         bool _parseTk();
 
     public:
-        PeekableQueue * run();
+        void run();
     };
 }
 
