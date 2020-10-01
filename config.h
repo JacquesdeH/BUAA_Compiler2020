@@ -20,7 +20,7 @@ namespace config
         ELSETK, SWITCHTK, CASETK, DEFAULTTK, WHILETK, FORTK, SCANFTK, PRINTFTK, RETURNTK, PLUS,
         MINU, MULT, DIV, LSS, LEQ, GRE, GEQ, EQL, NEQ, COLON,
         ASSIGN, SEMICN, COMMA, LPARENT, RPARENT, LBRACK, RBRACK, LBRACE, RBRACE,
-        ERROR
+        EMPTY
     };
 
     const std::string RESERVED[] = {"const", "int", "char", "void", "main", "if", "else", "switch", "case", "default",

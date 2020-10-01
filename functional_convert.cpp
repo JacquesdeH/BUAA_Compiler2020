@@ -131,7 +131,7 @@ string tkcode2output(const config::TokenCode& tkcode)
             tkclass = "RBRACE";
             break;
         default:
-            tkclass = "ERROR";
+            tkclass = "EMPTY";
             std::cerr << "Error branch in convert::tkcode2output!" << std::endl;
     }
     return tkclass;
@@ -213,6 +213,6 @@ config::TokenCode text2token(const string& original)
     else
     {
         std::cerr << "Error branch in convert::text2token!" << std::endl;
-        return config::ERROR; // ERROR
+        return config::EMPTY; // EMPTY
     }
 }
