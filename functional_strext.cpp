@@ -5,7 +5,7 @@
 #include <cctype>
 #include <algorithm>
 
-#include "utils_strext.h"
+#include "functional_strext.h"
 
 char toLower(const char& ch)
 {

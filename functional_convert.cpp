@@ -5,8 +5,8 @@
 #include <iostream>
 #include <algorithm>
 
-#include "utils_convert.h"
-#include "utils_strext.h"
+#include "functional_convert.h"
+#include "functional_strext.h"
 
 string tkcode2output(const config::TokenCode& tkcode)
 {

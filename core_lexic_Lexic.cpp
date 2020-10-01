@@ -5,8 +5,8 @@
 #include <cstring>
 
 #include "core_lexic_Lexic.h"
-#include "utils_convert.h"
-#include "utils_strext.h"
+#include "functional_convert.h"
+#include "functional_strext.h"
 
 lexic::Lexic::Lexic(const string &fIn, const string &fOut)
 {
