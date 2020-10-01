@@ -19,3 +19,8 @@ const string &TokenPair::getTkvalue() const
 {
     return tkvalue;
 }
+
+bool TokenPair::isToken(const config::TokenCode &tkcode) const
+{
+    return tkcode == this->tkcode;
+}

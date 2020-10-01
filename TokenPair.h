@@ -23,6 +23,7 @@ public:
 public:
     config::TokenCode getTkcode() const;
     const string &getTkvalue() const;
+    bool isToken(const config::TokenCode& tkcode) const;
 };
 
 #endif //PROJECT_TOKENPAIR_H
