@@ -2,7 +2,7 @@
 // Created by JacquesdeH on 2020/10/2.
 //
 
-#include "Table.h"
+#include "symbol_Table.h"
 
 symbol::Table::Table()
 {

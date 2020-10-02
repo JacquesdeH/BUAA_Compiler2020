@@ -2,7 +2,7 @@
 // Created by JacquesdeH on 2020/10/2.
 //
 
-#include "SymbolManager.h"
+#include "symbol_SymbolManager.h"
 
 symbol::SymbolManager::SymbolManager()
 {

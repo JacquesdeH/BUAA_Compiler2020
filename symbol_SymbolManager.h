@@ -2,12 +2,12 @@
 // Created by JacquesdeH on 2020/10/2.
 //
 
-#ifndef PROJECT_SYMBOLMANAGER_H
-#define PROJECT_SYMBOLMANAGER_H
+#ifndef PROJECT_SYMBOL_SYMBOLMANAGER_H
+#define PROJECT_SYMBOL_SYMBOLMANAGER_H
 
 #include <vector>
 
-#include "Table.h"
+#include "symbol_Table.h"
 
 using std::vector;
 
@@ -28,4 +28,4 @@ namespace symbol
 }
 
 
-#endif //PROJECT_SYMBOLMANAGER_H
+#endif //PROJECT_SYMBOL_SYMBOLMANAGER_H

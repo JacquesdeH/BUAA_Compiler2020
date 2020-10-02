@@ -2,7 +2,7 @@
 // Created by JacquesdeH on 2020/10/2.
 //
 
-#include "Info.h"
+#include "symbol_Info.h"
 
 symbol::Info::Info(const config::SymbolType &_symbolType, const config::DataType &_dataType, const uint &_arrayDim,
            const uint &_declareRow, const uint &_dim0, const uint &_dim1)

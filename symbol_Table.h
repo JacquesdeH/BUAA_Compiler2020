@@ -2,13 +2,13 @@
 // Created by JacquesdeH on 2020/10/2.
 //
 
-#ifndef PROJECT_TABLE_H
-#define PROJECT_TABLE_H
+#ifndef PROJECT_SYMBOL_TABLE_H
+#define PROJECT_SYMBOL_TABLE_H
 
 #include <unordered_map>
 #include <string>
 
-#include "Info.h"
+#include "symbol_Info.h"
 
 using std::unordered_map;
 using std::string;
@@ -29,4 +29,4 @@ namespace symbol
 }
 
 
-#endif //PROJECT_TABLE_H
+#endif //PROJECT_SYMBOL_TABLE_H

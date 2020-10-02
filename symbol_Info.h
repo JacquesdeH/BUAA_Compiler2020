@@ -2,8 +2,8 @@
 // Created by JacquesdeH on 2020/10/2.
 //
 
-#ifndef PROJECT_INFO_H
-#define PROJECT_INFO_H
+#ifndef PROJECT_SYMBOL_INFO_H
+#define PROJECT_SYMBOL_INFO_H
 
 #include <vector>
 
@@ -39,4 +39,4 @@ namespace symbol
 }
 
 
-#endif //PROJECT_INFO_H
+#endif //PROJECT_SYMBOL_INFO_H
