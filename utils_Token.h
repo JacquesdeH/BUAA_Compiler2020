@@ -20,6 +20,7 @@ private:
     int column;
 
 public:
+    Token();
     Token(const config::TokenCode& _tkcode, const string &_tkvalue = "", const int& _row = 0, const int& _column = 0);
 
 public:

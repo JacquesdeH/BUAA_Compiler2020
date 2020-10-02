@@ -4,6 +4,14 @@
 
 #include "utils_Token.h"
 
+Token::Token()
+{
+    this->tkcode = config::EMPTY;
+    this->tkvalue = "";
+    this->row = config::ROW_INIT;
+    this->column = config::COLUMN_INIT;
+}
+
 Token::Token(const config::TokenCode &_tkcode, const string &_tkvalue, const int& _row, const int& _column)
 {
     this->tkcode = _tkcode;
