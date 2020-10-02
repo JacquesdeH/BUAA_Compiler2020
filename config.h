@@ -5,6 +5,8 @@
 #ifndef PROJECT_CONFIG_H
 #define PROJECT_CONFIG_H
 
+typedef unsigned int uint;
+
 namespace config
 {
     const bool PRINT_LEXIC = true;
@@ -25,6 +27,16 @@ namespace config
 
     const std::string RESERVED[] = {"const", "int", "char", "void", "main", "if", "else", "switch", "case", "default",
                                     "while", "for", "scanf", "printf", "return"};
+
+    enum SymbolType
+    {
+        CONST, VAR, FUNCTION
+    };
+
+    enum DataType
+    {
+        INT, CHAR, VOID
+    };
 }
 
 #endif //PROJECT_CONFIG_H

@@ -80,7 +80,7 @@ void lexic::Lexic::_skipBlank()
 
 void lexic::Lexic::_logtoken(const config::TokenCode &tkcode, const string &value, const int &row, const int& column)
 {
-    // TODO: update SymbolTable
+    // TODO: update Table
     this->queue->push(Token(tkcode, value, row, column));
     this->printer->print(tkcode, value);
 }
