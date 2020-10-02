@@ -26,7 +26,7 @@ namespace lexic
         ~Printer();
 
     public:
-        void print(const config::TokenCode tkcode, const string& tkvalue);
+        void print(const config::TokenCode& tkcode, const string& tkvalue);
     };
 }
 

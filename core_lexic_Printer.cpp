@@ -15,7 +15,7 @@ lexic::Printer::~Printer()
     fsOut.close();
 }
 
-void lexic::Printer::print(const config::TokenCode tkcode, const string &tkvalue)
+void lexic::Printer::print(const config::TokenCode& tkcode, const string &tkvalue)
 {
     if (!enabled)
         return;
