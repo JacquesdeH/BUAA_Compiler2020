@@ -39,7 +39,7 @@ namespace lexic
         static bool _isReservedToken(const char* buffer);
         void _readNext();
         void _skipBlank();
-        void _logtoken(const config::TokenCode& tkcode, const string& value);
+        void _logtoken(const config::TokenCode& tkcode, const string& value, const int& row, const int& column);
         bool _parseTk();
 
     public:

@@ -11,17 +11,17 @@ PeekableQueue::PeekableQueue()
     this->queue.clear();
 }
 
-void PeekableQueue::push(const TokenPair &tkpair)
+void PeekableQueue::push(const Token &tkpair)
 {
     this->queue.push_back(tkpair);
 }
 
-TokenPair PeekableQueue::peek(const int &k) const
+Token PeekableQueue::peek(const int &k) const
 {
     if (k <= 0)
             std::cerr << "Assert PeekableQueue::peek(" << k << ")" << std::endl;
     if (k > queue.size())
-        return TokenPair(config::EMPTY, "");
+        return Token(config::EMPTY);
     return queue[k-1];
 }
 

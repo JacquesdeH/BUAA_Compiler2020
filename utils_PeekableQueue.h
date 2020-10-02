@@ -7,21 +7,21 @@
 
 #include <vector>
 
-#include "utils_TokenPair.h"
+#include "utils_Token.h"
 
 using std::vector;
 
 class PeekableQueue
 {
 private:
-    vector<TokenPair> queue;
+    vector<Token> queue;
 
 public:
     PeekableQueue();
 
 public:
-    void push(const TokenPair& tkpair);
-    TokenPair peek(const int& k) const;
+    void push(const Token& tkpair);
+    Token peek(const int& k) const;
     void pop(const int& k);
 };
 

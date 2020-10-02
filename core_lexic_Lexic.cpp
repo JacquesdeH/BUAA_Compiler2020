@@ -78,10 +78,10 @@ void lexic::Lexic::_skipBlank()
         _readNext();
 }
 
-void lexic::Lexic::_logtoken(const config::TokenCode &tkcode, const string &value)
+void lexic::Lexic::_logtoken(const config::TokenCode &tkcode, const string &value, const int &row, const int& column)
 {
     // TODO: update SymbolTable
-    this->queue->push(TokenPair(tkcode, value));
+    this->queue->push(Token(tkcode, value, row, column));
     this->printer->print(tkcode, value);
 }
 
@@ -89,8 +89,13 @@ bool lexic::Lexic::_parseTk()
 {
     static char buffer[config::BUFFER_SIZE];
     int p = 0;
+    int row;
+    int column;
 
     _skipBlank();
+
+    row = this->reader->getRow();
+    column = this->reader->getColumn();
 
     if (ch == EOF)
     {
@@ -109,9 +114,9 @@ bool lexic::Lexic::_parseTk()
         }
         buffer[p] = '\0';
         if (_isReservedToken(buffer))
-            _logtoken(text2token(buffer), buffer);
+            _logtoken(text2token(buffer), buffer, row, column);
         else
-            _logtoken(config::IDENFR, buffer);
+            _logtoken(config::IDENFR, buffer, row, column);
     }
     // INTCON
     else if (_isDigit(ch))
@@ -124,7 +129,7 @@ bool lexic::Lexic::_parseTk()
             _readNext();
         }
         buffer[p] = '\0';
-        _logtoken(config::INTCON, buffer);
+        _logtoken(config::INTCON, buffer, row, column);
     }
     // CHARCON
     else if (ch == '\'')
@@ -144,7 +149,7 @@ bool lexic::Lexic::_parseTk()
                 // TODO: log ErrorManager with 0-length char const
             }
             else
-                _logtoken(config::CHARCON, buffer);
+                _logtoken(config::CHARCON, buffer, row, column);
         }
         else
         {
@@ -169,7 +174,7 @@ bool lexic::Lexic::_parseTk()
                 // TODO: log ErrorManager with 0-length string
             }
             else
-                _logtoken(config::STRCON, buffer);
+                _logtoken(config::STRCON, buffer, row, column);
         }
         else
         {
@@ -184,7 +189,7 @@ bool lexic::Lexic::_parseTk()
         buffer[p++] = ch;
         _readNext();
         buffer[p] = '\0';
-        _logtoken(text2token(buffer), buffer);
+        _logtoken(text2token(buffer), buffer, row, column);
     }
     // 2-letter defined char
     else if (ch == '<' || ch == '>' || ch == '=' || ch == '!')
@@ -249,7 +254,7 @@ bool lexic::Lexic::_parseTk()
             std::cerr << "Unexpected in Lexic 2-letter defined chars" << std::endl;
         // common behaviors
         buffer[p] = '\0';
-        _logtoken(tkcode, buffer);
+        _logtoken(tkcode, buffer, row, column);
     }
     else
     {

@@ -26,7 +26,7 @@ char lexic::Reader::next()
         if (fsIn.eof())
             return EOF;
         string s;
-        getline(fsIn, s, '\r');
+        getline(fsIn, s, '\n');
         for (char & c : s)
         {
             buffer.push(c);
