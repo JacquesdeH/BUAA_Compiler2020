@@ -4,6 +4,12 @@
 
 #include "core_lexic_Reader.h"
 
+#ifdef _WIN32
+#define DELIMITER '\n'
+#else
+#define DELIMITER '\r'
+#endif
+
 using std::getline;
 
 lexic::Reader::Reader(const string &fIn)
@@ -26,7 +32,7 @@ char lexic::Reader::next()
         if (fsIn.eof())
             return EOF;
         string s;
-        getline(fsIn, s, '\n');
+        getline(fsIn, s, DELIMITER);
         for (char & c : s)
         {
             buffer.push(c);
