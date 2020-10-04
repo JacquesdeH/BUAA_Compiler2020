@@ -74,3 +74,8 @@ bool Token::isCmpOp() const
 {
     return isTokens({config::LSS, config::LEQ, config::GRE, config::GEQ, config::NEQ, config::EQL});
 }
+
+bool Token::isLoopKeyword() const
+{
+    return isTokens({config::FORTK, config::WHILETK});
+}

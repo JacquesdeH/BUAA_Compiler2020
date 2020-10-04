@@ -33,6 +33,7 @@ public:
     bool isPlusMinusOp() const;
     bool isMultDivOp() const;
     bool isCmpOp() const;
+    bool isLoopKeyword() const;
     int getRow() const;
     int getColumn() const;
 };

@@ -7,6 +7,7 @@
 
 #include "utils_PeekableQueue.h"
 #include "syntactic_Printer.h"
+#include "symbol_SymbolManager.h"
 
 namespace syntactic
 {
@@ -15,9 +16,10 @@ namespace syntactic
     private:
         PeekableQueue* queue;
         Printer* printer;
+        symbol::SymbolManager* symbolManager;
 
     public:
-        Syntactic(const string& fOut, PeekableQueue* _queue);
+        Syntactic(const string& fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager);
         ~Syntactic();
 
     private:

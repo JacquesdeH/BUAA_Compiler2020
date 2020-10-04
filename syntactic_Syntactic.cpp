@@ -7,10 +7,11 @@
 #include "syntactic_Syntactic.h"
 #include "functional_strext.h"
 
-syntactic::Syntactic::Syntactic(const string &fOut, PeekableQueue* _queue)
+syntactic::Syntactic::Syntactic(const string &fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager)
 {
     this->printer = new Printer(fOut);
     this->queue = _queue;
+    this->symbolManager = _symbolManager;
 }
 
 syntactic::Syntactic::~Syntactic()
@@ -1053,4 +1054,489 @@ void syntactic::Syntactic::parseCompoundStatement()
     printer->printComponent("＜复合语句＞");
 }
 
+void syntactic::Syntactic::parseMainFunction()
+{
+    // void
+    if (!_cur().isToken(config::VOIDTK))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // main
+    if (!_cur().isToken(config::MAINTK))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // (
+    if (!_cur().isToken(config::LPARENT))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // )
+    if (!_cur().isToken(config::RPARENT))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // {
+    if (!_cur().isToken(config::LBRACE))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // ＜复合语句＞
+    parseCompoundStatement();
+    // }
+    if (!_cur().isToken(config::RBRACE))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+
+    printer->printComponent("＜主函数＞");
+}
+
+void syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
+{
+    // must be inside the Valued Function Declaration
+    // int | char
+    config::DataType dataType;
+    if (!_cur().isValuedType())
+    {
+        // TODO: ErrorManager
+    }
+    dataType = (_cur().isToken(config::CHARTK)) ? config::DataType::CHAR : config::DataType::INT;
+    _printAndNext();
+    // ＜标识符＞
+    Token idenfr;
+    if (!_cur().isToken(config::IDENFR))
+    {
+        // TODO: ErrorManager
+    }
+    idenfr = _cur();
+    _printAndNext();
+    // update Symbol Manager with Valued function declaration
+    symbolManager->declareSymbol(idenfr.getTkvalue(),
+                                 symbol::Info(config::SymbolType::FUNCTION,
+                                              dataType, idenfr.getRow()));
+
+    printer->printComponent("＜声明头部＞");
+}
+
+void syntactic::Syntactic::parseFunctionValuedDeclaration()
+{
+    // ＜声明头部＞
+    string funcIdenfr;
+    parseDeclarationHead(funcIdenfr);
+    // (
+    if (!_cur().isToken(config::LPARENT))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // ＜参数表＞
+    parseParameterDeclarationList();
+    // )
+    if (!_cur().isToken(config::RPARENT))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // {
+    if (!_cur().isToken(config::LBRACE))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // ＜复合语句＞
+    parseCompoundStatement();
+    // }
+    if (!_cur().isToken(config::RBRACE))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+
+    printer->printComponent("＜有返回值函数定义＞");
+}
+
+void syntactic::Syntactic::parseFunctionVoidDeclaration()
+{
+    // void
+    if (!_cur().isToken(config::VOIDTK))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // ＜标识符＞
+    Token idenfr;
+    if (!_cur().isToken(config::IDENFR))
+    {
+        // TODO: ErrorManager
+    }
+    idenfr = _cur();
+    _printAndNext();
+    // update Symbol Manager with Valued function declaration
+    symbolManager->declareSymbol(idenfr.getTkvalue(),
+                                 symbol::Info(config::SymbolType::FUNCTION,
+                                              config::DataType::VOID, idenfr.getRow()));
+    // (
+    if (!_cur().isToken(config::LPARENT))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // ＜参数表＞
+    parseParameterDeclarationList();
+    // )
+    if (!_cur().isToken(config::RPARENT))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // {
+    if (!_cur().isToken(config::LBRACE))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // ＜复合语句＞
+    parseCompoundStatement();
+    // }
+    if (!_cur().isToken(config::RBRACE))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+
+    printer->printComponent("＜无返回值函数定义＞");
+}
+
+void syntactic::Syntactic::parseFunctionValuedCallStatement()
+{
+    // ＜标识符＞
+    Token idenfr;
+    if (!_cur().isToken(config::IDENFR))
+    {
+        // TODO: ErrorManager
+    }
+    idenfr = _cur();
+    if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
+    {
+        // TODO: ErrorManager
+    }
+    if (!symbolManager->getInfoInAll(idenfr.getTkvalue()).isValuedFunction())
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // (
+    if (!_cur().isToken(config::LPARENT))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // ＜值参数表＞
+    parseParameterValueList();
+    // )
+    if (!_cur().isToken(config::RPARENT))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+
+    printer->printComponent("＜有返回值函数调用语句＞");
+}
+
+void syntactic::Syntactic::parseFunctionVoidCallStatement()
+{
+    // ＜标识符＞
+    Token idenfr;
+    if (!_cur().isToken(config::IDENFR))
+    {
+        // TODO: ErrorManager
+    }
+    idenfr = _cur();
+    if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
+    {
+        // TODO: ErrorManager
+    }
+    if (!symbolManager->getInfoInAll(idenfr.getTkvalue()).isVoidFunction())
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // (
+    if (!_cur().isToken(config::LPARENT))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+    // ＜值参数表＞
+    parseParameterValueList();
+    // )
+    if (!_cur().isToken(config::RPARENT))
+    {
+        // TODO: ErrorManager
+    }
+    _printAndNext();
+
+    printer->printComponent("＜无返回值函数调用语句＞");
+}
+
+void syntactic::Syntactic::parseStatement()
+{
+    // ＜空＞;
+    if (_cur().isToken(config::SEMICN))
+    {
+        // ;
+        _printAndNext();
+    }
+    // '{'＜语句列＞'}'
+    else if (_cur().isToken(config::LBRACE))
+    {
+        // {
+        _printAndNext();
+        // ＜语句列＞
+        parseStatementList();
+        // }
+        if (!_cur().isToken(config::RBRACE))
+        {
+            // TODO: ErrorManager
+        }
+        _printAndNext();
+    }
+    // ＜循环语句＞
+    else if (_cur().isLoopKeyword())
+    {
+        // ＜循环语句＞
+        parseLoopStatement();
+    }
+    // ＜条件语句＞
+    else if (_cur().isTokens({config::IFTK}))
+    {
+        // ＜条件语句＞
+        parseConditionStatement();
+    }
+    // ＜读语句＞;
+    else if (_cur().isTokens({config::SCANFTK}))
+    {
+        // ＜读语句＞
+        parseReadStatement();
+        // ;
+        if (!_cur().isToken(config::SEMICN))
+        {
+            // TODO: ErrorManager
+        }
+        _printAndNext();
+    }
+    // ＜写语句＞;
+    else if (_cur().isTokens({config::PRINTFTK}))
+    {
+        // ＜写语句＞
+        parsePrintStatement();
+        // ;
+        if (!_cur().isToken(config::SEMICN))
+        {
+            // TODO: ErrorManager
+        }
+        _printAndNext();
+    }
+    // ＜返回语句＞;
+    else if (_cur().isTokens({config::RETURNTK}))
+    {
+        // ＜返回语句＞
+        parseReturnStatement();
+        // ;
+        if (!_cur().isToken(config::SEMICN))
+        {
+            // TODO: ErrorManager
+        }
+        _printAndNext();
+    }
+    // ＜情况语句＞
+    else if (_cur().isTokens({config::SWITCHTK}))
+    {
+        // ＜情况语句＞
+        parseSwitchStatement();
+    }
+    // ＜有返回值函数调用语句＞; | ＜无返回值函数调用语句＞; | ＜赋值语句＞;
+    else if (_cur().isTokens({config::IDENFR}))
+    {
+        // ＜有返回值函数调用语句＞ | ＜无返回值函数调用语句＞ by token 2 with '(' to be function call
+        if (queue->peek(2).isToken(config::LPARENT))
+        {
+            Token idenfr = _cur();
+            if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
+            {
+                // TODO: ErrorManager
+            }
+            // ＜有返回值函数调用语句＞
+            if (symbolManager->getInfoInAll(idenfr.getTkvalue()).isValuedFunction())
+            {
+                // ＜有返回值函数调用语句＞
+                parseFunctionValuedCallStatement();
+            }
+            // ＜无返回值函数调用语句＞
+            else
+            {
+                // ＜无返回值函数调用语句＞
+                parseFunctionVoidCallStatement();
+            }
+        }
+        // ＜赋值语句＞
+        else
+        {
+            // ＜赋值语句＞
+            parseAssignStatement();
+        }
+        // ; commonly parsed!
+        if (!_cur().isToken(config::SEMICN))
+        {
+            // TODO: ErrorManager
+        }
+        _printAndNext();
+    }
+    // error
+    else
+    {
+        // TODO: ErrorManager
+    }
+
+    printer->printComponent("＜语句＞");
+}
+
+void syntactic::Syntactic::parseExpression()
+{
+    bool isFirst = true;
+    do
+    {
+        int flag = 1;
+        // +|- with first to be optional
+        if (_cur().isPlusMinusOp())
+        {
+            if (_cur().isToken(config::MINU))
+                flag = -1;
+            _printAndNext();
+        }
+        else if (!isFirst)
+        {
+            // TODO: ErrorManager where +|- is not optional
+        }
+        // ＜项＞
+        parseTerm();
+        // deal with this term related expression
+        isFirst = false;
+    } while (_cur().isPlusMinusOp());
+
+    printer->printComponent("＜表达式＞");
+}
+
+void syntactic::Syntactic::parseTerm()
+{
+    bool isFirst = true;
+    do
+    {
+        // *|/
+        if (!isFirst)
+        {
+            if (!_cur().isMultDivOp())
+            {
+                // TODO: ErrorManager
+            }
+            _printAndNext();
+        }
+        // ＜因子＞
+        parseFactor();
+        // deal with factor related term
+        isFirst = false;
+    } while (_cur().isMultDivOp());
+
+    printer->printComponent("＜项＞");
+}
+
+void syntactic::Syntactic::parseFactor()
+{
+    // ＜字符＞
+    if (_cur().isToken(config::CHARCON))
+    {
+        // ＜字符＞
+        char _ch = _cur().getTkvalue()[0];
+        _printAndNext();
+    }
+    // ＜整数＞
+    else if (_cur().isTokens({config::PLUS, config::MINU, config::INTCON}))
+    {
+        // ＜整数＞
+        int _int = 0;
+        parseInteger(_int);
+    }
+    // '('＜表达式＞')'
+    else if (_cur().isToken(config::LPARENT))
+    {
+        // (
+        _printAndNext();
+        // ＜表达式＞
+        parseExpression();
+        // )
+        if (!_cur().isToken(config::RPARENT))
+        {
+            // TODO: ErrorManager
+        }
+        _printAndNext();
+    }
+    // ＜标识符＞ ｜ ＜标识符＞'['＜表达式＞']' | ＜标识符＞'['＜表达式＞']''['＜表达式＞']' | ＜有返回值函数调用语句＞ by token 2
+    else if (_cur().isToken(config::IDENFR))
+    {
+        // ＜有返回值函数调用语句＞
+        if (queue->peek(2).isToken(config::LPARENT))
+        {
+            // ＜有返回值函数调用语句＞
+            parseFunctionValuedCallStatement();
+        }
+        // ＜标识符＞ ｜ ＜标识符＞'['＜表达式＞']' | ＜标识符＞'['＜表达式＞']''['＜表达式＞']'
+        else
+        {
+            Token idenfr;
+            int dim = 0;
+            // ＜标识符＞
+            if (!_cur().isToken(config::IDENFR))
+            {
+                // TODO: ErrorManager
+            }
+            idenfr = _cur();
+            _printAndNext();
+            // '['＜表达式＞']'
+            while (_cur().isToken(config::LBRACK))
+            {
+                if (dim >= 2)
+                {
+                    // TODO: ErrorManager
+                    break;
+                }
+                // [
+                _printAndNext();
+                // ＜表达式＞
+                parseExpression();
+                // ]
+                if (!_cur().isToken(config::RBRACK))
+                {
+                    // TODO: ErrorManager
+                }
+                _printAndNext();
+                // increase dim
+                dim++;
+            }
+        }
+    }
+    // error
+    else
+    {
+        // TODO: ErrorManager
+    }
+
+    printer->printComponent("＜因子＞");
+}
 
