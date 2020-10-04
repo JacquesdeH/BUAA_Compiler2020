@@ -21,8 +21,8 @@ public:
 
 public:
     void push(const Token& tkpair);
-    Token peek(const int& k) const;
-    void pop(const int& k);
+    Token peek(const int& k = 1) const;
+    void pop(const int& k = 1);
 };
 
 

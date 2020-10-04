@@ -44,3 +44,33 @@ int Token::getColumn() const
 {
     return column;
 }
+
+bool Token::isValuedType() const
+{
+    return tkcode == config::INTTK || tkcode == config::CHARTK;
+}
+
+bool Token::isTokens(std::initializer_list<config::TokenCode> _tkcodes) const
+{
+    for (const config::TokenCode _tkcode : _tkcodes)
+    {
+        if (this->isToken(_tkcode))
+            return true;
+    }
+    return false;
+}
+
+bool Token::isPlusMinusOp() const
+{
+    return isTokens({config::PLUS, config::MINU});
+}
+
+bool Token::isMultDivOp() const
+{
+    return isTokens({config::MULT, config::DIV});
+}
+
+bool Token::isCmpOp() const
+{
+    return isTokens({config::LSS, config::LEQ, config::GRE, config::GEQ, config::NEQ, config::EQL});
+}

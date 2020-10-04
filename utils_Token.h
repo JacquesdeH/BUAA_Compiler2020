@@ -6,6 +6,7 @@
 #define PROJECT_UTILS_TOKEN_H
 
 #include <string>
+#include <initializer_list>
 
 #include "config.h"
 
@@ -27,6 +28,11 @@ public:
     config::TokenCode getTkcode() const;
     const string &getTkvalue() const;
     bool isToken(const config::TokenCode& _tkcode) const;
+    bool isTokens(std::initializer_list<config::TokenCode> _tkcodes) const;
+    bool isValuedType() const;
+    bool isPlusMinusOp() const;
+    bool isMultDivOp() const;
+    bool isCmpOp() const;
     int getRow() const;
     int getColumn() const;
 };
