@@ -11,8 +11,8 @@ typedef unsigned int uint;
 
 namespace config
 {
-    const bool PRINT_LEXIC = true;
-    const bool PRINT_SYNTACTIC = false;
+    const bool PRINT_LEXIC = false;
+    const bool PRINT_SYNTACTIC = true;
 
     const int BUFFER_SIZE = 0x10000;
 
