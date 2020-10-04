@@ -3,7 +3,7 @@
 //
 
 #include "config.h"
-#include "syntactic_Printer.h"
+#include "core_syntactic_Printer.h"
 #include "functional_convert.h"
 
 syntactic::Printer::Printer(const string &fOut)

@@ -2,8 +2,8 @@
 // Created by JacquesdeH on 2020/10/2.
 //
 
-#ifndef PROJECT_SYNTACTIC_PRINTER_H
-#define PROJECT_SYNTACTIC_PRINTER_H
+#ifndef PROJECT_CORE_SYNTACTIC_PRINTER_H
+#define PROJECT_CORE_SYNTACTIC_PRINTER_H
 
 #include <fstream>
 #include <string>
@@ -31,4 +31,4 @@ namespace syntactic
 }
 
 
-#endif //PROJECT_SYNTACTIC_PRINTER_H
+#endif //PROJECT_CORE_SYNTACTIC_PRINTER_H

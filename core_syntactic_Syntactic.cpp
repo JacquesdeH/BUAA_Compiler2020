@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#include "syntactic_Syntactic.h"
+#include "core_syntactic_Syntactic.h"
 #include "functional_strext.h"
 
 syntactic::Syntactic::Syntactic(const string &fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager)

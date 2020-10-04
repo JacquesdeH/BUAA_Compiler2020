@@ -2,11 +2,11 @@
 // Created by JacquesdeH on 2020/10/2.
 //
 
-#ifndef PROJECT_SYNTACTIC_SYNTACTIC_H
-#define PROJECT_SYNTACTIC_SYNTACTIC_H
+#ifndef PROJECT_CORE_SYNTACTIC_SYNTACTIC_H
+#define PROJECT_CORE_SYNTACTIC_SYNTACTIC_H
 
 #include "utils_PeekableQueue.h"
-#include "syntactic_Printer.h"
+#include "core_syntactic_Printer.h"
 #include "symbol_SymbolManager.h"
 
 namespace syntactic
@@ -81,4 +81,4 @@ namespace syntactic
 }
 
 
-#endif //PROJECT_SYNTACTIC_SYNTACTIC_H
+#endif //PROJECT_CORE_SYNTACTIC_SYNTACTIC_H
