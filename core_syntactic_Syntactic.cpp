@@ -686,6 +686,7 @@ void syntactic::Syntactic::parseSwitchStatement()
     {
         // TODO: ErrorManager
     }
+    _printAndNext();
 
     printer->printComponent("情况语句");
 }
