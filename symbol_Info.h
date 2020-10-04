@@ -29,12 +29,20 @@ namespace symbol
         bool ctrlAddressed;
 
     public:
+        Info();
         Info(const config::SymbolType &_symbolType, const config::DataType &_dataType, const uint &_declareRow,
              const uint &_arrayDim = 0, const uint &_dim0 = 0, const uint &_dim1 = 0);
 
     public:
         void logReference(const uint& _row);
         void logAddress(const uint& _address);
+        bool checkDeclared() const;
+        bool checkAddressed() const;
+        void assertDeclared() const;
+        void assertAddressed() const;
+        bool isFunction() const;
+        bool isValuedFunction() const;
+        bool isVoidFunction() const;
     };
 }
 

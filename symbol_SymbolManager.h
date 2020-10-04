@@ -23,7 +23,10 @@ namespace symbol
         SymbolManager();
 
     public:
-        bool hasSymbolInScope(const string& symbol);
+        bool hasSymbolInScope(const string& symbol) const;
+        bool hasSymbolInAll(const string& symbol) const;
+        Info getInfoInAll(const string& symbol) const;
+        bool declareSymbol(const string& symbol, const Info& info);
     };
 }
 
