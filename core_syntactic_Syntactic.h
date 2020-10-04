@@ -26,6 +26,7 @@ namespace syntactic
         Token _cur();
         void _next();
         void _printAndNext();
+        bool _isComeFirstThan(const config::TokenCode& tkcode1, const config::TokenCode& tkcode2) const;
 
     public:
         void parseProgram();

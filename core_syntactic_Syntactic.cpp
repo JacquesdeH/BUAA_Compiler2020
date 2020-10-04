@@ -35,6 +35,21 @@ void syntactic::Syntactic::_printAndNext()
     _next();
 }
 
+bool syntactic::Syntactic::_isComeFirstThan(const config::TokenCode &tkcode1, const config::TokenCode &tkcode2) const
+{
+    // tkcode1 exists before tkcode2 occurred
+    int pos = 1;
+    while (!queue->peek(pos).isToken(config::EMPTY))
+    {
+        if (queue->peek(pos).isToken(tkcode1))
+            return true;
+        if (queue->peek(pos).isToken(tkcode2))
+            return false;
+        pos++;
+    }
+    return false;
+}
+
 void syntactic::Syntactic::parseProgram()
 {
     // [<常量说明>]
@@ -194,11 +209,9 @@ void syntactic::Syntactic::parseVarIllustration()
 
 void syntactic::Syntactic::parseVarDeclaration()
 {
-    // ＜变量定义无初始化＞|＜变量定义及初始化＞ by '=' at token 3 6 9
+    // ＜变量定义无初始化＞|＜变量定义及初始化＞ by '=' should occur before ';'
     // ＜变量定义及初始化＞
-    if (queue->peek(3).isToken(config::ASSIGN) ||
-        queue->peek(6).isToken(config::ASSIGN) ||
-        queue->peek(9).isToken(config::ASSIGN))
+    if (_isComeFirstThan(config::ASSIGN, config::SEMICN))
     {
         parseVarDeclarationInitialized();
     }
