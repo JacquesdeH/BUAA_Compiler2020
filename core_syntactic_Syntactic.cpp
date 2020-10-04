@@ -185,7 +185,7 @@ void syntactic::Syntactic::parseVarIllustration()
             // TODO: ErrorManager
         }
         _printAndNext();
-    } while (queue->peek(3).isToken(config::LPARENT));
+    } while (!queue->peek(3).isToken(config::LPARENT));
 
     printer->printComponent("＜变量说明＞");
 }
