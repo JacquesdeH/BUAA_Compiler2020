@@ -56,7 +56,7 @@ void syntactic::Syntactic::parseProgram()
     // ＜主函数＞
     parseMainFunction();
 
-    printer->printComponent("＜主函数＞");
+    printer->printComponent("＜程序＞");
 }
 
 void syntactic::Syntactic::parseConstIllustration()
