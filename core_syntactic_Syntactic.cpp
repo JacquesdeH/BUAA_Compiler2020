@@ -56,7 +56,7 @@ void syntactic::Syntactic::parseProgram()
     // ＜主函数＞
     parseMainFunction();
 
-    printer->printComponent("＜程序＞");
+    printer->printComponent("程序");
 }
 
 void syntactic::Syntactic::parseConstIllustration()
@@ -79,7 +79,7 @@ void syntactic::Syntactic::parseConstIllustration()
         _printAndNext();
     } while (_cur().isToken(config::CONSTTK));
 
-    printer->printComponent("＜常量说明＞");
+    printer->printComponent("常量说明");
 }
 
 void syntactic::Syntactic::parseConstDeclaration()
@@ -139,7 +139,7 @@ void syntactic::Syntactic::parseConstDeclaration()
         isFirst = false;
     } while (_cur().isToken(config::COMMA));
 
-    printer->printComponent("＜常量定义＞");
+    printer->printComponent("常量定义");
 }
 
 void syntactic::Syntactic::parseInteger(int &_integer)
@@ -156,7 +156,7 @@ void syntactic::Syntactic::parseInteger(int &_integer)
     parseUnsigned(_integer);
     _integer *= flag;
 
-    printer->printComponent("＜整数＞");
+    printer->printComponent("整数");
 }
 
 void syntactic::Syntactic::parseUnsigned(int &_unsigned)
@@ -169,7 +169,7 @@ void syntactic::Syntactic::parseUnsigned(int &_unsigned)
     _unsigned = str2int(_cur().getTkvalue());
     _printAndNext();
 
-    printer->printComponent("＜无符号整数＞");
+    printer->printComponent("无符号整数");
 }
 
 void syntactic::Syntactic::parseVarIllustration()
@@ -187,7 +187,7 @@ void syntactic::Syntactic::parseVarIllustration()
         _printAndNext();
     } while (!queue->peek(3).isToken(config::LPARENT));
 
-    printer->printComponent("＜变量说明＞");
+    printer->printComponent("变量说明");
 }
 
 void syntactic::Syntactic::parseVarDeclaration()
@@ -206,7 +206,7 @@ void syntactic::Syntactic::parseVarDeclaration()
         parseVarDeclarationUninitialized();
     }
 
-    printer->printComponent("＜变量定义＞");
+    printer->printComponent("变量定义");
 }
 
 void syntactic::Syntactic::parseVarDeclarationUninitialized()
@@ -269,7 +269,7 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
         isFirst = false;
     } while (_cur().isToken(config::COMMA));
 
-    printer->printComponent("＜变量定义无初始化＞");
+    printer->printComponent("变量定义无初始化");
 }
 
 void syntactic::Syntactic::parseVarDeclarationInitialized()
@@ -469,7 +469,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
     }
     // TODO: Update SymbolManager
 
-    printer->printComponent("＜变量定义及初始化＞");
+    printer->printComponent("变量定义及初始化");
 }
 
 void syntactic::Syntactic::parseString(string &_str)
@@ -482,7 +482,7 @@ void syntactic::Syntactic::parseString(string &_str)
     _str = _cur().getTkvalue();
     _printAndNext();
 
-    printer->printComponent("＜字符串＞");
+    printer->printComponent("字符串");
 }
 
 void syntactic::Syntactic::parseConstant(int& _value, bool& _isInteger)
@@ -501,7 +501,7 @@ void syntactic::Syntactic::parseConstant(int& _value, bool& _isInteger)
         parseInteger(_value);
     }
 
-    printer->printComponent("＜常量＞");
+    printer->printComponent("常量");
 }
 
 void syntactic::Syntactic::parseCaseList()
@@ -513,7 +513,7 @@ void syntactic::Syntactic::parseCaseList()
         parseCaseSubStatement();
     } while (_cur().isToken(config::CASETK));
 
-    printer->printComponent("＜情况表＞");
+    printer->printComponent("情况表");
 }
 
 void syntactic::Syntactic::parseCaseSubStatement()
@@ -537,7 +537,7 @@ void syntactic::Syntactic::parseCaseSubStatement()
     // ＜语句＞
     parseStatement();
 
-    printer->printComponent("＜情况子语句＞");
+    printer->printComponent("情况子语句");
 }
 
 void syntactic::Syntactic::parseDefault()
@@ -557,7 +557,7 @@ void syntactic::Syntactic::parseDefault()
     // ＜语句＞
     parseStatement();
 
-    printer->printComponent("＜缺省＞");
+    printer->printComponent("缺省");
 }
 
 void syntactic::Syntactic::parseStatementList()
@@ -569,7 +569,7 @@ void syntactic::Syntactic::parseStatementList()
         parseStatement();
     }
 
-    printer->printComponent("＜语句列＞");
+    printer->printComponent("语句列");
 }
 
 void syntactic::Syntactic::parseReadStatement()
@@ -600,7 +600,7 @@ void syntactic::Syntactic::parseReadStatement()
     }
     _printAndNext();
 
-    printer->printComponent("＜读语句＞");
+    printer->printComponent("读语句");
 }
 
 void syntactic::Syntactic::parsePrintStatement()
@@ -644,7 +644,7 @@ void syntactic::Syntactic::parsePrintStatement()
     }
     _printAndNext();
 
-    printer->printComponent("＜写语句＞");
+    printer->printComponent("写语句");
 }
 
 void syntactic::Syntactic::parseSwitchStatement()
@@ -685,7 +685,7 @@ void syntactic::Syntactic::parseSwitchStatement()
         // TODO: ErrorManager
     }
 
-    printer->printComponent("＜情况语句＞");
+    printer->printComponent("情况语句");
 }
 
 void syntactic::Syntactic::parseReturnStatement()
@@ -711,7 +711,7 @@ void syntactic::Syntactic::parseReturnStatement()
         _printAndNext();
     }
 
-    printer->printComponent("＜返回语句＞");
+    printer->printComponent("返回语句");
 }
 
 void syntactic::Syntactic::parseAssignStatement()
@@ -756,7 +756,7 @@ void syntactic::Syntactic::parseAssignStatement()
     // ＜表达式＞
     parseExpression();
 
-    printer->printComponent("＜赋值语句＞");
+    printer->printComponent("赋值语句");
 }
 
 void syntactic::Syntactic::parseConditionStatement()
@@ -792,7 +792,7 @@ void syntactic::Syntactic::parseConditionStatement()
         parseStatement();
     }
 
-    printer->printComponent("＜条件语句＞");
+    printer->printComponent("条件语句");
 }
 
 void syntactic::Syntactic::parseLoopStatement()
@@ -808,7 +808,7 @@ void syntactic::Syntactic::parseLoopStatement()
         parseWhileStatement();
     }
 
-    printer->printComponent("＜循环语句＞");
+    printer->printComponent("循环语句");
 }
 
 void syntactic::Syntactic::parseWhileStatement()
@@ -947,7 +947,7 @@ void syntactic::Syntactic::parseCondition()
     // ＜表达式＞
     parseExpression();
 
-    printer->printComponent("＜条件＞");
+    printer->printComponent("条件");
 }
 
 void syntactic::Syntactic::parseStepLength(int &_step)
@@ -955,7 +955,7 @@ void syntactic::Syntactic::parseStepLength(int &_step)
     // ＜无符号整数＞
     parseUnsigned(_step);
 
-    printer->printComponent("＜步长＞");
+    printer->printComponent("步长");
 }
 
 void syntactic::Syntactic::parseParameterDeclarationList()
@@ -1001,7 +1001,7 @@ void syntactic::Syntactic::parseParameterDeclarationList()
         } while (_cur().isToken(config::COMMA));
     }
 
-    printer->printComponent("＜参数表＞");
+    printer->printComponent("参数表");
 }
 
 void syntactic::Syntactic::parseParameterValueList()
@@ -1033,7 +1033,7 @@ void syntactic::Syntactic::parseParameterValueList()
         } while (_cur().isToken(config::COMMA));
     }
 
-    printer->printComponent("＜值参数表＞");
+    printer->printComponent("值参数表");
 }
 
 void syntactic::Syntactic::parseCompoundStatement()
@@ -1051,7 +1051,7 @@ void syntactic::Syntactic::parseCompoundStatement()
     // ＜语句列＞
     parseStatementList();
 
-    printer->printComponent("＜复合语句＞");
+    printer->printComponent("复合语句");
 }
 
 void syntactic::Syntactic::parseMainFunction()
@@ -1095,7 +1095,7 @@ void syntactic::Syntactic::parseMainFunction()
     }
     _printAndNext();
 
-    printer->printComponent("＜主函数＞");
+    printer->printComponent("主函数");
 }
 
 void syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
@@ -1122,7 +1122,7 @@ void syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
                                  symbol::Info(config::SymbolType::FUNCTION,
                                               dataType, idenfr.getRow()));
 
-    printer->printComponent("＜声明头部＞");
+    printer->printComponent("声明头部");
 }
 
 void syntactic::Syntactic::parseFunctionValuedDeclaration()
@@ -1159,7 +1159,7 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     }
     _printAndNext();
 
-    printer->printComponent("＜有返回值函数定义＞");
+    printer->printComponent("有返回值函数定义");
 }
 
 void syntactic::Syntactic::parseFunctionVoidDeclaration()
@@ -1211,7 +1211,7 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     }
     _printAndNext();
 
-    printer->printComponent("＜无返回值函数定义＞");
+    printer->printComponent("无返回值函数定义");
 }
 
 void syntactic::Syntactic::parseFunctionValuedCallStatement()
@@ -1247,7 +1247,7 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
     }
     _printAndNext();
 
-    printer->printComponent("＜有返回值函数调用语句＞");
+    printer->printComponent("有返回值函数调用语句");
 }
 
 void syntactic::Syntactic::parseFunctionVoidCallStatement()
@@ -1283,7 +1283,7 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     }
     _printAndNext();
 
-    printer->printComponent("＜无返回值函数调用语句＞");
+    printer->printComponent("无返回值函数调用语句");
 }
 
 void syntactic::Syntactic::parseStatement()
@@ -1405,7 +1405,7 @@ void syntactic::Syntactic::parseStatement()
         // TODO: ErrorManager
     }
 
-    printer->printComponent("＜语句＞");
+    printer->printComponent("语句");
 }
 
 void syntactic::Syntactic::parseExpression()
@@ -1431,7 +1431,7 @@ void syntactic::Syntactic::parseExpression()
         isFirst = false;
     } while (_cur().isPlusMinusOp());
 
-    printer->printComponent("＜表达式＞");
+    printer->printComponent("表达式");
 }
 
 void syntactic::Syntactic::parseTerm()
@@ -1454,7 +1454,7 @@ void syntactic::Syntactic::parseTerm()
         isFirst = false;
     } while (_cur().isMultDivOp());
 
-    printer->printComponent("＜项＞");
+    printer->printComponent("项");
 }
 
 void syntactic::Syntactic::parseFactor()
@@ -1537,6 +1537,6 @@ void syntactic::Syntactic::parseFactor()
         // TODO: ErrorManager
     }
 
-    printer->printComponent("＜因子＞");
+    printer->printComponent("因子");
 }
 
