@@ -4,8 +4,8 @@
 
 #include "symbol_Info.h"
 
-symbol::Info::Info(const config::SymbolType &_symbolType, const config::DataType &_dataType, const uint &_arrayDim,
-           const uint &_declareRow, const uint &_dim0, const uint &_dim1)
+symbol::Info::Info(const config::SymbolType &_symbolType, const config::DataType &_dataType, const uint &_declareRow,
+                   const uint &_arrayDim, const uint &_dim0, const uint &_dim1)
 {
     this->ctrlDeclared = false;
     this->ctrlAddressed = false;

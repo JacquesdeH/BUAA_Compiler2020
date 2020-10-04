@@ -29,8 +29,8 @@ namespace symbol
         bool ctrlAddressed;
 
     public:
-        Info(const config::SymbolType& _symbolType, const config::DataType& _dataType,
-             const uint& _arrayDim, const uint& _declareRow, const uint& _dim0=0, const uint& _dim1=0);
+        Info(const config::SymbolType &_symbolType, const config::DataType &_dataType, const uint &_declareRow,
+             const uint &_arrayDim = 0, const uint &_dim0 = 0, const uint &_dim1 = 0);
 
     public:
         void logReference(const uint& _row);
