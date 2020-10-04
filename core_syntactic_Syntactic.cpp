@@ -176,6 +176,7 @@ void syntactic::Syntactic::parseVarIllustration()
 {
     // ＜变量定义＞;{＜变量定义＞;} start with ＜类型标识符＞＜标识符＞
     // should differ from following {＜有返回值函数定义＞|＜无返回值函数定义＞}＜主函数＞ by '(' at token 3
+    // BUT ＜复合语句＞::=［＜常量说明＞］［＜变量说明＞］＜语句列＞ troubles to need more specification
     do
     {
         parseVarDeclaration();
@@ -185,7 +186,8 @@ void syntactic::Syntactic::parseVarIllustration()
             // TODO: ErrorManager
         }
         _printAndNext();
-    } while (!queue->peek(3).isToken(config::LPARENT));
+    } while (_cur().isValuedType() && queue->peek(2).isToken(config::IDENFR) &&
+                !queue->peek(3).isToken(config::LPARENT));
 
     printer->printComponent("变量说明");
 }
