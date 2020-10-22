@@ -78,7 +78,7 @@ namespace config
     enum ErrorType
     {
         // Code A
-        IllegalChar, EmptyCharOrString, CharLengthError,
+        IllegalLetterChar, IllegalLetterString, EmptyCharOrString, CharLengthError,
         // Code B
         DuplicatedName,
         // Code C
@@ -116,7 +116,7 @@ namespace config
     };
 
     const std::unordered_map<std::string, std::initializer_list<ErrorType>> errorType2Code = {
-            {"a", {IllegalChar, EmptyCharOrString, CharLengthError}},
+            {"a", {IllegalLetterChar, IllegalLetterString, EmptyCharOrString, CharLengthError}},
             {"b", {DuplicatedName}},
             {"c", {UndefinedName}},
             {"d", {FunctionParamCountMismatch}},
@@ -135,6 +135,8 @@ namespace config
             {"o", {ConstantTypeMismatchInVarDeclarationAndInit, ConstantTypeMismatchInSwitchCase}},
             {"p", {ExpectDefaultStatement}},
     };
+
+    const std::initializer_list<char> stopwordsChar = {EOF, '\r', '\n'};
 }
 
 #endif //PROJECT_CONFIG_H

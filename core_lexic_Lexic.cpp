@@ -148,14 +148,25 @@ bool lexic::Lexic::_parseTk()
             _readNext();
             if (strlen(buffer) == 0)
             {
-                // TODO: log ErrorManager with 0-length char const
+                // ErrorManager
+                // charcon is empty
+                errorManager->insertError(row, column, config::ErrorType::EmptyCharOrString, "Empty char constant");
+                // no skip
             }
             else
                 _logtoken(config::CHARCON, buffer, row, column);
         }
         else
         {
-            // TODO: log ErrorManager
+            // ErrorManager
+            // illegal char
+            if (!_isCharLetter(ch))
+                errorManager->insertError(row, column, config::ErrorType::IllegalLetterChar, "Encountered illegal letter of char constant");
+            // char length mor than 1
+            else
+                errorManager->insertError(row, column, config::ErrorType::CharLengthError, "Char constant length more than 1");
+            skipUntil({'\''}, config::stopwordsChar);
+            _readNext();
         }
     }
     // STRCON
@@ -173,14 +184,20 @@ bool lexic::Lexic::_parseTk()
             _readNext();
             if (strlen(buffer) == 0)
             {
-                // TODO: log ErrorManager with 0-length string
+                // ErrorManager
+                // empty string
+                errorManager->insertError(row, column, config::ErrorType::EmptyCharOrString, "Empty string");
+                // no skip
             }
             else
                 _logtoken(config::STRCON, buffer, row, column);
         }
         else
         {
-            // TODO: log ErrorManager
+            // ErrorManager
+            // illegal string letter
+            errorManager->insertError(row, column, config::ErrorType::IllegalLetterString, "Illegal string letter");
+            skipUntil({'\"'}, config::stopwordsChar);
         }
     }
     // 1-letter defined char
@@ -261,6 +278,7 @@ bool lexic::Lexic::_parseTk()
     else
     {
         // TODO: ErrorManager with un-recognized char
+        _readNext();
     }
 
     return true;
