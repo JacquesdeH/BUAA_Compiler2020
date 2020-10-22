@@ -151,6 +151,7 @@ bool lexic::Lexic::_parseTk()
                 // ErrorManager
                 // charcon is empty
                 errorManager->insertError(row, column, config::ErrorType::EmptyCharOrString, "Empty char constant");
+                _logtoken(config::CHARCON, "ERROR", row, column);
                 // no skip
             }
             else
@@ -165,6 +166,7 @@ bool lexic::Lexic::_parseTk()
             // char length mor than 1
             else
                 errorManager->insertError(row, column, config::ErrorType::CharLengthError, "Char constant length more than 1");
+            _logtoken(config::CHARCON, "ERROR", row, column);
             skipUntil({'\''}, config::stopwordsChar);
             _readNext();
         }
@@ -290,15 +292,17 @@ void lexic::Lexic::run()
 }
 
 void
-lexic::Lexic::skipUntil(const std::initializer_list<char> &successors, const std::initializer_list<char> &stopwords)
+lexic::Lexic::skipUntil(const std::initializer_list<char> &successors, const std::initializer_list<char> &stopwords, const bool & keepCur)
 {
     std::unordered_set<char> wordset;
     for (const auto & word : successors)
         wordset.insert(word);
     for (const auto & word : stopwords)
         wordset.insert(word);
+    if (keepCur && (wordset.find(ch) != wordset.end()))
+        return;
     do
     {
         _readNext();
-    } while (wordset.find(ch) != wordset.end());
+    } while (wordset.find(ch) == wordset.end());
 }

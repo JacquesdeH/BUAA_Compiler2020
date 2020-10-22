@@ -30,7 +30,7 @@ string errorType2Code(const config::ErrorType &errorType)
 {
     for (const auto& entry : config::errorType2Code)
     {
-        for (const auto& eachErrorType : entry.second)
+        for (config::ErrorType eachErrorType : entry.second)
             if (eachErrorType == errorType)
                 return entry.first;
     }
