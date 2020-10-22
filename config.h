@@ -7,6 +7,7 @@
 
 #include <unordered_map>
 #include <initializer_list>
+#include <unordered_set>
 
 typedef unsigned int uint;
 
@@ -115,7 +116,7 @@ namespace config
         GeneralError
     };
 
-    const std::unordered_map<std::string, std::initializer_list<ErrorType>> errorType2Code = {
+    const std::unordered_map<std::string, std::unordered_set<ErrorType>> errorType2Code = {
             {"a", {IllegalLetterChar, IllegalLetterString, EmptyCharOrString, CharLengthError}},
             {"b", {DuplicatedName}},
             {"c", {UndefinedName}},
@@ -136,7 +137,7 @@ namespace config
             {"p", {ExpectDefaultStatement}},
     };
 
-    const std::initializer_list<char> stopwordsChar = {EOF, '\r', '\n'};
+    const std::unordered_set<char> stopwordsChar = {EOF, '\r', '\n'};
 }
 
 #endif //PROJECT_CONFIG_H

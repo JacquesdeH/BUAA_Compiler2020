@@ -292,7 +292,7 @@ void lexic::Lexic::run()
 }
 
 void
-lexic::Lexic::skipUntil(const std::initializer_list<char> &successors, const std::initializer_list<char> &stopwords, const bool & keepCur)
+lexic::Lexic::skipUntil(const std::unordered_set<char> &successors, const std::unordered_set<char> &stopwords, const bool & keepCur)
 {
     std::unordered_set<char> wordset;
     for (const auto & word : successors)
