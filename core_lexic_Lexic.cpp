@@ -189,6 +189,7 @@ bool lexic::Lexic::_parseTk()
                 // ErrorManager
                 // empty string
                 errorManager->insertError(row, column, config::ErrorType::EmptyCharOrString, "Empty string");
+                _logtoken(config::STRCON, "ERROR", row, column);
                 // no skip
             }
             else
@@ -199,6 +200,7 @@ bool lexic::Lexic::_parseTk()
             // ErrorManager
             // illegal string letter
             errorManager->insertError(row, column, config::ErrorType::IllegalLetterString, "Illegal string letter");
+            _logtoken(config::STRCON, "ERROR", row, column);
             skipUntil({'\"'}, config::stopwordsChar);
         }
     }
