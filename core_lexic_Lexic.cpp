@@ -3,6 +3,7 @@
 //
 
 #include <cstring>
+#include <unordered_set>
 
 #include "core_lexic_Lexic.h"
 #include "functional_convert.h"
@@ -268,4 +269,18 @@ bool lexic::Lexic::_parseTk()
 void lexic::Lexic::run()
 {
     while (_parseTk());
+}
+
+void
+lexic::Lexic::skipUntil(const std::initializer_list<char> &successors, const std::initializer_list<char> &stopwords)
+{
+    std::unordered_set<char> wordset;
+    for (const auto & word : successors)
+        wordset.insert(word);
+    for (const auto & word : stopwords)
+        wordset.insert(word);
+    do
+    {
+        _readNext();
+    } while (wordset.find(ch) != wordset.end());
 }

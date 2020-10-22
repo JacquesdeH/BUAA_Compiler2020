@@ -9,6 +9,7 @@
 
 #include <string>
 #include <fstream>
+#include <initializer_list>
 
 #include "core_lexic_Reader.h"
 #include "core_lexic_Printer.h"
@@ -43,6 +44,7 @@ namespace lexic
         void _skipBlank();
         void _logtoken(const config::TokenCode& tkcode, const string& value, const int& row, const int& column);
         bool _parseTk();
+        void skipUntil(const std::initializer_list<char> & successors, const std::initializer_list<char> & stopwords);
 
     public:
         void run();
