@@ -7,11 +7,12 @@
 #include "core_syntactic_Syntactic.h"
 #include "functional_strext.h"
 
-syntactic::Syntactic::Syntactic(const string &fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager)
+syntactic::Syntactic::Syntactic(const string &fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager, error::ErrorManager* _errorManager)
 {
     this->printer = new Printer(fOut);
     this->queue = _queue;
     this->symbolManager = _symbolManager;
+    this->errorManager = _errorManager;
 }
 
 syntactic::Syntactic::~Syntactic()

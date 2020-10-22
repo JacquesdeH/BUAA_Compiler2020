@@ -8,12 +8,13 @@
 #include "functional_convert.h"
 #include "functional_strext.h"
 
-lexic::Lexic::Lexic(const string &fIn, const string &fOut, PeekableQueue* _queue)
+lexic::Lexic::Lexic(const string &fIn, const string &fOut, PeekableQueue* _queue, error::ErrorManager* _errorManager)
 {
     this->reader = new Reader(fIn);
     this->printer = new Printer(fOut);
     this->ch = '\0';
     this->queue = _queue;
+    this->errorManager = _errorManager;
 }
 
 lexic::Lexic::~Lexic()
