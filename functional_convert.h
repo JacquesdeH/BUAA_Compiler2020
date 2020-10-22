@@ -13,5 +13,6 @@ using std::string;
 
 string tkcode2output(const config::TokenCode& tkcode);
 config::TokenCode text2token(const string& token);
+string errorType2Code(const config::ErrorType& errorType);
 
 #endif //PROJECT_FUNCTIONAL_CONVERT_H

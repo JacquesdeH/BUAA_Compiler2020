@@ -25,3 +25,16 @@ config::TokenCode text2token(const string& original)
     }
     return config::STR2TOKEN.at(token);
 }
+
+string errorType2Code(const config::ErrorType &errorType)
+{
+    for (const auto& entry : config::errorType2Code)
+    {
+        for (const auto& eachErrorType : entry.second)
+            if (eachErrorType == errorType)
+                return entry.first;
+    }
+    // not found errorType
+    std::cerr << "Unexpected ErrorType occurred!" << std::endl;
+    return "GeneralError";
+}

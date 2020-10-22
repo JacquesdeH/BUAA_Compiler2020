@@ -6,6 +6,7 @@
 #define PROJECT_CONFIG_H
 
 #include <unordered_map>
+#include <initializer_list>
 
 typedef unsigned int uint;
 
@@ -71,6 +72,67 @@ namespace config
     enum DataType
     {
         INT, CHAR, VOID
+    };
+
+    enum ErrorType
+    {
+        // Code A
+        IllegalChar, EmptyCharOrString, CharLengthError,
+        // Code B
+        DuplicatedName,
+        // Code C
+        UndefinedName,
+        // Code D
+        FunctionParamCountMismatch,
+        // Code E
+        FunctionParamTypeMismatch,
+        // Code F
+        IllegalTypeInCondition,
+        // Code G
+        VoidFunctionWithParents, VoidFunctionWithValue,
+        // Code H
+        ValuedFunctionWithoutReturn, ValuedFunctionWithVoid, ValuedFunctionWithParents, ValuedFunctionReturnTypeMismatch,
+        // Code I
+        ArraySubIndexTypeNotInt,
+        // Code J
+        ModifyConstWithAssign, ModifyConstWithScanf,
+        // Code K
+        ExpectSemicnInStatementEnd, ExpectSemicnInFor, ExpectSemicnAtConstVarDeclarationEnd,
+        // Code L
+        ExpectRParentAtFunctionCall, ExpectRParentAtFunctionDeclaration, ExpectRParentAtMain, ExpectRParentAtExpression,
+        ExpectRParentAtIf, ExpectRParentAtWhile, ExpectRParentAtFor, ExpectRParentAtSwitch,
+        ExpectRParentAtScanf, ExpectRParentAtPrintf, ExpectRParentAtReturn,
+        // Code M
+        ExpectRBrackAtArrayDeclaration, ExpectRBrackAtArrayUseInFactor, ExpectRBrackAtArrayUseInAssignLeft,
+        // Code N
+        ArrayInitMismatchWithTemplate,
+        // Code O
+        ConstantTypeMismatchInVarDeclarationAndInit, ConstantTypeMismatchInSwitchCase,
+        // Code P
+        ExpectDefaultStatement,
+        // Default
+        GeneralError
+    };
+
+    const std::unordered_map<std::string, std::initializer_list<ErrorType>> errorType2Code = {
+            {"a", {IllegalChar, EmptyCharOrString, CharLengthError}},
+            {"b", {DuplicatedName}},
+            {"c", {UndefinedName}},
+            {"d", {FunctionParamCountMismatch}},
+            {"e", {FunctionParamTypeMismatch}},
+            {"f", {IllegalTypeInCondition}},
+            {"g", {VoidFunctionWithParents, VoidFunctionWithValue}},
+            {"h", {ValuedFunctionWithoutReturn, ValuedFunctionWithVoid, ValuedFunctionWithParents, ValuedFunctionReturnTypeMismatch}},
+            {"i", {ArraySubIndexTypeNotInt}},
+            {"j", {ModifyConstWithAssign, ModifyConstWithScanf}},
+            {"k", {ExpectSemicnInStatementEnd, ExpectSemicnInFor, ExpectSemicnAtConstVarDeclarationEnd}},
+            {"l", {ExpectRParentAtFunctionCall, ExpectRParentAtFunctionDeclaration, ExpectRParentAtMain, ExpectRParentAtExpression,
+                          ExpectRParentAtIf, ExpectRParentAtWhile, ExpectRParentAtFor, ExpectRParentAtSwitch,
+                          ExpectRParentAtScanf, ExpectRParentAtPrintf, ExpectRParentAtReturn}},
+            {"m", {ExpectRBrackAtArrayDeclaration, ExpectRBrackAtArrayUseInFactor, ExpectRBrackAtArrayUseInAssignLeft}},
+            {"n", {ArrayInitMismatchWithTemplate}},
+            {"o", {ConstantTypeMismatchInVarDeclarationAndInit, ConstantTypeMismatchInSwitchCase}},
+            {"p", {ExpectDefaultStatement}},
     };
 }
 
