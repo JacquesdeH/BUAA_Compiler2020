@@ -16,5 +16,7 @@ int main()
     instance_Lexic.run();
     instance_Syntactic.parseProgram();
 
+    errorManager.printAllErrors();
+
     return 0;
 }
