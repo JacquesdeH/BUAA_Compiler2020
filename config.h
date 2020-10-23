@@ -138,6 +138,7 @@ namespace config
     };
 
     const std::unordered_set<char> stopwordsChar = {EOF, '\r', '\n'};
+    const std::unordered_set<TokenCode> stopwordsToken = {SEMICN};
 }
 
 #endif //PROJECT_CONFIG_H

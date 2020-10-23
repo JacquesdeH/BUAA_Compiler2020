@@ -29,6 +29,8 @@ namespace syntactic
         void _next();
         void _printAndNext();
         bool _isComeFirstThan(const config::TokenCode& tkcode1, const config::TokenCode& tkcode2) const;
+        void _skipUntil(const std::unordered_set<config::TokenCode> & successors,
+                        const std::unordered_set<config::TokenCode> & stopwords, const bool & keepCur = false);
 
     public:
         void parseProgram();

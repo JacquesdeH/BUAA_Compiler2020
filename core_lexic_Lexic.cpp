@@ -167,7 +167,7 @@ bool lexic::Lexic::_parseTk()
             else
                 errorManager->insertError(row, column, config::ErrorType::CharLengthError, "Char constant length more than 1");
             _logtoken(config::CHARCON, "ERROR", row, column);
-            skipUntil({'\''}, config::stopwordsChar);
+            _skipUntil({'\''}, config::stopwordsChar);
             _readNext();
         }
     }
@@ -201,7 +201,7 @@ bool lexic::Lexic::_parseTk()
             // illegal string letter
             errorManager->insertError(row, column, config::ErrorType::IllegalLetterString, "Illegal string letter");
             _logtoken(config::STRCON, "ERROR", row, column);
-            skipUntil({'\"'}, config::stopwordsChar);
+            _skipUntil({'\"'}, config::stopwordsChar);
         }
     }
     // 1-letter defined char
@@ -294,7 +294,7 @@ void lexic::Lexic::run()
 }
 
 void
-lexic::Lexic::skipUntil(const std::unordered_set<char> &successors, const std::unordered_set<char> &stopwords, const bool & keepCur)
+lexic::Lexic::_skipUntil(const std::unordered_set<char> &successors, const std::unordered_set<char> &stopwords, const bool & keepCur)
 {
     std::unordered_set<char> wordset;
     for (const auto & word : successors)

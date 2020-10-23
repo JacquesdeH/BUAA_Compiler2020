@@ -1697,3 +1697,19 @@ void syntactic::Syntactic::parseFactor()
     printer->printComponent("因子");
 }
 
+void syntactic::Syntactic::_skipUntil(const std::unordered_set<config::TokenCode> &successors,
+                                      const std::unordered_set<config::TokenCode> &stopwords, const bool &keepCur)
+{
+    std::unordered_set<config::TokenCode> wordset;
+    for (const auto & word : successors)
+        wordset.insert(word);
+    for (const auto & word : stopwords)
+        wordset.insert(word);
+    if (keepCur && (wordset.find(_cur().getTkcode()) != wordset.end()))
+        return;
+    do
+    {
+        _printAndNext();
+    } while (wordset.find(_cur().getTkcode()) == wordset.end());
+}
+

@@ -44,7 +44,7 @@ namespace lexic
         void _skipBlank();
         void _logtoken(const config::TokenCode& tkcode, const string& value, const int& row, const int& column);
         bool _parseTk();
-        void skipUntil(const std::unordered_set<char> & successors, const std::unordered_set<char> & stopwords, const bool & keepCur = false);
+        void _skipUntil(const std::unordered_set<char> & successors, const std::unordered_set<char> & stopwords, const bool & keepCur = false);
 
     public:
         void run();
