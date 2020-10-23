@@ -637,7 +637,22 @@ void syntactic::Syntactic::parseReadStatement()
     {
         // TODO: ErrorManager
     }
-    Token token = _cur();
+    Token idenfr = _cur();
+    if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
+    {
+        // ErrorManager
+        errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::UndefinedName,
+                                  "Undefined idenfr in Read Statement");
+        // no skip
+    }
+    else
+    {
+        symbol::Info idenfrInfo = symbolManager->getInfoInAll(idenfr.getTkvalue());
+        if (idenfrInfo.isSymbolTypeOf(config::SymbolType::CONST) || !idenfrInfo.isDimOf(0))
+        {
+            // TODO: ErrorManager
+        }
+    }
     _printAndNext();
     // )
     if (!_cur().isToken(config::RPARENT))
@@ -770,6 +785,13 @@ void syntactic::Syntactic::parseAssignStatement()
         // TODO: ErrorManager
     }
     idenfr = _cur();
+    if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
+    {
+        // ErrorManager
+        errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::UndefinedName,
+                                  "Undefined idenfr in assignment statement");
+        // no skip
+    }
     _printAndNext();
     // '['＜表达式＞']' | '['＜表达式＞']''['＜表达式＞']'
     int dim = 0;
@@ -905,6 +927,13 @@ void syntactic::Syntactic::parseForStatement()
         // TODO: ErrorManager
     }
     idenfr1 = _cur();
+    if (!symbolManager->hasSymbolInAll(idenfr1.getTkvalue()))
+    {
+        // ErrorManager
+        errorManager->insertError(idenfr1.getRow(), idenfr1.getColumn(), config::ErrorType::UndefinedName,
+                                  "Undefined idenfr in for of 1");
+        // no skip
+    }
     _printAndNext();
     // =
     if (!_cur().isToken(config::ASSIGN))
@@ -935,6 +964,13 @@ void syntactic::Syntactic::parseForStatement()
         // TODO: ErrorManager
     }
     idenfr2 = _cur();
+    if (!symbolManager->hasSymbolInAll(idenfr2.getTkvalue()))
+    {
+        // ErrorManager
+        errorManager->insertError(idenfr2.getRow(), idenfr2.getColumn(), config::ErrorType::UndefinedName,
+                                  "Undefined idenfr in for 2");
+        // no skip
+    }
     if (idenfr1.getTkvalue() != idenfr2.getTkvalue())
     {
         // TODO: ErrorManager
@@ -953,6 +989,13 @@ void syntactic::Syntactic::parseForStatement()
         // TODO: ErrorManager
     }
     idenfr3 = _cur();
+    if (!symbolManager->hasSymbolInAll(idenfr3.getTkvalue()))
+    {
+        // ErrorManager
+        errorManager->insertError(idenfr3.getRow(), idenfr3.getColumn(), config::ErrorType::UndefinedName,
+                                  "Undefined idenfr in for 3");
+        // no skip
+    }
     if (idenfr1.getTkvalue() != idenfr3.getTkvalue())
     {
         // TODO: ErrorManager
@@ -1079,7 +1122,7 @@ void syntactic::Syntactic::parseParameterValueList()
             {
                 if (!_cur().isToken(config::COMMA))
                 {
-                    // RODO: ErrorManager
+                    // TODO: ErrorManager
                 }
                 _printAndNext();
             }
@@ -1323,7 +1366,10 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
     idenfr = _cur();
     if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::UndefinedName,
+                                  "Undefined Valued function call");
+        // no skip
     }
     if (!symbolManager->getInfoInAll(idenfr.getTkvalue()).isValuedFunction())
     {
@@ -1359,7 +1405,10 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     idenfr = _cur();
     if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::UndefinedName,
+                                  "Undefined Void function call");
+        // no skip
     }
     if (!symbolManager->getInfoInAll(idenfr.getTkvalue()).isVoidFunction())
     {
@@ -1469,7 +1518,10 @@ void syntactic::Syntactic::parseStatement()
             Token idenfr = _cur();
             if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
             {
-                // TODO: ErrorManager
+                // ErrorManager
+                errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::UndefinedName,
+                                          "Undefined function name call");
+                // no skip
             }
             // ＜有返回值函数调用语句＞
             if (symbolManager->getInfoInAll(idenfr.getTkvalue()).isValuedFunction())
@@ -1605,6 +1657,13 @@ void syntactic::Syntactic::parseFactor()
                 // TODO: ErrorManager
             }
             idenfr = _cur();
+            if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
+            {
+                // ErrorManager
+                errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::UndefinedName,
+                                          "Undefined idenfr in Factor");
+                // no skip
+            }
             _printAndNext();
             // '['＜表达式＞']'
             while (_cur().isToken(config::LBRACK))

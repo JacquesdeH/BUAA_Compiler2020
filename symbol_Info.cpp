@@ -84,3 +84,31 @@ bool symbol::Info::isVoidFunction() const
     return isFunction() && (dataType == config::DataType::VOID);
 }
 
+bool symbol::Info::isSymbolTypeOf(const config::SymbolType &_symbolType) const
+{
+    assertDeclared();
+    return symbolType == _symbolType;
+}
+
+bool symbol::Info::isDataTypeOf(const config::DataType &_dataType) const
+{
+    assertDeclared();
+    return dataType == _dataType;
+}
+
+bool symbol::Info::isDimOf(const int &_dims, const int & _dimLim0, const int & _dimLim1) const
+{
+    assertDeclared();
+    if (arrayDim != _dims)
+        return false;
+    switch (arrayDim)
+    {
+        case 0: return true;
+        case 1: return dimLimit[0] == _dimLim0;
+        case 2: return (dimLimit[0] == _dimLim0) && (dimLimit[1] == _dimLim1);
+        default:
+            std::cerr << "Unexpected dim counts in isDimOf" << std::endl;
+            return false;
+    }
+}
+

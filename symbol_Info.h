@@ -43,6 +43,9 @@ namespace symbol
         bool isFunction() const;
         bool isValuedFunction() const;
         bool isVoidFunction() const;
+        bool isSymbolTypeOf(const config::SymbolType & _symbolType) const;
+        bool isDataTypeOf(const config::DataType & _dataType) const;
+        bool isDimOf(const int & _dims, const int & _dimLim0 = 0, const int & _dimLim1 = 0) const;
     };
 }
 
