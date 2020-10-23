@@ -550,19 +550,19 @@ void syntactic::Syntactic::parseConstant(int& _value, bool& _isInteger)
     printer->printComponent("常量");
 }
 
-void syntactic::Syntactic::parseCaseList()
+void syntactic::Syntactic::parseCaseList(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // ＜情况子语句＞{＜情况子语句＞}
     do
     {
         // ＜情况子语句＞
-        parseCaseSubStatement();
+        parseCaseSubStatement(hasReturned, insideFuncAndType);
     } while (_cur().isToken(config::CASETK));
 
     printer->printComponent("情况表");
 }
 
-void syntactic::Syntactic::parseCaseSubStatement()
+void syntactic::Syntactic::parseCaseSubStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // case
     if (!_cur().isToken(config::CASETK))
@@ -581,12 +581,12 @@ void syntactic::Syntactic::parseCaseSubStatement()
     }
     _printAndNext();
     // ＜语句＞
-    parseStatement();
+    parseStatement(hasReturned, insideFuncAndType);
 
     printer->printComponent("情况子语句");
 }
 
-void syntactic::Syntactic::parseDefault()
+void syntactic::Syntactic::parseDefault(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // default
     if (!_cur().isToken(config::DEFAULTTK))
@@ -601,18 +601,18 @@ void syntactic::Syntactic::parseDefault()
     }
     _printAndNext();
     // ＜语句＞
-    parseStatement();
+    parseStatement(hasReturned, insideFuncAndType);
 
     printer->printComponent("缺省");
 }
 
-void syntactic::Syntactic::parseStatementList()
+void syntactic::Syntactic::parseStatementList(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // ｛＜语句＞｝by '}' following
     while (!_cur().isToken(config::RBRACE))
     {
         // ＜语句＞
-        parseStatement();
+        parseStatement(hasReturned, insideFuncAndType);
     }
 
     printer->printComponent("语句列");
@@ -708,7 +708,7 @@ void syntactic::Syntactic::parsePrintStatement()
     printer->printComponent("写语句");
 }
 
-void syntactic::Syntactic::parseSwitchStatement()
+void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // switch
     if (!_cur().isToken(config::SWITCHTK))
@@ -737,9 +737,9 @@ void syntactic::Syntactic::parseSwitchStatement()
     }
     _printAndNext();
     // ＜情况表＞
-    parseCaseList();
+    parseCaseList(hasReturned, insideFuncAndType);
     // ＜缺省＞
-    parseDefault();
+    parseDefault(hasReturned, insideFuncAndType);
     // }
     if (!_cur().isToken(config::RBRACE))
     {
@@ -750,21 +750,61 @@ void syntactic::Syntactic::parseSwitchStatement()
     printer->printComponent("情况语句");
 }
 
-void syntactic::Syntactic::parseReturnStatement()
+void syntactic::Syntactic::parseReturnStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // return
+    Token returnToken = _cur();
     if (!_cur().isToken(config::RETURNTK))
     {
         // TODO: ErrorManager
     }
     _printAndNext();
     // ['('＜表达式＞')'] by '[' existence
+    // has a ( at least [ return ( ]
     if (_cur().isToken(config::LPARENT))
     {
         // (
         _printAndNext();
+        // return(); type with empty expr
+        if (_cur().isToken(config::RPARENT))
+        {
+            if (config::isValuedDataType(insideFuncAndType))
+            {
+                // ErrorManager
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ValuedFunctionWithParents,
+                                          "Valued func with return();");
+                // no skip
+            }
+            else if (config::isVoidDataType(insideFuncAndType))
+            {
+                // ErrorManager
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::VoidFunctionWithParents,
+                                          "Void func with return();");
+                // no skip
+            }
+        }
         // ＜表达式＞
-        parseExpression();
+        else
+        {
+            config::DataType exprDataType = parseExpression();
+            if (config::isValuedDataType(insideFuncAndType))
+            {
+                if (exprDataType != insideFuncAndType)
+                {
+                    // ErrorManager with mismatch return value type
+                    errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ValuedFunctionReturnTypeMismatch,
+                                              "Valued func with mismatch return value type");
+                    // no skip
+                }
+            }
+            else if (config::isVoidDataType(insideFuncAndType))
+            {
+                // ErrorManager
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::VoidFunctionWithValue,
+                                          "Void func with valued return");
+                // no skip
+            }
+        }
         // )
         if (!_cur().isToken(config::RPARENT))
         {
@@ -772,8 +812,20 @@ void syntactic::Syntactic::parseReturnStatement()
         }
         _printAndNext();
     }
+    // return;
+    else if (_cur().isToken(config::SEMICN))
+    {
+        if (config::isValuedDataType(insideFuncAndType))
+        {
+            // ErrorManager valued has return;
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ValuedFunctionWithVoid,
+                                      "Valued func with return;");
+            // no skip
+        }
+    }
 
     printer->printComponent("返回语句");
+    hasReturned = true;
 }
 
 void syntactic::Syntactic::parseAssignStatement()
@@ -828,7 +880,7 @@ void syntactic::Syntactic::parseAssignStatement()
     printer->printComponent("赋值语句");
 }
 
-void syntactic::Syntactic::parseConditionStatement()
+void syntactic::Syntactic::parseConditionStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // if
     if (!_cur().isToken(config::IFTK))
@@ -851,36 +903,36 @@ void syntactic::Syntactic::parseConditionStatement()
     }
     _printAndNext();
     // ＜语句＞
-    parseStatement();
+    parseStatement(hasReturned, insideFuncAndType);
     // ［else＜语句＞］
     if (_cur().isToken(config::ELSETK))
     {
         // else
         _printAndNext();
         // ＜语句＞
-        parseStatement();
+        parseStatement(hasReturned, insideFuncAndType);
     }
 
     printer->printComponent("条件语句");
 }
 
-void syntactic::Syntactic::parseLoopStatement()
+void syntactic::Syntactic::parseLoopStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // for
     if (_cur().isToken(config::FORTK))
     {
-        parseForStatement();
+        parseForStatement(hasReturned, insideFuncAndType);
     }
     // while
     else
     {
-        parseWhileStatement();
+        parseWhileStatement(hasReturned, insideFuncAndType);
     }
 
     printer->printComponent("循环语句");
 }
 
-void syntactic::Syntactic::parseWhileStatement()
+void syntactic::Syntactic::parseWhileStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // while
     if (!_cur().isToken(config::WHILETK))
@@ -903,10 +955,10 @@ void syntactic::Syntactic::parseWhileStatement()
     }
     _printAndNext();
     // ＜语句＞
-    parseStatement();
+    parseStatement(hasReturned, insideFuncAndType);
 }
 
-void syntactic::Syntactic::parseForStatement()
+void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // for
     if (!_cur().isToken(config::FORTK))
@@ -1020,7 +1072,7 @@ void syntactic::Syntactic::parseForStatement()
     }
     _printAndNext();
     // ＜语句＞
-    parseStatement();
+    parseStatement(hasReturned, insideFuncAndType);
 }
 
 void syntactic::Syntactic::parseCondition()
@@ -1183,7 +1235,7 @@ void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType
     printer->printComponent("值参数表");
 }
 
-void syntactic::Syntactic::parseCompoundStatement()
+void syntactic::Syntactic::parseCompoundStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // ［＜常量说明＞］
     if (_cur().isToken(config::CONSTTK))
@@ -1196,7 +1248,7 @@ void syntactic::Syntactic::parseCompoundStatement()
         parseVarIllustration();
     }
     // ＜语句列＞
-    parseStatementList();
+    parseStatementList(hasReturned, insideFuncAndType);
 
     printer->printComponent("复合语句");
 }
@@ -1249,7 +1301,8 @@ void syntactic::Syntactic::parseMainFunction()
     }
     _printAndNext();
     // ＜复合语句＞
-    parseCompoundStatement();
+    bool hasReturned = false;
+    parseCompoundStatement(hasReturned, config::VOID);
     // }
     if (!_cur().isToken(config::RBRACE))
     {
@@ -1262,7 +1315,7 @@ void syntactic::Syntactic::parseMainFunction()
     printer->printComponent("主函数");
 }
 
-void syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
+config::DataType syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
 {
     // must be inside the Valued Function Declaration
     // int | char
@@ -1295,13 +1348,14 @@ void syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
                                                   dataType, idenfr.getRow()));
 
     printer->printComponent("声明头部");
+    return dataType;
 }
 
 void syntactic::Syntactic::parseFunctionValuedDeclaration()
 {
     // ＜声明头部＞
     string funcIdenfr;
-    parseDeclarationHead(funcIdenfr);
+    config::DataType funcDataType = parseDeclarationHead(funcIdenfr);
     // (
     if (!_cur().isToken(config::LPARENT))
     {
@@ -1326,7 +1380,15 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     }
     _printAndNext();
     // ＜复合语句＞
-    parseCompoundStatement();
+    bool hasReturned = false;
+    parseCompoundStatement(hasReturned, funcDataType);
+    if (!hasReturned)
+    {
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ValuedFunctionWithoutReturn,
+                                  "Valued func has not returned");
+        // no skip
+    }
     // }
     if (!_cur().isToken(config::RBRACE))
     {
@@ -1391,7 +1453,8 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     }
     _printAndNext();
     // ＜复合语句＞
-    parseCompoundStatement();
+    bool hasReturned = false;
+    parseCompoundStatement(hasReturned, config::DataType::VOID);
     // }
     if (!_cur().isToken(config::RBRACE))
     {
@@ -1486,7 +1549,7 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     printer->printComponent("无返回值函数调用语句");
 }
 
-void syntactic::Syntactic::parseStatement()
+void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // ＜空＞;
     if (_cur().isToken(config::SEMICN))
@@ -1500,7 +1563,7 @@ void syntactic::Syntactic::parseStatement()
         // {
         _printAndNext();
         // ＜语句列＞
-        parseStatementList();
+        parseStatementList(hasReturned, insideFuncAndType);
         // }
         if (!_cur().isToken(config::RBRACE))
         {
@@ -1512,13 +1575,13 @@ void syntactic::Syntactic::parseStatement()
     else if (_cur().isLoopKeyword())
     {
         // ＜循环语句＞
-        parseLoopStatement();
+        parseLoopStatement(hasReturned, insideFuncAndType);
     }
     // ＜条件语句＞
     else if (_cur().isTokens({config::IFTK}))
     {
         // ＜条件语句＞
-        parseConditionStatement();
+        parseConditionStatement(hasReturned, insideFuncAndType);
     }
     // ＜读语句＞;
     else if (_cur().isTokens({config::SCANFTK}))
@@ -1548,7 +1611,7 @@ void syntactic::Syntactic::parseStatement()
     else if (_cur().isTokens({config::RETURNTK}))
     {
         // ＜返回语句＞
-        parseReturnStatement();
+        parseReturnStatement(hasReturned, insideFuncAndType);
         // ;
         if (!_cur().isToken(config::SEMICN))
         {
@@ -1560,7 +1623,7 @@ void syntactic::Syntactic::parseStatement()
     else if (_cur().isTokens({config::SWITCHTK}))
     {
         // ＜情况语句＞
-        parseSwitchStatement();
+        parseSwitchStatement(hasReturned, insideFuncAndType);
     }
     // ＜有返回值函数调用语句＞; | ＜无返回值函数调用语句＞; | ＜赋值语句＞;
     else if (_cur().isTokens({config::IDENFR}))

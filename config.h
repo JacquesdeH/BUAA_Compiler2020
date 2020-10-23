@@ -78,6 +78,10 @@ namespace config
         DATA_DEFAULT
     };
 
+    bool isValuedDataType(const DataType & dataType);
+
+    bool isVoidDataType(const DataType & dataType);
+
     enum ErrorType
     {
         // Code A

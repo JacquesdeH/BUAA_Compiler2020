@@ -45,20 +45,20 @@ namespace syntactic
         void parseFunctionVoidDeclaration();
         void parseFunctionValuedCallStatement();
         void parseFunctionVoidCallStatement();
-        void parseDeclarationHead(string& _idenfr);
+        config::DataType parseDeclarationHead(string& _idenfr);
         // Statement
-        void parseCompoundStatement();
-        void parseStatementList();
-        void parseStatement();
+        void parseCompoundStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
+        void parseStatementList(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
+        void parseStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
         void parseAssignStatement();
-        void parseConditionStatement();
-        void parseLoopStatement();
-        void parseWhileStatement();
-        void parseForStatement();
+        void parseConditionStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
+        void parseLoopStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
+        void parseWhileStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
+        void parseForStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
         void parseReadStatement();
         void parsePrintStatement();
-        void parseSwitchStatement();
-        void parseReturnStatement();
+        void parseSwitchStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
+        void parseReturnStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
         // Expression
         config::DataType parseExpression();
         config::DataType parseTerm();
@@ -67,9 +67,9 @@ namespace syntactic
         vector<config::DataType> parseParameterDeclarationList();
         void parseParameterValueList(const vector<config::DataType> & _paramDataTypeList);
         // Conditional component
-        void parseCaseList();
-        void parseCaseSubStatement();
-        void parseDefault();
+        void parseCaseList(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
+        void parseCaseSubStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
+        void parseDefault(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
         void parseCondition();
         void parseStepLength(int& _step);
         // Const & Var
