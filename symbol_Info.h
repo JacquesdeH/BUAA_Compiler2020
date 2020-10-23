@@ -6,6 +6,7 @@
 #define PROJECT_SYMBOL_INFO_H
 
 #include <vector>
+#include <initializer_list>
 
 #include "config.h"
 
@@ -22,6 +23,7 @@ namespace symbol
         uint dimLimit[2];
         uint declareRow;
         vector<uint> referRows;
+        vector<config::DataType> funcParamDataTypeList;
         uint address;
 
     private:
@@ -31,7 +33,8 @@ namespace symbol
     public:
         Info();
         Info(const config::SymbolType &_symbolType, const config::DataType &_dataType, const uint &_declareRow,
-             const uint &_arrayDim = 0, const uint &_dim0 = 0, const uint &_dim1 = 0);
+             const uint &_arrayDim = 0, const uint &_dim0 = 0, const uint &_dim1 = 0,
+             const std::initializer_list<config::DataType> & _funcParamDataTypeList = {});
 
     public:
         void logReference(const uint& _row);

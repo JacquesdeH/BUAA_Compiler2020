@@ -13,7 +13,8 @@ symbol::Info::Info()
 }
 
 symbol::Info::Info(const config::SymbolType &_symbolType, const config::DataType &_dataType, const uint &_declareRow,
-                   const uint &_arrayDim, const uint &_dim0, const uint &_dim1)
+                   const uint &_arrayDim, const uint &_dim0, const uint &_dim1,
+                   const std::initializer_list<config::DataType> & _funcParamDataTypeList)
 {
     this->ctrlDeclared = false;
     this->ctrlAddressed = false;
@@ -24,6 +25,7 @@ symbol::Info::Info(const config::SymbolType &_symbolType, const config::DataType
     this->dimLimit[0] = _dim0;
     this->dimLimit[1] = _dim1;
     this->declareRow = _declareRow;
+    this->funcParamDataTypeList = _funcParamDataTypeList;
 
     this->ctrlDeclared = true;
 
