@@ -9,6 +9,7 @@
 symbol::Info::Info()
 {
     this->ctrlDeclared = false;
+    this->ctrlParamListFilled = false;
     this->ctrlAddressed = false;
 }
 
@@ -17,6 +18,7 @@ symbol::Info::Info(const config::SymbolType &_symbolType, const config::DataType
                    const std::initializer_list<config::DataType> & _funcParamDataTypeList)
 {
     this->ctrlDeclared = false;
+    this->ctrlParamListFilled = false;
     this->ctrlAddressed = false;
 
     this->symbolType = _symbolType;
@@ -112,5 +114,47 @@ bool symbol::Info::isDimOf(const int &_dims, const int & _dimLim0, const int & _
             std::cerr << "Unexpected dim counts in isDimOf" << std::endl;
             return false;
     }
+}
+
+void symbol::Info::logFuncParam(const vector<config::DataType> &_paramList)
+{
+    for (const auto & _param : _paramList)
+    {
+        funcParamDataTypeList.push_back(_param);
+    }
+    ctrlParamListFilled = true;
+}
+
+int symbol::Info::queryFuncParamCount() const
+{
+    return funcParamDataTypeList.size();
+}
+
+bool symbol::Info::checkFuncParamMatchAt(const int &_index, const config::DataType &_dataType)
+{
+    if (_index < 0)
+        std::cerr << "Encountered negative index in checkFuncParamMatchAt" << std::endl;
+    if (_index >= funcParamDataTypeList.size())
+        return false;
+    return _dataType == funcParamDataTypeList[_index];
+}
+
+void symbol::Info::assertParamFilled() const
+{
+    if (ctrlParamListFilled)
+        return;
+    std::cerr << "Assertion error on assertParamFilled()" << std::endl;
+}
+
+vector<config::DataType> symbol::Info::queryParamDataTypeListOfFunction() const
+{
+    if (!isFunction())
+        std::cerr << "Not a function when call queryParamDataTypeList" << std::endl;
+    return funcParamDataTypeList;
+}
+
+config::DataType symbol::Info::queryDataType() const
+{
+    return dataType;
 }
 

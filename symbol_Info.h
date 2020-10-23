@@ -28,6 +28,7 @@ namespace symbol
 
     private:
         bool ctrlDeclared;
+        bool ctrlParamListFilled;
         bool ctrlAddressed;
 
     public:
@@ -39,16 +40,22 @@ namespace symbol
     public:
         void logReference(const uint& _row);
         void logAddress(const uint& _address);
+        void logFuncParam(const vector<config::DataType> &_paramList);
         bool checkDeclared() const;
         bool checkAddressed() const;
         void assertDeclared() const;
         void assertAddressed() const;
+        void assertParamFilled() const;
         bool isFunction() const;
         bool isValuedFunction() const;
         bool isVoidFunction() const;
         bool isSymbolTypeOf(const config::SymbolType & _symbolType) const;
         bool isDataTypeOf(const config::DataType & _dataType) const;
+        config::DataType queryDataType() const;
         bool isDimOf(const int & _dims, const int & _dimLim0 = 0, const int & _dimLim1 = 0) const;
+        int queryFuncParamCount() const;
+        bool checkFuncParamMatchAt(const int & _index, const config::DataType & _dataType);
+        vector<config::DataType> queryParamDataTypeListOfFunction() const;
     };
 }
 

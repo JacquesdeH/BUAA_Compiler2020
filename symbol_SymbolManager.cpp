@@ -47,7 +47,7 @@ bool symbol::SymbolManager::declareSymbol(const string& symbol, const symbol::In
 symbol::Info symbol::SymbolManager::getInfoInAll(const string &symbol) const
 {
     string lowerSymbol = toLower(symbol);
-    Info ret;
+    Info ret(config::SymbolType::SYMBOL_DEFAULT, config::DataType::DATA_DEFAULT, 0);
     int pTable = curTable;
     while (pTable >= 0)
     {

@@ -1048,8 +1048,9 @@ void syntactic::Syntactic::parseStepLength(int &_step)
     printer->printComponent("步长");
 }
 
-void syntactic::Syntactic::parseParameterDeclarationList()
+vector<config::DataType> syntactic::Syntactic::parseParameterDeclarationList()
 {
+    vector<config::DataType> retParamDataTypeList;
     // ＜空＞
     if (!_cur().isValuedType())
     {
@@ -1086,6 +1087,8 @@ void syntactic::Syntactic::parseParameterDeclarationList()
             }
             idenfr = _cur();
             _printAndNext();
+            // update ret list of dataType
+            retParamDataTypeList.push_back(dataType);
             // Update SymbolManager
             if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
             {
@@ -1102,10 +1105,12 @@ void syntactic::Syntactic::parseParameterDeclarationList()
     }
 
     printer->printComponent("参数表");
+    return retParamDataTypeList;
 }
 
-void syntactic::Syntactic::parseParameterValueList()
+void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType> & _paramDataTypeList)
 {
+    int curIndexOfParam = 0;
     // ＜空＞ by next token after to be ')'
     if (_cur().isToken(config::RPARENT))
     {
@@ -1117,6 +1122,7 @@ void syntactic::Syntactic::parseParameterValueList()
         bool isFirst = true;
         do
         {
+            Token curToken = _cur();
             // ,
             if (!isFirst)
             {
@@ -1127,10 +1133,33 @@ void syntactic::Syntactic::parseParameterValueList()
                 _printAndNext();
             }
             // ＜表达式＞
-            parseExpression();
+            config::DataType curDataType = parseExpression();
             // deal with new value
+            if (curIndexOfParam >= _paramDataTypeList.size())
+            {
+                // ErrorManager
+                errorManager->insertError(curToken.getRow(), curToken.getColumn(), config::ErrorType::FunctionParamCountMismatch,
+                                          "Param Value count more than expected");
+                _skipUntil({config::COMMA, config::RPARENT}, config::stopwordsToken, true);
+            }
+            else if (curDataType != _paramDataTypeList[curIndexOfParam])
+            {
+                // ErrorManager
+                errorManager->insertError(curToken.getRow(), curToken.getColumn(), config::ErrorType::FunctionParamTypeMismatch,
+                                          "Param Vlaue type mismatch");
+                _skipUntil({config::COMMA, config::RPARENT}, config::stopwordsToken);
+            }
             isFirst = false;
+            curIndexOfParam++;
         } while (_cur().isToken(config::COMMA));
+    }
+    // possibly param count is less
+    if (curIndexOfParam != _paramDataTypeList.size())
+    {
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::FunctionParamCountMismatch,
+                                  "Param Value count less than expected");
+        // no skip
     }
 
     printer->printComponent("值参数表");
@@ -1264,7 +1293,8 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     // SymbolManager new scope
     symbolManager->pushNewScope();
     // ＜参数表＞
-    parseParameterDeclarationList();
+    const vector<config::DataType> paramDataTypeList = parseParameterDeclarationList();
+    symbolManager->getInfoInAll(funcIdenfr).logFuncParam(paramDataTypeList);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1328,7 +1358,8 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     // SymbolManager new scope
     symbolManager->pushNewScope();
     // ＜参数表＞
-    parseParameterDeclarationList();
+    const vector<config::DataType> paramDataTypeList = parseParameterDeclarationList();
+    symbolManager->getInfoInAll(idenfr.getTkvalue()).logFuncParam(paramDataTypeList);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1383,7 +1414,9 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
     }
     _printAndNext();
     // ＜值参数表＞
-    parseParameterValueList();
+    const vector<config::DataType> & _paramDataTypeList =
+            symbolManager->getInfoInAll(idenfr.getTkvalue()).queryParamDataTypeListOfFunction();
+    parseParameterValueList(_paramDataTypeList);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1422,7 +1455,9 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     }
     _printAndNext();
     // ＜值参数表＞
-    parseParameterValueList();
+    const vector<config::DataType> & _paramDataTypeList =
+            symbolManager->getInfoInAll(idenfr.getTkvalue()).queryParamDataTypeListOfFunction();
+    parseParameterValueList(_paramDataTypeList);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1558,11 +1593,15 @@ void syntactic::Syntactic::parseStatement()
     printer->printComponent("语句");
 }
 
-void syntactic::Syntactic::parseExpression()
+config::DataType syntactic::Syntactic::parseExpression()
 {
+    config::DataType retDataType = config::DataType::CHAR;
     bool isFirst = true;
     do
     {
+        // not a single term must be an int expr
+        if (!isFirst)
+            retDataType = config::DataType::INT;
         int flag = 1;
         // +|- with first to be optional
         if (_cur().isPlusMinusOp())
@@ -1570,22 +1609,29 @@ void syntactic::Syntactic::parseExpression()
             if (_cur().isToken(config::MINU))
                 flag = -1;
             _printAndNext();
+            // with a +|- must be an expr
+            retDataType = config::DataType::INT;
         }
         else if (!isFirst)
         {
             // TODO: ErrorManager where +|- is not optional
         }
         // ＜项＞
-        parseTerm();
+        config::DataType termDataType = parseTerm();
+        // update if term is not a char
+        if (termDataType == config::DataType::INT)
+            retDataType = config::DataType::INT;
         // deal with this term related expression
         isFirst = false;
     } while (_cur().isPlusMinusOp());
 
     printer->printComponent("表达式");
+    return retDataType;
 }
 
-void syntactic::Syntactic::parseTerm()
+config::DataType syntactic::Syntactic::parseTerm()
 {
+    config::DataType retDataType = config::DataType::CHAR;
     bool isFirst = true;
     do
     {
@@ -1597,24 +1643,33 @@ void syntactic::Syntactic::parseTerm()
                 // TODO: ErrorManager
             }
             _printAndNext();
+            // with * and / must be an expr
+            retDataType = config::DataType::INT;
         }
         // ＜因子＞
-        parseFactor();
+        config::DataType factorDataType = parseFactor();
+        // Factor is a int type
+        if (factorDataType == config::DataType::INT)
+            retDataType = config::DataType::INT;
         // deal with factor related term
         isFirst = false;
     } while (_cur().isMultDivOp());
 
     printer->printComponent("项");
+    return retDataType;
 }
 
-void syntactic::Syntactic::parseFactor()
+config::DataType syntactic::Syntactic::parseFactor()
 {
+    config::DataType retDataType;
     // ＜字符＞
     if (_cur().isToken(config::CHARCON))
     {
         // ＜字符＞
         char _ch = _cur().getTkvalue()[0];
         _printAndNext();
+        // CASE 1 of single CHARCON is a char
+        retDataType = config::DataType::CHAR;
     }
     // ＜整数＞
     else if (_cur().isTokens({config::PLUS, config::MINU, config::INTCON}))
@@ -1622,6 +1677,8 @@ void syntactic::Syntactic::parseFactor()
         // ＜整数＞
         int _int = 0;
         parseInteger(_int);
+        // not a char for sure
+        retDataType = config::DataType::INT;
     }
     // '('＜表达式＞')'
     else if (_cur().isToken(config::LPARENT))
@@ -1636,6 +1693,8 @@ void syntactic::Syntactic::parseFactor()
             // TODO: ErrorManager
         }
         _printAndNext();
+        // a recursive expr must be a int type
+        retDataType = config::DataType::INT;
     }
     // ＜标识符＞ ｜ ＜标识符＞'['＜表达式＞']' | ＜标识符＞'['＜表达式＞']''['＜表达式＞']' | ＜有返回值函数调用语句＞ by token 2
     else if (_cur().isToken(config::IDENFR))
@@ -1643,8 +1702,11 @@ void syntactic::Syntactic::parseFactor()
         // ＜有返回值函数调用语句＞
         if (queue->peek(2).isToken(config::LPARENT))
         {
+            Token idenfr = _cur();
             // ＜有返回值函数调用语句＞
             parseFunctionValuedCallStatement();
+            // return type based on function call
+            retDataType = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType();
         }
         // ＜标识符＞ ｜ ＜标识符＞'['＜表达式＞']' | ＜标识符＞'['＜表达式＞']''['＜表达式＞']'
         else
@@ -1686,15 +1748,19 @@ void syntactic::Syntactic::parseFactor()
                 // increase dim
                 dim++;
             }
+            // retDataType based on idenfr type
+            retDataType = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType();
         }
     }
     // error
     else
     {
         // TODO: ErrorManager
+        retDataType = config::DATA_DEFAULT;
     }
 
     printer->printComponent("因子");
+    return retDataType;
 }
 
 void syntactic::Syntactic::_skipUntil(const std::unordered_set<config::TokenCode> &successors,

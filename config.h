@@ -68,12 +68,14 @@ namespace config
 
     enum SymbolType
     {
-        CONST, VAR, FUNCTION
+        CONST, VAR, FUNCTION,
+        SYMBOL_DEFAULT
     };
 
     enum DataType
     {
-        INT, CHAR, VOID
+        INT, CHAR, VOID,
+        DATA_DEFAULT
     };
 
     enum ErrorType

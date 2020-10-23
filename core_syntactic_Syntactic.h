@@ -60,12 +60,12 @@ namespace syntactic
         void parseSwitchStatement();
         void parseReturnStatement();
         // Expression
-        void parseExpression();
-        void parseTerm();
-        void parseFactor();
+        config::DataType parseExpression();
+        config::DataType parseTerm();
+        config::DataType parseFactor();
         // Parameter
-        void parseParameterDeclarationList();
-        void parseParameterValueList();
+        vector<config::DataType> parseParameterDeclarationList();
+        void parseParameterValueList(const vector<config::DataType> & _paramDataTypeList);
         // Conditional component
         void parseCaseList();
         void parseCaseSubStatement();
