@@ -1333,6 +1333,7 @@ config::DataType syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
         // TODO: ErrorManager
     }
     idenfr = _cur();
+    _idenfr = idenfr.getTkvalue();
     _printAndNext();
     // update SymbolManager with Valued function declaration
     if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
