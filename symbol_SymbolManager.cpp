@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "symbol_SymbolManager.h"
+#include "functional_strext.h"
 
 symbol::SymbolManager::SymbolManager()
 {
@@ -15,15 +16,16 @@ symbol::SymbolManager::SymbolManager()
 
 bool symbol::SymbolManager::hasSymbolInScope(const string &symbol) const
 {
-    return tables[curTable].hasKey(symbol);
+    return tables[curTable].hasKey(toLower(symbol));
 }
 
 bool symbol::SymbolManager::hasSymbolInAll(const string &symbol) const
 {
+    string lowerSymbol = toLower(symbol);
     int pTable = curTable;
     while (pTable >= 0)
     {
-        if (tables[pTable].hasKey(symbol))
+        if (tables[pTable].hasKey(lowerSymbol))
             return true;
         pTable--;
     }
@@ -32,24 +34,26 @@ bool symbol::SymbolManager::hasSymbolInAll(const string &symbol) const
 
 bool symbol::SymbolManager::declareSymbol(const string& symbol, const symbol::Info &info)
 {
-    if (hasSymbolInScope(symbol))
+    string lowerSymbol = toLower(symbol);
+    if (hasSymbolInScope(lowerSymbol))
     {
         // TODO: ErrorManager
         return false;
     }
-    tables[curTable].insertRecord(symbol, info);
+    tables[curTable].insertRecord(lowerSymbol, info);
     return true;
 }
 
 symbol::Info symbol::SymbolManager::getInfoInAll(const string &symbol) const
 {
+    string lowerSymbol = toLower(symbol);
     Info ret;
     int pTable = curTable;
     while (pTable >= 0)
     {
-        if (tables[pTable].hasKey(symbol))
+        if (tables[pTable].hasKey(lowerSymbol))
         {
-            ret = tables[pTable].getInfo(symbol);
+            ret = tables[pTable].getInfo(lowerSymbol);
             break;
         }
         pTable--;
