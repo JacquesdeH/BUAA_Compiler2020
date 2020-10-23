@@ -70,6 +70,6 @@ void symbol::SymbolManager::pushNewScope()
 
 void symbol::SymbolManager::popCurScope()
 {
-    tables.erase(tables.rbegin().base());
+    tables.erase(tables.begin() + curTable);
     curTable--;
 }

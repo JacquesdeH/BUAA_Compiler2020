@@ -100,13 +100,13 @@ void syntactic::Syntactic::parseConstIllustration()
 
 void syntactic::Syntactic::parseConstDeclaration()
 {
-    config::TokenCode dataType;
+    config::DataType dataType;
     // char | int
     if (!_cur().isValuedType())
     {
         // TODO: ErrorManager
     }
-    dataType = _cur().getTkcode();
+    dataType = (_cur().getTkcode() == config::INTTK) ? config::DataType::INT : config::DataType::CHAR;
     _printAndNext();
     // ＜标识符＞＝＜整数＞{,＜标识符＞＝＜整数＞} | ＜标识符＞＝＜字符＞{,＜标识符＞＝＜字符＞}
     bool isFirst = true;
@@ -138,7 +138,7 @@ void syntactic::Syntactic::parseConstDeclaration()
         }
         _printAndNext();
         // ＜字符＞
-        if (config::CHARTK == dataType)
+        if (config::DataType::CHAR == dataType)
         {
             if (!_cur().isToken(config::CHARCON))
             {
@@ -152,6 +152,8 @@ void syntactic::Syntactic::parseConstDeclaration()
         {
             parseInteger(intValue);
         }
+        // SymbolManager
+        symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(config::SymbolType::CONST, dataType, idenfr.getRow()));
         isFirst = false;
     } while (_cur().isToken(config::COMMA));
 
@@ -281,7 +283,9 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
             // increase dim
             dim++;
         }
-        // TODO: Update SymbolManager
+        // Update SymbolManager
+        symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
+                config::SymbolType::VAR, dataType, idenfr.getRow(), dim, dimLim[0], dimLim[1]));
         isFirst = false;
     } while (_cur().isToken(config::COMMA));
 
@@ -483,8 +487,9 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
         default:
             std::cerr << "Unexpected dim in parseVarDeclarationInitialized() with dim = " << dim << std::endl;
     }
-    // TODO: Update SymbolManager
-
+    // Update SymbolManager
+    symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
+            config::SymbolType::VAR, dataType, idenfr.getRow(), dim, dimLim[0], dimLim[1]));
     printer->printComponent("变量定义及初始化");
 }
 
@@ -1014,6 +1019,7 @@ void syntactic::Syntactic::parseParameterDeclarationList()
             idenfr = _cur();
             _printAndNext();
             // Update SymbolManager
+            symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(config::SymbolType::VAR, dataType, idenfr.getRow()));
             isFirst = false;
         } while (_cur().isToken(config::COMMA));
     }
@@ -1073,6 +1079,7 @@ void syntactic::Syntactic::parseCompoundStatement()
 
 void syntactic::Syntactic::parseMainFunction()
 {
+    Token idenfr;
     // void
     if (!_cur().isToken(config::VOIDTK))
     {
@@ -1084,13 +1091,19 @@ void syntactic::Syntactic::parseMainFunction()
     {
         // TODO: ErrorManager
     }
+    idenfr = _cur();
     _printAndNext();
+    // SymbolManager consider main function as well
+    symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
+            config::SymbolType::FUNCTION, config::DataType::VOID, idenfr.getRow()));
     // (
     if (!_cur().isToken(config::LPARENT))
     {
         // TODO: ErrorManager
     }
     _printAndNext();
+    // SymbolManager into a new scope
+    symbolManager->pushNewScope();
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1111,6 +1124,8 @@ void syntactic::Syntactic::parseMainFunction()
         // TODO: ErrorManager
     }
     _printAndNext();
+    // SymbolManager recover to original scope
+    symbolManager->popCurScope();
 
     printer->printComponent("主函数");
 }
@@ -1153,6 +1168,8 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
         // TODO: ErrorManager
     }
     _printAndNext();
+    // SymbolManager new scope
+    symbolManager->pushNewScope();
     // ＜参数表＞
     parseParameterDeclarationList();
     // )
@@ -1175,6 +1192,8 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
         // TODO: ErrorManager
     }
     _printAndNext();
+    // SymbolManager recover original scope
+    symbolManager->popCurScope();
 
     printer->printComponent("有返回值函数定义");
 }
@@ -1205,6 +1224,8 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
         // TODO: ErrorManager
     }
     _printAndNext();
+    // SymbolManager new scope
+    symbolManager->pushNewScope();
     // ＜参数表＞
     parseParameterDeclarationList();
     // )
@@ -1227,6 +1248,8 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
         // TODO: ErrorManager
     }
     _printAndNext();
+    // SymbolManager recover original scope
+    symbolManager->popCurScope();
 
     printer->printComponent("无返回值函数定义");
 }
