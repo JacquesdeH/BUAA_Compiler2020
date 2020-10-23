@@ -1025,17 +1025,35 @@ void syntactic::Syntactic::parseForStatement()
 
 void syntactic::Syntactic::parseCondition()
 {
+    config::DataType tmpDataType;
+    Token tmpToken;
     // ＜表达式＞
-    parseExpression();
+    tmpToken = _cur();
+    tmpDataType = parseExpression();
+    if (tmpDataType != config::DataType::INT)
+    {
+        // ErrorManager with not INT of condition
+        errorManager->insertError(tmpToken.getRow(), tmpToken.getColumn(), config::ErrorType::IllegalTypeInCondition,
+                                  "Not int type in condition cmp");
+        // no skip
+    }
     // ＜关系运算符＞
     if (!_cur().isCmpOp())
     {
-        // TODO: ErrorMAnager
+        // TODO: ErrorManager
     }
     Token cmpOp = _cur();
     _printAndNext();
     // ＜表达式＞
-    parseExpression();
+    tmpToken = _cur();
+    tmpDataType = parseExpression();
+    if (tmpDataType != config::DataType::INT)
+    {
+        // ErrorManager with not INT of condition
+        errorManager->insertError(tmpToken.getRow(), tmpToken.getColumn(), config::ErrorType::IllegalTypeInCondition,
+                                  "Not int type in condition cmp");
+        // no skip
+    }
 
     printer->printComponent("条件");
 }
