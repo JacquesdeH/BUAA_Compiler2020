@@ -282,7 +282,16 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
             // [
             _printAndNext();
             // ＜无符号整数＞
-            parseUnsigned(dimLim[dim]);
+            if (!_cur().isToken(config::INTCON))
+            {
+                // ErrorManager
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArraySubIndexTypeNotInt,
+                                          "In declare array with init Sub is not int");
+                _skipUntil({config::RBRACK}, config::stopwordsToken, true);
+                dimLim[dim] = 0;
+            }
+            else
+                parseUnsigned(dimLim[dim]);
             // ]
             if (!_cur().isToken(config::RBRACK))
             {
@@ -341,7 +350,16 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
         // [
         _printAndNext();
         // ＜无符号整数＞
-        parseUnsigned(dimLim[dim]);
+        if (!_cur().isToken(config::INTCON))
+        {
+            // ErrorManager
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArraySubIndexTypeNotInt,
+                                      "In declare array with init Sub is not int");
+            _skipUntil({config::RBRACK}, config::stopwordsToken, true);
+            dimLim[dim] = 0;
+        }
+        else
+            parseUnsigned(dimLim[dim]);
         // ]
         if (!_cur().isToken(config::RBRACK))
         {
@@ -857,7 +875,14 @@ void syntactic::Syntactic::parseAssignStatement()
         // [
         _printAndNext();
         // ＜表达式＞
-        parseExpression();
+        config::DataType exprDataType = parseExpression();
+        if (exprDataType != config::DataType::INT)
+        {
+            // ErrorManager
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArraySubIndexTypeNotInt,
+                                      "Assign use array sub is not int");
+            _skipUntil({config::RBRACK}, config::stopwordsToken, true);
+        }
         // ]
         if (!_cur().isToken(config::RBRACK))
         {
@@ -1820,7 +1845,14 @@ config::DataType syntactic::Syntactic::parseFactor()
                 // [
                 _printAndNext();
                 // ＜表达式＞
-                parseExpression();
+                config::DataType exprDataType = parseExpression();
+                if (exprDataType != config::DataType::INT)
+                {
+                    // ErrorManager
+                    errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArraySubIndexTypeNotInt,
+                                              "In factor call array sub is not int");
+                    _skipUntil({config::RBRACK}, config::stopwordsToken, true);
+                }
                 // ]
                 if (!_cur().isToken(config::RBRACK))
                 {
