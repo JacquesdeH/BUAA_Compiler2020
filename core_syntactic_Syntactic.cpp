@@ -1134,7 +1134,7 @@ void syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
     }
     idenfr = _cur();
     _printAndNext();
-    // update Symbol Manager with Valued function declaration
+    // update SymbolManager with Valued function declaration
     symbolManager->declareSymbol(idenfr.getTkvalue(),
                                  symbol::Info(config::SymbolType::FUNCTION,
                                               dataType, idenfr.getRow()));
@@ -1195,7 +1195,7 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     }
     idenfr = _cur();
     _printAndNext();
-    // update Symbol Manager with Valued function declaration
+    // update SymbolManager with Valued function declaration
     symbolManager->declareSymbol(idenfr.getTkvalue(),
                                  symbol::Info(config::SymbolType::FUNCTION,
                                               config::DataType::VOID, idenfr.getRow()));

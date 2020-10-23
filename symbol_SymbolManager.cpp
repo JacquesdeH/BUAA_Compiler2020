@@ -61,3 +61,15 @@ symbol::Info symbol::SymbolManager::getInfoInAll(const string &symbol) const
     }
     return ret;
 }
+
+void symbol::SymbolManager::pushNewScope()
+{
+    tables.emplace_back();
+    curTable++;
+}
+
+void symbol::SymbolManager::popCurScope()
+{
+    tables.erase(tables.rbegin().base());
+    curTable--;
+}
