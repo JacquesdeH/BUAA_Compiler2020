@@ -77,3 +77,25 @@ void symbol::SymbolManager::popCurScope()
     tables.erase(tables.begin() + curTable);
     curTable--;
 }
+
+symbol::Info &symbol::SymbolManager::getInfoFromLastScope(const string &symbol) const
+{
+    string lowerSymbol = toLower(symbol);
+    static Info ret(config::SymbolType::SYMBOL_DEFAULT, config::DataType::DATA_DEFAULT, 0);
+    int pTable = curTable - 1;
+    while (pTable >= 0)
+    {
+        if (tables[pTable].hasKey(lowerSymbol))
+        {
+            return tables[pTable].getInfo(lowerSymbol);
+            break;
+        }
+        pTable--;
+    }
+    if (pTable < 0)
+    {
+        // Error!
+        std::cerr << "Unable to find " << symbol << " in getInfoFromLastScope() " << std::endl;
+    }
+    return ret;
+}

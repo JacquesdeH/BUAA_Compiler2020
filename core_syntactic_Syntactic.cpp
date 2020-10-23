@@ -1367,7 +1367,7 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     symbolManager->pushNewScope();
     // ＜参数表＞
     const vector<config::DataType> paramDataTypeList = parseParameterDeclarationList();
-    symbolManager->getInfoInAll(funcIdenfr).logFuncParam(paramDataTypeList);
+    symbolManager->getInfoFromLastScope(funcIdenfr).logFuncParam(paramDataTypeList);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1440,7 +1440,7 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     symbolManager->pushNewScope();
     // ＜参数表＞
     const vector<config::DataType> paramDataTypeList = parseParameterDeclarationList();
-    symbolManager->getInfoInAll(idenfr.getTkvalue()).logFuncParam(paramDataTypeList);
+    symbolManager->getInfoFromLastScope(idenfr.getTkvalue()).logFuncParam(paramDataTypeList);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
