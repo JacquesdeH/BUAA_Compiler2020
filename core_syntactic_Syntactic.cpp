@@ -153,7 +153,16 @@ void syntactic::Syntactic::parseConstDeclaration()
             parseInteger(intValue);
         }
         // SymbolManager
-        symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(config::SymbolType::CONST, dataType, idenfr.getRow()));
+        if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
+        {
+            // ErrorManager with dup name with const
+            errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::DuplicatedName,
+                                      "Duplicated const idenfr");
+            // no skip
+        }
+        else
+            symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
+                    config::SymbolType::CONST, dataType, idenfr.getRow()));
         isFirst = false;
     } while (_cur().isToken(config::COMMA));
 
@@ -284,8 +293,16 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
             dim++;
         }
         // Update SymbolManager
-        symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
-                config::SymbolType::VAR, dataType, idenfr.getRow(), dim, dimLim[0], dimLim[1]));
+        if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
+        {
+            // ErrorManager with dup idenfr in var declaration
+            errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::DuplicatedName,
+                                      "Duplicated name in var declaration without init");
+            // no skip
+        }
+        else
+            symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
+                    config::SymbolType::VAR, dataType, idenfr.getRow(), dim, dimLim[0], dimLim[1]));
         isFirst = false;
     } while (_cur().isToken(config::COMMA));
 
@@ -488,8 +505,16 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
             std::cerr << "Unexpected dim in parseVarDeclarationInitialized() with dim = " << dim << std::endl;
     }
     // Update SymbolManager
-    symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
-            config::SymbolType::VAR, dataType, idenfr.getRow(), dim, dimLim[0], dimLim[1]));
+    if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
+    {
+        // ErrorManager with dup idenfr in var declaration
+        errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::DuplicatedName,
+                                  "Duplicated name in var declaration");
+        // no skip
+    }
+    else
+        symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
+                config::SymbolType::VAR, dataType, idenfr.getRow(), dim, dimLim[0], dimLim[1]));
     printer->printComponent("变量定义及初始化");
 }
 
@@ -1019,7 +1044,16 @@ void syntactic::Syntactic::parseParameterDeclarationList()
             idenfr = _cur();
             _printAndNext();
             // Update SymbolManager
-            symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(config::SymbolType::VAR, dataType, idenfr.getRow()));
+            if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
+            {
+                // ErrorManager with duplicated name
+                errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::DuplicatedName,
+                                          "Duplicated parameter");
+                // no skip
+            }
+            else
+                symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
+                        config::SymbolType::VAR, dataType, idenfr.getRow()));
             isFirst = false;
         } while (_cur().isToken(config::COMMA));
     }
@@ -1158,9 +1192,17 @@ void syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
     idenfr = _cur();
     _printAndNext();
     // update SymbolManager with Valued function declaration
-    symbolManager->declareSymbol(idenfr.getTkvalue(),
-                                 symbol::Info(config::SymbolType::FUNCTION,
-                                              dataType, idenfr.getRow()));
+    if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
+    {
+        // ErrorManager duplicated idenfr
+        errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::DuplicatedName,
+                                  "Duplicated name of valued function");
+        // no skip
+    }
+    else
+        symbolManager->declareSymbol(idenfr.getTkvalue(),
+                                     symbol::Info(config::SymbolType::FUNCTION,
+                                                  dataType, idenfr.getRow()));
 
     printer->printComponent("声明头部");
 }
@@ -1223,9 +1265,17 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     idenfr = _cur();
     _printAndNext();
     // update SymbolManager with Valued function declaration
-    symbolManager->declareSymbol(idenfr.getTkvalue(),
-                                 symbol::Info(config::SymbolType::FUNCTION,
-                                              config::DataType::VOID, idenfr.getRow()));
+    if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
+    {
+        // ErrorManager with duplicated name
+        errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::DuplicatedName,
+                                  "Duplicated name in void function");
+        // no skip
+    }
+    else
+        symbolManager->declareSymbol(idenfr.getTkvalue(),
+                                     symbol::Info(config::SymbolType::FUNCTION,
+                                                  config::DataType::VOID, idenfr.getRow()));
     // (
     if (!_cur().isToken(config::LPARENT))
     {
