@@ -25,7 +25,7 @@ namespace symbol
 
     public:
         bool hasKey(const string& _key) const;
-        Info getInfo(const string& key) const;
+        Info& getInfo(const string& key) const;
         bool insertRecord(const string& key, const Info& info);
     };
 }

@@ -25,7 +25,7 @@ namespace symbol
     public:
         bool hasSymbolInScope(const string& symbol) const;
         bool hasSymbolInAll(const string& symbol) const;
-        Info getInfoInAll(const string& symbol) const;
+        Info& getInfoInAll(const string& symbol) const;
         bool declareSymbol(const string& symbol, const Info& info);
         void pushNewScope();
         void popCurScope();

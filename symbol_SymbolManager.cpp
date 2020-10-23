@@ -44,16 +44,16 @@ bool symbol::SymbolManager::declareSymbol(const string& symbol, const symbol::In
     return true;
 }
 
-symbol::Info symbol::SymbolManager::getInfoInAll(const string &symbol) const
+symbol::Info& symbol::SymbolManager::getInfoInAll(const string &symbol) const
 {
     string lowerSymbol = toLower(symbol);
-    Info ret(config::SymbolType::SYMBOL_DEFAULT, config::DataType::DATA_DEFAULT, 0);
+    static Info ret(config::SymbolType::SYMBOL_DEFAULT, config::DataType::DATA_DEFAULT, 0);
     int pTable = curTable;
     while (pTable >= 0)
     {
         if (tables[pTable].hasKey(lowerSymbol))
         {
-            ret = tables[pTable].getInfo(lowerSymbol);
+            return tables[pTable].getInfo(lowerSymbol);
             break;
         }
         pTable--;
