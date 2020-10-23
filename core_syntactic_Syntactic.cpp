@@ -1094,6 +1094,14 @@ void syntactic::Syntactic::parseMainFunction()
     idenfr = _cur();
     _printAndNext();
     // SymbolManager consider main function as well
+    if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
+    {
+        // ErrorManager
+        // main name duplicated
+        errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::DuplicatedName,
+                                  "Main function name duplicate error");
+        // no skip
+    }
     symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
             config::SymbolType::FUNCTION, config::DataType::VOID, idenfr.getRow()));
     // (
