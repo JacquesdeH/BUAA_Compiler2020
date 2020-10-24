@@ -90,9 +90,13 @@ void syntactic::Syntactic::parseConstIllustration()
         // ;
         if (!_cur().isToken(config::SEMICN))
         {
-            // TODO: ErrorManager
+            // ErrorManager ;
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnAtConstVarDeclarationEnd,
+                                      "Expect ; at the end of const declaration");
+            // no skip
         }
-        _printAndNext();
+        else
+            _printAndNext();
     } while (_cur().isToken(config::CONSTTK));
 
     printer->printComponent("常量说明");
@@ -210,9 +214,13 @@ void syntactic::Syntactic::parseVarIllustration()
         // ;
         if (!_cur().isToken(config::SEMICN))
         {
-            // TODO: ErrorManager
+            // ErrorManager ;
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnAtConstVarDeclarationEnd,
+                                      "Expect ; at the end of var declaration");
+            // no skip
         }
-        _printAndNext();
+        else
+            _printAndNext();
     } while (_cur().isValuedType() && queue->peek(2).isToken(config::IDENFR) &&
                 !queue->peek(3).isToken(config::LPARENT));
 
@@ -1039,17 +1047,25 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     // ;
     if (!_cur().isToken(config::SEMICN))
     {
-        // TODO: ErrorManager
+        // ErrorManager ;
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInFor,
+                                  "In <For> statement expect a ; at first position");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
     // ＜条件＞
     parseCondition();
     // ;
     if (!_cur().isToken(config::SEMICN))
     {
-        // TODO: ErrorManager
+        // ErrorManager ;
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInFor,
+                                  "In <For> statement expect a ; at second position");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
     // ＜标识符＞
     Token idenfr2;
     if (!_cur().isToken(config::IDENFR))
@@ -1597,7 +1613,15 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
     if (_cur().isToken(config::SEMICN))
     {
         // ;
-        _printAndNext();
+        if (!_cur().isToken(config::SEMICN))
+        {
+            // ErrorManager ;
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
+                                      "In <Null>; statement expect a ;");
+            // no skip
+        }
+        else
+            _printAndNext();
     }
     // '{'＜语句列＞'}'
     else if (_cur().isToken(config::LBRACE))
@@ -1633,9 +1657,13 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
         // ;
         if (!_cur().isToken(config::SEMICN))
         {
-            // TODO: ErrorManager
+            // ErrorManager ;
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
+                                      "In <Read>; statement expect a ;");
+            // no skip
         }
-        _printAndNext();
+        else
+            _printAndNext();
     }
     // ＜写语句＞;
     else if (_cur().isTokens({config::PRINTFTK}))
@@ -1645,9 +1673,13 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
         // ;
         if (!_cur().isToken(config::SEMICN))
         {
-            // TODO: ErrorManager
+            // ErrorManager ;
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
+                                      "In <Write>; statement expect a ;");
+            // no skip
         }
-        _printAndNext();
+        else
+            _printAndNext();
     }
     // ＜返回语句＞;
     else if (_cur().isTokens({config::RETURNTK}))
@@ -1657,9 +1689,13 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
         // ;
         if (!_cur().isToken(config::SEMICN))
         {
-            // TODO: ErrorManager
+            // ErrorManager ;
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
+                                      "In <Return>; statement expect a ;");
+            // no skip
         }
-        _printAndNext();
+        else
+            _printAndNext();
     }
     // ＜情况语句＞
     else if (_cur().isTokens({config::SWITCHTK}))
@@ -1703,9 +1739,13 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
         // ; commonly parsed!
         if (!_cur().isToken(config::SEMICN))
         {
-            // TODO: ErrorManager
+            // ErrorManager ;
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
+                                      "In <FuncCallValued>;|<FuncCallVoid>;|<Assign>; statement expect a ;");
+            // no skip
         }
-        _printAndNext();
+        else
+            _printAndNext();
     }
     // error
     else
