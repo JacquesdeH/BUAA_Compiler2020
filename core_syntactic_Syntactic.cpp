@@ -1864,19 +1864,27 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
                 // ErrorManager
                 errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::UndefinedName,
                                           "Undefined function name call");
-                // no skip
+                _skipUntil({config::SEMICN}, config::stopwordsToken, true);
             }
-            // ＜有返回值函数调用语句＞
-            if (symbolManager->getInfoInAll(idenfr.getTkvalue()).isValuedFunction())
-            {
-                // ＜有返回值函数调用语句＞
-                parseFunctionValuedCallStatement();
-            }
-            // ＜无返回值函数调用语句＞
             else
             {
-                // ＜无返回值函数调用语句＞
-                parseFunctionVoidCallStatement();
+                // ＜有返回值函数调用语句＞
+                if (symbolManager->getInfoInAll(idenfr.getTkvalue()).isValuedFunction())
+                {
+                    // ＜有返回值函数调用语句＞
+                    parseFunctionValuedCallStatement();
+                }
+                    // ＜无返回值函数调用语句＞
+                else if (symbolManager->getInfoInAll(idenfr.getTkvalue()).isVoidFunction())
+                {
+                    // ＜无返回值函数调用语句＞
+                    parseFunctionVoidCallStatement();
+                }
+                else
+                {
+                    // TODO: ErrorManager
+                    // not a defined function, partly processed before
+                }
             }
         }
         // ＜赋值语句＞
