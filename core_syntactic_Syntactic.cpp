@@ -297,7 +297,7 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
                 // ErrorManager
                 errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArraySubIndexTypeNotInt,
                                           "In declare array with init Sub is not int");
-                _skipUntil({config::RBRACK}, config::stopwordsToken, true);
+                _skipUntil({config::RBRACK}, config::stopwordsToken);
                 dimLim[dim] = 0;
             }
             else
@@ -369,7 +369,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
             // ErrorManager
             errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArraySubIndexTypeNotInt,
                                       "In declare array with init Sub is not int");
-            _skipUntil({config::RBRACK}, config::stopwordsToken, true);
+            _skipUntil({config::RBRACK}, config::stopwordsToken);
             dimLim[dim] = 0;
         }
         else
@@ -475,7 +475,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
                     // ErrorManager
                     errorManager->insertError(enterToken.getRow(), enterToken.getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
                                               "Array init count more than expected at dim=1");
-                    _skipUntil({config::SEMICN}, config::stopwordsToken);
+                    _skipUntil({config::SEMICN}, config::stopwordsToken, true);
                     goto ArrayInitDimSwitchEnd;
                 }
                 isFirst = false;
@@ -486,7 +486,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
                 // ErrorManager
                 errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
                                           "Array init count less than expected at dim=1");
-                _skipUntil({config::SEMICN}, config::stopwordsToken);
+                _skipUntil({config::SEMICN}, config::stopwordsToken, true);
                 goto ArrayInitDimSwitchEnd;
             }
             // }
@@ -577,7 +577,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
                     // ErrorManager
                     errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
                                               "dimLim[1] mismatch in array init");
-                    _skipUntil({config::SEMICN}, config::stopwordsToken);
+                    _skipUntil({config::SEMICN}, config::stopwordsToken, true);
                     goto ArrayInitDimSwitchEnd;
                 }
                 // }
@@ -595,7 +595,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
                 // ErrorManager
                 errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
                                           "dimLim[0] mismatch in array init");
-                _skipUntil({config::SEMICN}, config::stopwordsToken);
+                _skipUntil({config::SEMICN}, config::stopwordsToken, true);
                 goto ArrayInitDimSwitchEnd;
             }
             // }
@@ -1018,7 +1018,7 @@ void syntactic::Syntactic::parseAssignStatement()
             // ErrorManager
             errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArraySubIndexTypeNotInt,
                                       "Assign use array sub is not int");
-            _skipUntil({config::RBRACK}, config::stopwordsToken, true);
+            _skipUntil({config::RBRACK}, config::stopwordsToken);
         }
         // ]
         if (!_cur().isToken(config::RBRACK))
@@ -1396,7 +1396,7 @@ void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType
                 // ErrorManager
                 errorManager->insertError(curToken.getRow(), curToken.getColumn(), config::ErrorType::FunctionParamCountMismatch,
                                           "Param Value count more than expected");
-                _skipUntil({config::COMMA, config::RPARENT}, config::stopwordsToken, true);
+                _skipUntil({config::COMMA, config::RPARENT}, config::stopwordsToken);
             }
             else if (curDataType != config::DataType::DATA_DEFAULT && curDataType != _paramDataTypeList[curIndexOfParam])
             {
@@ -1864,7 +1864,7 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
                 // ErrorManager
                 errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::UndefinedName,
                                           "Undefined function name call");
-                _skipUntil({config::SEMICN}, config::stopwordsToken, true);
+                _skipUntil({config::SEMICN}, config::stopwordsToken);
             }
             else
             {
@@ -2091,7 +2091,7 @@ config::DataType syntactic::Syntactic::parseFactor()
                     // ErrorManager
                     errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArraySubIndexTypeNotInt,
                                               "In factor call array sub is not int");
-                    _skipUntil({config::RBRACK}, config::stopwordsToken, true);
+                    _skipUntil({config::RBRACK}, config::stopwordsToken);
                     hasError = true;
                 }
                 // ]
@@ -2128,14 +2128,14 @@ config::DataType syntactic::Syntactic::parseFactor()
 }
 
 void syntactic::Syntactic::_skipUntil(const std::unordered_set<config::TokenCode> &successors,
-                                      const std::unordered_set<config::TokenCode> &stopwords, const bool &keepCur)
+                                      const std::unordered_set<config::TokenCode> &stopwords, const bool &hardSkipCur)
 {
     std::unordered_set<config::TokenCode> wordset;
     for (const auto & word : successors)
         wordset.insert(word);
     for (const auto & word : stopwords)
         wordset.insert(word);
-    if (keepCur && (wordset.find(_cur().getTkcode()) != wordset.end()))
+    if (!hardSkipCur && (wordset.find(_cur().getTkcode()) != wordset.end()))
         return;
     do
     {
