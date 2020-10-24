@@ -306,7 +306,7 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
             if (!_cur().isToken(config::RBRACK))
             {
                 // ErrorManager
-                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRBrackAtArrayDeclaration,
+                errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRBrackAtArrayDeclaration,
                                           "Expect ] at array declaration for var without init");
                 // no skip
             }
@@ -378,7 +378,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
         if (!_cur().isToken(config::RBRACK))
         {
             // ErrorManager
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRBrackAtArrayDeclaration,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRBrackAtArrayDeclaration,
                                       "Expect ] at array declaration for var with init");
             // no skip
         }
@@ -779,7 +779,7 @@ void syntactic::Syntactic::parseReadStatement()
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtScanf,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtScanf,
                                   "Expect ) at scanf");
         // no skip
     }
@@ -827,7 +827,7 @@ void syntactic::Syntactic::parsePrintStatement()
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtPrintf,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtPrintf,
                                   "Expect ) at printf");
         // no skip
     }
@@ -857,7 +857,7 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtSwitch,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtSwitch,
                                   "Expect ) at switch()");
         // no skip
     }
@@ -950,7 +950,7 @@ void syntactic::Syntactic::parseReturnStatement(bool & hasReturned, config::Data
         if (!_cur().isToken(config::RPARENT))
         {
             // ErrorManager
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtReturn,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtReturn,
                                       "Expect ) at return() or return(<Expr>)");
             // no skip
         }
@@ -1024,7 +1024,7 @@ void syntactic::Syntactic::parseAssignStatement()
         if (!_cur().isToken(config::RBRACK))
         {
             // ErrorManager
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRBrackAtArrayUseInAssignLeft,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRBrackAtArrayUseInAssignLeft,
                                       "Expect ] at array use in assign statement left");
             // no skip
         }
@@ -1066,7 +1066,7 @@ void syntactic::Syntactic::parseConditionStatement(bool & hasReturned, config::D
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtIf,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtIf,
                                   "Expect ) at if()");
         // no skip
     }
@@ -1122,7 +1122,7 @@ void syntactic::Syntactic::parseWhileStatement(bool & hasReturned, config::DataT
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtWhile,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtWhile,
                                   "Expect ) at while()");
         // no skip
     }
@@ -1251,7 +1251,7 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtFor,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtFor,
                                   "Expect ) at for()");
         // no skip
     }
@@ -1478,7 +1478,7 @@ void syntactic::Syntactic::parseMainFunction()
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtMain,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtMain,
                                   "Expect ) at Main");
         // no skip
     }
@@ -1562,7 +1562,7 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtFunctionDeclaration,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtFunctionDeclaration,
                                   "Expect ) at valued func declaration");
         // no skip
     }
@@ -1639,7 +1639,7 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtFunctionDeclaration,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtFunctionDeclaration,
                                   "Expect ) at void func declaration");
         // no skip
     }
@@ -1701,7 +1701,7 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtFunctionCall,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtFunctionCall,
                                   "Expect ) at valued func call");
         // no skip
     }
@@ -1746,7 +1746,7 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     if (!_cur().isToken(config::RPARENT))
     {
         // ErrorManager
-        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtFunctionCall,
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtFunctionCall,
                                   "Expect ) at void func call");
         // no skip
     }
@@ -2022,7 +2022,7 @@ config::DataType syntactic::Syntactic::parseFactor()
         if (!_cur().isToken(config::RPARENT))
         {
             // ErrorManager
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtExpression,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRParentAtExpression,
                                       "Expect ) at (<Expr>)");
             // no skip
             hasError = true;
@@ -2098,7 +2098,7 @@ config::DataType syntactic::Syntactic::parseFactor()
                 if (!_cur().isToken(config::RBRACK))
                 {
                     // ErrorManager
-                    errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRBrackAtArrayUseInFactor,
+                    errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectRBrackAtArrayUseInFactor,
                                               "Expect ] at array use in factor");
                     // no skip
                     hasError = true;
