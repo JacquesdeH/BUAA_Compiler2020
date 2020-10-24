@@ -29,6 +29,8 @@ void error::ErrorManager::insertError(const int &row, const int &column, const c
 
 void error::ErrorManager::printAllErrors()
 {
+    if (!enable_print_tuple)
+        return;
     while (!errors.empty())
     {
         ErrorEntry entry = errors.top();
