@@ -2,7 +2,7 @@
 // Created by JacquesdeH on 2020/10/22.
 //
 
-#include "ErrorEntry.h"
+#include "error_ErrorEntry.h"
 #include "functional_convert.h"
 
 error::ErrorEntry::ErrorEntry(const int &_row, const int &_column, const config::ErrorType &_type,

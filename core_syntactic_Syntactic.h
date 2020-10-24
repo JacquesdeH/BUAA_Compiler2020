@@ -8,7 +8,7 @@
 #include "utils_PeekableQueue.h"
 #include "core_syntactic_Printer.h"
 #include "symbol_SymbolManager.h"
-#include "ErrorManager.h"
+#include "error_ErrorManager.h"
 
 namespace syntactic
 {

@@ -2,14 +2,14 @@
 // Created by JacquesdeH on 2020/10/22.
 //
 
-#ifndef PROJECT_ERRORMANAGER_H
-#define PROJECT_ERRORMANAGER_H
+#ifndef PROJECT_ERROR_ERRORMANAGER_H
+#define PROJECT_ERROR_ERRORMANAGER_H
 
 #include <queue>
 #include <iostream>
 #include <fstream>
 
-#include "ErrorEntry.h"
+#include "error_ErrorEntry.h"
 
 namespace error
 {
@@ -33,4 +33,4 @@ namespace error
 }
 
 
-#endif //PROJECT_ERRORMANAGER_H
+#endif //PROJECT_ERROR_ERRORMANAGER_H

@@ -2,8 +2,8 @@
 // Created by JacquesdeH on 2020/10/22.
 //
 
-#ifndef PROJECT_ERRORENTRY_H
-#define PROJECT_ERRORENTRY_H
+#ifndef PROJECT_ERROR_ERRORENTRY_H
+#define PROJECT_ERROR_ERRORENTRY_H
 
 #include <string>
 
@@ -28,4 +28,4 @@ namespace error
 }
 
 
-#endif //PROJECT_ERRORENTRY_H
+#endif //PROJECT_ERROR_ERRORENTRY_H
