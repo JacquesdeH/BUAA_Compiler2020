@@ -31,7 +31,7 @@ namespace error
         void insertError(const int & row, const int & column, const config::ErrorType & type, const std::string & description);
         void printAllErrors();
         void watchErrors();
-        bool queryWatch();
+        bool queryWatch() const;
     };
 }
 

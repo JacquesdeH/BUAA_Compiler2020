@@ -50,7 +50,7 @@ void error::ErrorManager::watchErrors()
     watch = false;
 }
 
-bool error::ErrorManager::queryWatch()
+bool error::ErrorManager::queryWatch() const
 {
     return watch;
 }
