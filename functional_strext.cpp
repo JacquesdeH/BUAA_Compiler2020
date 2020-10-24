@@ -8,6 +8,7 @@
 #include <algorithm>
 
 #include "functional_strext.h"
+#include "config.h"
 
 char toLower(const char& ch)
 {
@@ -29,4 +30,11 @@ int str2int(const string& s)
 int char2int(const char& ch)
 {
     return (int)(unsigned int)ch;
+}
+
+string int2str(const int &_int)
+{
+    char buffer[config::BUFFER_SIZE];
+    sprintf(buffer, "%d", _int);
+    return string(buffer);
 }

@@ -13,5 +13,6 @@ char toLower(const char& ch);
 string toLower(const string& s);
 int str2int(const string& s);
 int char2int(const char& ch);
+string int2str(const int& _int);
 
 #endif //PROJECT_FUNCTIONAL_STREXT_H

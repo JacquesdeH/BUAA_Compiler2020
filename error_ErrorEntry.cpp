@@ -4,6 +4,7 @@
 
 #include "error_ErrorEntry.h"
 #include "functional_convert.h"
+#include "functional_strext.h"
 
 error::ErrorEntry::ErrorEntry(const int &_row, const int &_column, const config::ErrorType &_type,
                        const std::string &_description)
@@ -36,11 +37,10 @@ bool error::ErrorEntry::operator>(const error::ErrorEntry &other) const
     return this->description > other.description;
 }
 
-
 std::string error::ErrorEntry::to_string(const bool & detailed)
 {
     std::string code = errorType2Code(type);
-    std::string output = std::to_string(row) + " " + code;
+    std::string output = int2str(row) + " " + code;
     if (detailed)
         output = output + " " + description;
     return output;
