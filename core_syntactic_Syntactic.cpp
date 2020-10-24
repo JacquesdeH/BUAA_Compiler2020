@@ -689,9 +689,13 @@ void syntactic::Syntactic::parseReadStatement()
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtScanf,
+                                  "Expect ) at scanf");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
 
     printer->printComponent("读语句");
 }
@@ -733,9 +737,13 @@ void syntactic::Syntactic::parsePrintStatement()
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtPrintf,
+                                  "Expect ) at printf");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
 
     printer->printComponent("写语句");
 }
@@ -759,9 +767,13 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtSwitch,
+                                  "Expect ) at switch()");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
     // {
     if (!_cur().isToken(config::LBRACE))
     {
@@ -840,9 +852,13 @@ void syntactic::Syntactic::parseReturnStatement(bool & hasReturned, config::Data
         // )
         if (!_cur().isToken(config::RPARENT))
         {
-            // TODO: ErrorManager
+            // ErrorManager
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtReturn,
+                                      "Expect ) at return() or return(<Expr>)");
+            // no skip
         }
-        _printAndNext();
+        else
+            _printAndNext();
     }
     // return;
     else if (_cur().isToken(config::SEMICN))
@@ -948,9 +964,13 @@ void syntactic::Syntactic::parseConditionStatement(bool & hasReturned, config::D
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtIf,
+                                  "Expect ) at if()");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
     // ＜语句＞
     parseStatement(hasReturned, insideFuncAndType);
     // ［else＜语句＞］
@@ -1000,9 +1020,13 @@ void syntactic::Syntactic::parseWhileStatement(bool & hasReturned, config::DataT
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtWhile,
+                                  "Expect ) at while()");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
     // ＜语句＞
     parseStatement(hasReturned, insideFuncAndType);
 }
@@ -1125,9 +1149,13 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtFor,
+                                  "Expect ) at for()");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
     // ＜语句＞
     parseStatement(hasReturned, insideFuncAndType);
 }
@@ -1348,9 +1376,13 @@ void syntactic::Syntactic::parseMainFunction()
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtMain,
+                                  "Expect ) at Main");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
     // {
     if (!_cur().isToken(config::LBRACE))
     {
@@ -1428,9 +1460,13 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtFunctionDeclaration,
+                                  "Expect ) at valued func declaration");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
     // {
     if (!_cur().isToken(config::LBRACE))
     {
@@ -1501,9 +1537,13 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtFunctionDeclaration,
+                                  "Expect ) at void func declaration");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
     // {
     if (!_cur().isToken(config::LBRACE))
     {
@@ -1559,9 +1599,13 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtFunctionCall,
+                                  "Expect ) at valued func call");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
 
     printer->printComponent("有返回值函数调用语句");
 }
@@ -1600,9 +1644,13 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     // )
     if (!_cur().isToken(config::RPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtFunctionCall,
+                                  "Expect ) at void func call");
+        // no skip
     }
-    _printAndNext();
+    else
+        _printAndNext();
 
     printer->printComponent("无返回值函数调用语句");
 }
@@ -1853,9 +1901,13 @@ config::DataType syntactic::Syntactic::parseFactor()
         // )
         if (!_cur().isToken(config::RPARENT))
         {
-            // TODO: ErrorManager
+            // ErrorManager
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtExpression,
+                                      "Expect ) at (<Expr>)");
+            // no skip
         }
-        _printAndNext();
+        else
+            _printAndNext();
         // a recursive expr must be a int type
         retDataType = config::DataType::INT;
     }
