@@ -303,9 +303,13 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
             // ]
             if (!_cur().isToken(config::RBRACK))
             {
-                // TODO: ErrorManager
+                // ErrorManager
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRBrackAtArrayDeclaration,
+                                          "Expect ] at array declaration for var without init");
+                // no skip
             }
-            _printAndNext();
+            else
+                _printAndNext();
             // increase dim
             dim++;
         }
@@ -371,9 +375,13 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
         // ]
         if (!_cur().isToken(config::RBRACK))
         {
-            // TODO: ErrorManager
+            // ErrorManager
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRBrackAtArrayDeclaration,
+                                      "Expect ] at array declaration for var with init");
+            // no skip
         }
-        _printAndNext();
+        else
+            _printAndNext();
         // increase dim
         dim++;
     }
@@ -926,9 +934,13 @@ void syntactic::Syntactic::parseAssignStatement()
         // ]
         if (!_cur().isToken(config::RBRACK))
         {
-            // TODO: ErrorManager
+            // ErrorManager
+            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRBrackAtArrayUseInAssignLeft,
+                                      "Expect ] at array use in assign statement left");
+            // no skip
         }
-        _printAndNext();
+        else
+            _printAndNext();
         // increase dim
         dim++;
     }
@@ -1964,9 +1976,13 @@ config::DataType syntactic::Syntactic::parseFactor()
                 // ]
                 if (!_cur().isToken(config::RBRACK))
                 {
-                    // TODO: ErrorManager
+                    // ErrorManager
+                    errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRBrackAtArrayUseInFactor,
+                                              "Expect ] at array use in factor");
+                    // no skip
                 }
-                _printAndNext();
+                else
+                    _printAndNext();
                 // increase dim
                 dim++;
             }
