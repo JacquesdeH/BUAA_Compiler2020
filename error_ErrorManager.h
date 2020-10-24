@@ -17,6 +17,7 @@ namespace error
     {
     private:
         const bool enable_print_tuple = config::PRINT_ERROR_TUPLE;
+        const bool enable_detailed_info = config::PRINT_DETAILED_ERROR;
         std::priority_queue<ErrorEntry, std::vector<ErrorEntry>, std::greater<ErrorEntry> > errors;
         bool useCout;
         std::ofstream fsOut;

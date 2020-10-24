@@ -37,8 +37,11 @@ bool error::ErrorEntry::operator>(const error::ErrorEntry &other) const
 }
 
 
-std::string error::ErrorEntry::to_string()
+std::string error::ErrorEntry::to_string(const bool & detailed)
 {
     std::string code = errorType2Code(type);
-    return std::to_string(row) + " " + code;
+    std::string output = std::to_string(row) + " " + code;
+    if (detailed)
+        output = output + " " + description;
+    return output;
 }

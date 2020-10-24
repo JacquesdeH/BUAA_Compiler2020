@@ -37,7 +37,7 @@ void error::ErrorManager::printAllErrors()
     {
         ErrorEntry entry = errors.top();
         errors.pop();
-        std::string output = entry.to_string();
+        std::string output = entry.to_string(enable_detailed_info);
         if (useCout)
             std::cout << output << std::endl;
         else
