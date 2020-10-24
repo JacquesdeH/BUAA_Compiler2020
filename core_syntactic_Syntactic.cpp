@@ -872,7 +872,15 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     // ＜情况表＞
     parseCaseList(hasReturned, insideFuncAndType, exprDataType);
     // ＜缺省＞
-    parseDefault(hasReturned, insideFuncAndType);
+    if (!_cur().isToken(config::DEFAULTTK))
+    {
+        // ErrorManager
+        errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectDefaultStatement,
+                                  "Expect <default> in switch statement");
+        // no skip
+    }
+    else
+        parseDefault(hasReturned, insideFuncAndType);
     // }
     if (!_cur().isToken(config::RBRACE))
     {
