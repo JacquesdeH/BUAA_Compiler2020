@@ -398,6 +398,14 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
         // ＜常量＞
         case 0:
         {
+            if (_cur().isToken(config::LBRACE))
+            {
+                // ErrorManager with dim mismatch
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
+                                          "Array init count mismatch for dim=0");
+                _skipUntil({config::SEMICN}, config::stopwordsToken);
+                goto ArrayInitDimSwitchEnd;
+            }
             // ＜常量＞
             bool isInt = false;
             int _value = 0;
@@ -415,15 +423,28 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
             // {
             if (!_cur().isToken(config::LBRACE))
             {
-                // TODO: ErrorManager
+                // ErrorManager with dim mismatch
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
+                                          "Array init count mismatch for dim=1 with less {");
+                _skipUntil({config::SEMICN}, config::stopwordsToken);
+                goto ArrayInitDimSwitchEnd;
             }
             _printAndNext();
+            if (_cur().isToken(config::LBRACE))
+            {
+                // ErrorManager with dim mismatch
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
+                                          "Array init count mismatch for dim=1 with more {");
+                _skipUntil({config::SEMICN}, config::stopwordsToken);
+                goto ArrayInitDimSwitchEnd;
+            }
             // ＜常量＞{,＜常量＞}
             bool isFirst = true;
             bool isInt = false;
             int _value = 0;
             do
             {
+                Token enterToken = _cur();
                 // ,
                 if (!isFirst)
                 {
@@ -440,19 +461,32 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
                     // TODO: ErrorManager
                 }
                 params.push_back(_value);
+                // check size more than expected
+                if (params.size() > dimLim[0])
+                {
+                    // ErrorManager
+                    errorManager->insertError(enterToken.getRow(), enterToken.getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
+                                              "Array init count more than expected at dim=1");
+                    _skipUntil({config::SEMICN}, config::stopwordsToken);
+                    goto ArrayInitDimSwitchEnd;
+                }
                 isFirst = false;
             } while (_cur().isToken(config::COMMA));
+            // check  size less than expected
+            if (params.size() < dimLim[0])
+            {
+                // ErrorManager
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
+                                          "Array init count less than expected at dim=1");
+                _skipUntil({config::SEMICN}, config::stopwordsToken);
+                goto ArrayInitDimSwitchEnd;
+            }
             // }
             if (!_cur().isToken(config::RBRACE))
             {
                 // TODO: ErrorManager
             }
             _printAndNext();
-            // check param numbers with dimLim
-            if (params.size() != dimLim[0])
-            {
-                // TODO: ErrorManager
-            }
         }
             break;
         // '{''{'＜常量＞{,＜常量＞}'}'{,'{'＜常量＞{,＜常量＞}'}'}'}'
@@ -461,14 +495,19 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
             // {
             if (!_cur().isToken(config::LBRACE))
             {
-                // TODO: ErrorManager
+                // ErrorManager with dim mismatch
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
+                                          "Array init count mismatch for dim=2 with less {");
+                _skipUntil({config::SEMICN}, config::stopwordsToken);
+                goto ArrayInitDimSwitchEnd;
             }
             _printAndNext();
             // ,'{'＜常量＞{,＜常量＞}'}'
-            int lastSize = params.size();
+            int lastSize;
             bool isFirst0 = true;
             do
             {
+                lastSize = params.size();
                 // ,
                 if (!isFirst0)
                 {
@@ -481,9 +520,21 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
                 // {
                 if (!_cur().isToken(config::LBRACE))
                 {
-                    // TODO: ErrorManager
+                    // ErrorManager with dim mismatch
+                    errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
+                                              "Array init count mismatch for dim=2 with less {");
+                    _skipUntil({config::SEMICN}, config::stopwordsToken);
+                    goto ArrayInitDimSwitchEnd;
                 }
                 _printAndNext();
+                if (_cur().isToken(config::LBRACE))
+                {
+                    // ErrorManager with dim mismatch
+                    errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
+                                              "Array init count mismatch for dim=2 with more {");
+                    _skipUntil({config::SEMICN}, config::stopwordsToken);
+                    goto ArrayInitDimSwitchEnd;
+                }
 
                 // ,＜常量＞
                 bool isFirst1 = true;
@@ -509,35 +560,45 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
                     }
                     params.push_back(_value);
                 } while (_cur().isToken(config::COMMA));
+                // check dimLim[1]
+                if (dimLim[1] != (params.size() - lastSize))
+                {
+                    // ErrorManager
+                    errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
+                                              "dimLim[1] mismatch in array init");
+                    _skipUntil({config::SEMICN}, config::stopwordsToken);
+                    goto ArrayInitDimSwitchEnd;
+                }
                 // }
                 if (!_cur().isToken(config::RBRACE))
                 {
                     // TODO: ErrorManager
                 }
                 _printAndNext();
-                // check dimLim[1]
-                if (dimLim[1] != (params.size() - lastSize))
-                {
-                    // TODO: ErrorManager
-                }
+
                 isFirst0 = false;
             } while (_cur().isToken(config::COMMA));
+            // check dimLim[0]
+            if (dimLim[0] * dimLim[1] != params.size())
+            {
+                // ErrorManager
+                errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArrayInitMismatchWithTemplate,
+                                          "dimLim[0] mismatch in array init");
+                _skipUntil({config::SEMICN}, config::stopwordsToken);
+                goto ArrayInitDimSwitchEnd;
+            }
             // }
             if (!_cur().isToken(config::RBRACE))
             {
                 // TODO: ErrorManager
             }
             _printAndNext();
-            // check dimLim[0]
-            if (dimLim[0] * dimLim[1] != params.size())
-            {
-                // TODO: ErrorManager
-            }
         }
             break;
         default:
             std::cerr << "Unexpected dim in parseVarDeclarationInitialized() with dim = " << dim << std::endl;
     }
+    ArrayInitDimSwitchEnd:
     // Update SymbolManager
     if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
     {
