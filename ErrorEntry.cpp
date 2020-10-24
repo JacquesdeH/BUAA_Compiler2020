@@ -25,6 +25,18 @@ bool error::ErrorEntry::operator<(const ErrorEntry &other) const
     return this->description < other.description;
 }
 
+bool error::ErrorEntry::operator>(const error::ErrorEntry &other) const
+{
+    if (this->row != other.row)
+        return this->row > other.row;
+    if (this->column != other.column)
+        return this->column > other.column;
+    if (this->type != other.type)
+        return this->type > other.type;
+    return this->description > other.description;
+}
+
+
 std::string error::ErrorEntry::to_string()
 {
     std::string code = errorType2Code(type);

@@ -22,6 +22,7 @@ namespace error
     public:
         ErrorEntry(const int & _row, const int & _column, const config::ErrorType & _type, const std::string & _description);
         bool operator < (const ErrorEntry & other) const;
+        bool operator > (const ErrorEntry & other) const;
         std::string to_string();
     };
 }
