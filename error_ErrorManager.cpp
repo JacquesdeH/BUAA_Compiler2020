@@ -6,18 +6,19 @@
 
 error::ErrorManager::ErrorManager()
 {
-    this->useCout = false;
+    this->useCout = true;
 }
 
 error::ErrorManager::ErrorManager(const std::string &fOut)
 {
     this->useCout = false;
-    this->fsOut.open(fOut);
+    if (enable_print_tuple)
+        this->fsOut.open(fOut);
 }
 
 error::ErrorManager::~ErrorManager()
 {
-    if (!useCout)
+    if (!useCout && enable_print_tuple)
         this->fsOut.close();
 }
 

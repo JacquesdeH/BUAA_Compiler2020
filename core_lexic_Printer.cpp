@@ -7,12 +7,14 @@
 
 lexic::Printer::Printer(const string &fOut)
 {
-    fsOut.open(fOut);
+    if (enabled)
+        fsOut.open(fOut);
 }
 
 lexic::Printer::~Printer()
 {
-    fsOut.close();
+    if (enabled)
+        fsOut.close();
 }
 
 void lexic::Printer::print(const config::TokenCode& tkcode, const string &tkvalue)

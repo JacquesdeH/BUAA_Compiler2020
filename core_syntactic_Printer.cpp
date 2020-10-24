@@ -9,7 +9,14 @@
 syntactic::Printer::Printer(const string &fOut)
 {
     this->enabled = config::PRINT_SYNTACTIC;
-    this->fsOut.open(fOut);
+    if (enabled)
+        this->fsOut.open(fOut);
+}
+
+syntactic::Printer::~Printer()
+{
+    if (enabled)
+        fsOut.close();
 }
 
 void syntactic::Printer::printToken(const Token &token)

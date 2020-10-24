@@ -23,6 +23,7 @@ namespace syntactic
 
     public:
         Printer(const string& fOut);
+        ~Printer();
 
     public:
         void printToken(const Token& token);
