@@ -1368,7 +1368,7 @@ void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType
 {
     int curIndexOfParam = 0;
     // ＜空＞ by next token after to be ')'
-    if (_cur().isToken(config::RPARENT))
+    if (!_isExprFirst())
     {
         // do nothing
     }
@@ -2146,5 +2146,12 @@ void syntactic::Syntactic::_skipUntil(const std::unordered_set<config::TokenCode
 Token syntactic::Syntactic::_last()
 {
     return cacheLast;
+}
+
+bool syntactic::Syntactic::_isExprFirst()
+{
+    std::unordered_set<config::TokenCode> targetTokens = {
+            config::PLUS, config::MINU, config::IDENFR, config::INTCON, config::CHARCON};
+    return targetTokens.find(_cur().getTkcode()) != targetTokens.end();
 }
 
