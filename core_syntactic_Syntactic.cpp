@@ -665,10 +665,16 @@ void syntactic::Syntactic::parseReadStatement()
     }
     else
     {
-        symbol::Info idenfrInfo = symbolManager->getInfoInAll(idenfr.getTkvalue());
-        if (idenfrInfo.isSymbolTypeOf(config::SymbolType::CONST) || !idenfrInfo.isDimOf(0))
+        if (symbolManager->getInfoInAll(idenfr.getTkvalue()).isSymbolTypeOf(config::SymbolType::CONST))
         {
-            // TODO: ErrorManager
+            // ErrorManager
+            errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::ModifyConstWithScanf,
+                                      "Change CONST idenfr in scanf statement");
+            // no skip
+        }
+        if (!(symbolManager->getInfoInAll(idenfr.getTkvalue()).isDimOf(0)))
+        {
+            // TODO: ErrorManager with dim in scanf not 0
         }
     }
     _printAndNext();
@@ -857,10 +863,20 @@ void syntactic::Syntactic::parseAssignStatement()
     idenfr = _cur();
     if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
     {
-        // ErrorManager
+        // ErrorManager without defined idenfr
         errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::UndefinedName,
                                   "Undefined idenfr in assignment statement");
         // no skip
+    }
+    else
+    {
+        if (symbolManager->getInfoInAll(idenfr.getTkvalue()).isSymbolTypeOf(config::SymbolType::CONST))
+        {
+            // ErrorManager
+            errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::ModifyConstWithAssign,
+                                      "Change CONST idenfr in assignment statement");
+            // no skip
+        }
     }
     _printAndNext();
     // '['＜表达式＞']' | '['＜表达式＞']''['＜表达式＞']'
