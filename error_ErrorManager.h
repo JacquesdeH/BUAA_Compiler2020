@@ -20,6 +20,7 @@ namespace error
         std::priority_queue<ErrorEntry, std::vector<ErrorEntry>, std::greater<ErrorEntry> > errors;
         bool useCout;
         std::ofstream fsOut;
+        bool watch;
 
     public:
         ErrorManager();
@@ -29,6 +30,8 @@ namespace error
     public:
         void insertError(const int & row, const int & column, const config::ErrorType & type, const std::string & description);
         void printAllErrors();
+        void watchErrors();
+        bool queryWatch();
     };
 }
 

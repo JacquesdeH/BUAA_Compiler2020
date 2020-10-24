@@ -1398,11 +1398,11 @@ void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType
                                           "Param Value count more than expected");
                 _skipUntil({config::COMMA, config::RPARENT}, config::stopwordsToken, true);
             }
-            else if (curDataType != _paramDataTypeList[curIndexOfParam])
+            else if (curDataType != config::DataType::DATA_DEFAULT && curDataType != _paramDataTypeList[curIndexOfParam])
             {
                 // ErrorManager
                 errorManager->insertError(curToken.getRow(), curToken.getColumn(), config::ErrorType::FunctionParamTypeMismatch,
-                                          "Param Vlaue type mismatch");
+                                          "Param Value type mismatch");
                 _skipUntil({config::COMMA, config::RPARENT}, config::stopwordsToken);
             }
             isFirst = false;
@@ -1915,6 +1915,7 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
 
 config::DataType syntactic::Syntactic::parseExpression()
 {
+    bool hasError = false;
     config::DataType retDataType = config::DataType::CHAR;
     bool isFirst = true;
     do
@@ -1935,22 +1936,26 @@ config::DataType syntactic::Syntactic::parseExpression()
         else if (!isFirst)
         {
             // TODO: ErrorManager where +|- is not optional
+            hasError = true;
         }
         // ＜项＞
         config::DataType termDataType = parseTerm();
         // update if term is not a char
         if (termDataType == config::DataType::INT)
             retDataType = config::DataType::INT;
+        else if (termDataType == config::DataType::DATA_DEFAULT)
+            hasError = true;
         // deal with this term related expression
         isFirst = false;
     } while (_cur().isPlusMinusOp());
 
     printer->printComponent("表达式");
-    return retDataType;
+    return hasError ? config::DataType::DATA_DEFAULT : retDataType;
 }
 
 config::DataType syntactic::Syntactic::parseTerm()
 {
+    bool hasError = false;
     config::DataType retDataType = config::DataType::CHAR;
     bool isFirst = true;
     do
@@ -1961,6 +1966,7 @@ config::DataType syntactic::Syntactic::parseTerm()
             if (!_cur().isMultDivOp())
             {
                 // TODO: ErrorManager
+                hasError = true;
             }
             _printAndNext();
             // with * and / must be an expr
@@ -1971,17 +1977,20 @@ config::DataType syntactic::Syntactic::parseTerm()
         // Factor is a int type
         if (factorDataType == config::DataType::INT)
             retDataType = config::DataType::INT;
+        else if (factorDataType == config::DataType::DATA_DEFAULT)
+            hasError = true;
         // deal with factor related term
         isFirst = false;
     } while (_cur().isMultDivOp());
 
     printer->printComponent("项");
-    return retDataType;
+    return hasError ? config::DataType::DATA_DEFAULT : retDataType;
 }
 
 config::DataType syntactic::Syntactic::parseFactor()
 {
-    config::DataType retDataType;
+    bool hasError = false;
+    config::DataType retDataType = config::DataType::DATA_DEFAULT;
     // ＜字符＞
     if (_cur().isToken(config::CHARCON))
     {
@@ -2006,7 +2015,9 @@ config::DataType syntactic::Syntactic::parseFactor()
         // (
         _printAndNext();
         // ＜表达式＞
-        parseExpression();
+        config::DataType exprDataType = parseExpression();
+        if (exprDataType == config::DataType::DATA_DEFAULT)
+            hasError = true;
         // )
         if (!_cur().isToken(config::RPARENT))
         {
@@ -2014,6 +2025,7 @@ config::DataType syntactic::Syntactic::parseFactor()
             errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRParentAtExpression,
                                       "Expect ) at (<Expr>)");
             // no skip
+            hasError = true;
         }
         else
             _printAndNext();
@@ -2028,9 +2040,15 @@ config::DataType syntactic::Syntactic::parseFactor()
         {
             Token idenfr = _cur();
             // ＜有返回值函数调用语句＞
+            errorManager->watchErrors();
             parseFunctionValuedCallStatement();
             // return type based on function call
-            retDataType = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType();
+            if (errorManager->queryWatch())
+                hasError = true;
+            if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
+                hasError = true;
+            else
+                retDataType = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType();
         }
         // ＜标识符＞ ｜ ＜标识符＞'['＜表达式＞']' | ＜标识符＞'['＜表达式＞']''['＜表达式＞']'
         else
@@ -2041,6 +2059,7 @@ config::DataType syntactic::Syntactic::parseFactor()
             if (!_cur().isToken(config::IDENFR))
             {
                 // TODO: ErrorManager
+                hasError = true;
             }
             idenfr = _cur();
             if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
@@ -2049,6 +2068,7 @@ config::DataType syntactic::Syntactic::parseFactor()
                 errorManager->insertError(idenfr.getRow(), idenfr.getColumn(), config::ErrorType::UndefinedName,
                                           "Undefined idenfr in Factor");
                 // no skip
+                hasError = true;
             }
             _printAndNext();
             // '['＜表达式＞']'
@@ -2057,18 +2077,22 @@ config::DataType syntactic::Syntactic::parseFactor()
                 if (dim >= 2)
                 {
                     // TODO: ErrorManager
+                    hasError = true;
                     break;
                 }
                 // [
                 _printAndNext();
                 // ＜表达式＞
                 config::DataType exprDataType = parseExpression();
+                if (exprDataType == config::DataType::DATA_DEFAULT)
+                    hasError = true;
                 if (exprDataType != config::DataType::INT)
                 {
                     // ErrorManager
                     errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ArraySubIndexTypeNotInt,
                                               "In factor call array sub is not int");
                     _skipUntil({config::RBRACK}, config::stopwordsToken, true);
+                    hasError = true;
                 }
                 // ]
                 if (!_cur().isToken(config::RBRACK))
@@ -2077,6 +2101,7 @@ config::DataType syntactic::Syntactic::parseFactor()
                     errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectRBrackAtArrayUseInFactor,
                                               "Expect ] at array use in factor");
                     // no skip
+                    hasError = true;
                 }
                 else
                     _printAndNext();
@@ -2095,10 +2120,11 @@ config::DataType syntactic::Syntactic::parseFactor()
     {
         // TODO: ErrorManager
         retDataType = config::DATA_DEFAULT;
+        hasError = true;
     }
 
     printer->printComponent("因子");
-    return retDataType;
+    return hasError ? config::DataType::DATA_DEFAULT : retDataType;
 }
 
 void syntactic::Syntactic::_skipUntil(const std::unordered_set<config::TokenCode> &successors,

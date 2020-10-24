@@ -25,6 +25,7 @@ error::ErrorManager::~ErrorManager()
 void error::ErrorManager::insertError(const int &row, const int &column, const config::ErrorType &type,
                                       const std::string &description)
 {
+    watch = true;
     errors.push(ErrorEntry(row, column, type, description));
 }
 
@@ -42,4 +43,14 @@ void error::ErrorManager::printAllErrors()
         else
             fsOut << output << std::endl;
     }
+}
+
+void error::ErrorManager::watchErrors()
+{
+    watch = false;
+}
+
+bool error::ErrorManager::queryWatch()
+{
+    return watch;
 }
