@@ -93,7 +93,7 @@ void syntactic::Syntactic::parseConstIllustration()
         if (!_cur().isToken(config::SEMICN))
         {
             // ErrorManager ;
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnAtConstVarDeclarationEnd,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectSemicnAtConstVarDeclarationEnd,
                                       "Expect ; at the end of const declaration");
             // no skip
         }
@@ -217,7 +217,7 @@ void syntactic::Syntactic::parseVarIllustration()
         if (!_cur().isToken(config::SEMICN))
         {
             // ErrorManager ;
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnAtConstVarDeclarationEnd,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectSemicnAtConstVarDeclarationEnd,
                                       "Expect ; at the end of var declaration");
             // no skip
         }
@@ -1765,7 +1765,7 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
         if (!_cur().isToken(config::SEMICN))
         {
             // ErrorManager ;
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
                                       "In <Null>; statement expect a ;");
             // no skip
         }
@@ -1807,7 +1807,7 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
         if (!_cur().isToken(config::SEMICN))
         {
             // ErrorManager ;
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
                                       "In <Read>; statement expect a ;");
             // no skip
         }
@@ -1823,7 +1823,7 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
         if (!_cur().isToken(config::SEMICN))
         {
             // ErrorManager ;
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
                                       "In <Write>; statement expect a ;");
             // no skip
         }
@@ -1839,7 +1839,7 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
         if (!_cur().isToken(config::SEMICN))
         {
             // ErrorManager ;
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
                                       "In <Return>; statement expect a ;");
             // no skip
         }
@@ -1897,7 +1897,7 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
         if (!_cur().isToken(config::SEMICN))
         {
             // ErrorManager ;
-            errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
+            errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ExpectSemicnInStatementEnd,
                                       "In <FuncCallValued>;|<FuncCallVoid>;|<Assign>; statement expect a ;");
             // no skip
         }
