@@ -1682,7 +1682,7 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
                                   "Undefined Valued function call");
         // no skip
     }
-    if (!symbolManager->getInfoInAll(idenfr.getTkvalue()).isValuedFunction())
+    else if (!symbolManager->getInfoInAll(idenfr.getTkvalue()).isValuedFunction())
     {
         // TODO: ErrorManager
     }
@@ -1727,7 +1727,7 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
                                   "Undefined Void function call");
         // no skip
     }
-    if (!symbolManager->getInfoInAll(idenfr.getTkvalue()).isVoidFunction())
+    else if (!symbolManager->getInfoInAll(idenfr.getTkvalue()).isVoidFunction())
     {
         // TODO: ErrorManager
     }
