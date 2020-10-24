@@ -15,6 +15,7 @@ namespace syntactic
     class Syntactic
     {
     private:
+        Token cacheLast;
         PeekableQueue* queue;
         Printer* printer;
         symbol::SymbolManager* symbolManager;
@@ -26,6 +27,7 @@ namespace syntactic
 
     private:
         Token _cur();
+        Token _last();
         void _next();
         void _printAndNext();
         bool _isComeFirstThan(const config::TokenCode& tkcode1, const config::TokenCode& tkcode2) const;
@@ -67,8 +69,10 @@ namespace syntactic
         vector<config::DataType> parseParameterDeclarationList();
         void parseParameterValueList(const vector<config::DataType> & _paramDataTypeList);
         // Conditional component
-        void parseCaseList(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
-        void parseCaseSubStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
+        void parseCaseList(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT,
+                           config::DataType declaredDataType = config::DATA_DEFAULT);
+        void parseCaseSubStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT,
+                                   config::DataType declaredDataType = config::DATA_DEFAULT);
         void parseDefault(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
         void parseCondition();
         void parseStepLength(int& _step);

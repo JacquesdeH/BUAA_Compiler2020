@@ -9,6 +9,7 @@
 
 syntactic::Syntactic::Syntactic(const string &fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager, error::ErrorManager* _errorManager)
 {
+    this->cacheLast = Token(config::EMPTY);
     this->printer = new Printer(fOut);
     this->queue = _queue;
     this->symbolManager = _symbolManager;
@@ -27,6 +28,7 @@ Token syntactic::Syntactic::_cur()
 
 void syntactic::Syntactic::_next()
 {
+    cacheLast = queue->peek();
     queue->pop();
 }
 
@@ -412,7 +414,10 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
             parseConstant(_value, isInt);
             if (isInt != (dataType == config::DataType::INT))
             {
-                // TODO: ErrorManager
+                // ErrorManager
+                errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ConstantTypeMismatchInVarDeclarationAndInit,
+                                          "Init type mismatch with array template at dim=0");
+                // no skip
             }
             params.push_back(_value);
         }
@@ -458,7 +463,10 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
                 parseConstant(_value, isInt);
                 if (isInt != (dataType == config::DataType::INT))
                 {
-                    // TODO: ErrorManager
+                    // ErrorManager
+                    errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ConstantTypeMismatchInVarDeclarationAndInit,
+                                              "Init type mismatch with array template at dim=1");
+                    // no skip
                 }
                 params.push_back(_value);
                 // check size more than expected
@@ -556,7 +564,10 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
                     parseConstant(_value, isInt);
                     if (isInt != (dataType == config::DataType::INT))
                     {
-                        // TODO: ErrorManager
+                        // ErrorManager
+                        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ConstantTypeMismatchInVarDeclarationAndInit,
+                                                  "Init type mismatch with array template at dim=2");
+                        // no skip// TODO: ErrorManager
                     }
                     params.push_back(_value);
                 } while (_cur().isToken(config::COMMA));
@@ -645,19 +656,21 @@ void syntactic::Syntactic::parseConstant(int& _value, bool& _isInteger)
     printer->printComponent("常量");
 }
 
-void syntactic::Syntactic::parseCaseList(bool & hasReturned, config::DataType insideFuncAndType)
+void syntactic::Syntactic::parseCaseList(bool & hasReturned, config::DataType insideFuncAndType,
+                                         config::DataType declaredDataType)
 {
     // ＜情况子语句＞{＜情况子语句＞}
     do
     {
         // ＜情况子语句＞
-        parseCaseSubStatement(hasReturned, insideFuncAndType);
+        parseCaseSubStatement(hasReturned, insideFuncAndType, declaredDataType);
     } while (_cur().isToken(config::CASETK));
 
     printer->printComponent("情况表");
 }
 
-void syntactic::Syntactic::parseCaseSubStatement(bool & hasReturned, config::DataType insideFuncAndType)
+void syntactic::Syntactic::parseCaseSubStatement(bool & hasReturned, config::DataType insideFuncAndType,
+                                                 config::DataType declaredDataType)
 {
     // case
     if (!_cur().isToken(config::CASETK))
@@ -669,6 +682,13 @@ void syntactic::Syntactic::parseCaseSubStatement(bool & hasReturned, config::Dat
     int _value;
     bool isInt;
     parseConstant(_value, isInt);
+    if (isInt != (declaredDataType == config::DataType::INT))
+    {
+        // ErrorManager
+        errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ConstantTypeMismatchInSwitchCase,
+                                  "Case constant type mismatch with declaration");
+        // no skip
+    }
     // :
     if (!_cur().isToken(config::COLON))
     {
@@ -832,7 +852,7 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     }
     _printAndNext();
     // ＜表达式＞
-    parseExpression();
+    config::DataType exprDataType = parseExpression();
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -850,7 +870,7 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     }
     _printAndNext();
     // ＜情况表＞
-    parseCaseList(hasReturned, insideFuncAndType);
+    parseCaseList(hasReturned, insideFuncAndType, exprDataType);
     // ＜缺省＞
     parseDefault(hasReturned, insideFuncAndType);
     // }
@@ -2076,5 +2096,10 @@ void syntactic::Syntactic::_skipUntil(const std::unordered_set<config::TokenCode
     {
         _printAndNext();
     } while (wordset.find(_cur().getTkcode()) == wordset.end());
+}
+
+Token syntactic::Syntactic::_last()
+{
+    return cacheLast;
 }
 
