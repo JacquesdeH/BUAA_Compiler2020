@@ -2084,7 +2084,10 @@ config::DataType syntactic::Syntactic::parseFactor()
                 dim++;
             }
             // retDataType based on idenfr type
-            retDataType = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType();
+            if (symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
+                retDataType = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType();
+            else
+                retDataType = config::DATA_DEFAULT;
         }
     }
     // error
