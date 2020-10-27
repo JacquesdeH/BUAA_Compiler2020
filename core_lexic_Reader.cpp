@@ -4,11 +4,7 @@
 
 #include "core_lexic_Reader.h"
 
-#ifdef _WIN32
 #define DELIMITER '\n'
-#else
-#define DELIMITER '\r'
-#endif
 
 using std::getline;
 
