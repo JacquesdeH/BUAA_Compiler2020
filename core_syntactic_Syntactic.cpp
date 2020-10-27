@@ -1694,8 +1694,9 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
     }
     _printAndNext();
     // ＜值参数表＞
-    const vector<config::DataType> & _paramDataTypeList =
-            symbolManager->getInfoInAll(idenfr.getTkvalue()).queryParamDataTypeListOfFunction();
+    const vector<config::DataType> & _paramDataTypeList = (symbolManager->hasSymbolInAll(idenfr.getTkvalue())) ?
+                                                          symbolManager->getInfoInAll(idenfr.getTkvalue()).queryParamDataTypeListOfFunction() :
+                                                          vector<config::DataType>();
     parseParameterValueList(_paramDataTypeList);
     // )
     if (!_cur().isToken(config::RPARENT))
@@ -1739,8 +1740,9 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     }
     _printAndNext();
     // ＜值参数表＞
-    const vector<config::DataType> & _paramDataTypeList =
-            symbolManager->getInfoInAll(idenfr.getTkvalue()).queryParamDataTypeListOfFunction();
+    const vector<config::DataType> & _paramDataTypeList = (symbolManager->hasSymbolInAll(idenfr.getTkvalue())) ?
+                                                          symbolManager->getInfoInAll(idenfr.getTkvalue()).queryParamDataTypeListOfFunction() :
+                                                          vector<config::DataType>();
     parseParameterValueList(_paramDataTypeList);
     // )
     if (!_cur().isToken(config::RPARENT))
