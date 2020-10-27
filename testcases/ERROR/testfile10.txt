@@ -1,0 +1,18 @@
+int arr[3];
+int call(char tmp)
+{
+char calle = 'b';
+if ((callE) >= ('C'))
+    return (1);
+else
+    return (arr[arr[1]]);
+}
+
+void main(){
+    char a='1';
+    call(a, a, a);
+}
+
+
+
+
