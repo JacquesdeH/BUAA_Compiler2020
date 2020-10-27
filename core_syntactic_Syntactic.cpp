@@ -2151,7 +2151,7 @@ Token syntactic::Syntactic::_last()
 bool syntactic::Syntactic::_isExprFirst()
 {
     std::unordered_set<config::TokenCode> targetTokens = {
-            config::PLUS, config::MINU, config::IDENFR, config::INTCON, config::CHARCON};
+            config::PLUS, config::MINU, config::IDENFR, config::INTCON, config::CHARCON, config::LPARENT};
     return targetTokens.find(_cur().getTkcode()) != targetTokens.end();
 }
 

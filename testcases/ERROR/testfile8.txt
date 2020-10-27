@@ -1,0 +1,15 @@
+
+int call(char tmp)
+{
+char call = 'b';
+return ((call));
+}
+
+void main(){
+    char a=1;
+  call((a));
+}
+
+
+
+
