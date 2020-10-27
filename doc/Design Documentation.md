@@ -619,6 +619,51 @@ class Info
 | ConstantTypeMismatchInSwitchCase            | None                                       |
 | ExpectDefaultStatement                      | None                                       |
 
+#### 具体实现
+
+将错误处理模块进行封装单独管理，由于词法分析和语法分析分为两遍，首先进行词法分析再进行语法分析，错误输出的顺序不能得到保证，因此实现上采用优先队列管理每一个错误ErrorEntry，并对自定义的ErrorEntry进行以行为关键字的有序维护。
+
+以下是实现的ErrorEntry和ErrorManager的接口：
+
+```cpp
+class ErrorEntry
+    {
+    private:
+        int row;
+        int column;
+        config::ErrorType type;
+        std::string description;
+
+    public:
+        ErrorEntry(const int & _row, const int & _column, const config::ErrorType & _type, const std::string & _description);
+        bool operator < (const ErrorEntry & other) const;
+        bool operator > (const ErrorEntry & other) const;
+        std::string to_string(const bool & detailed = false);
+    };
+
+class ErrorManager
+    {
+    private:
+        const bool enable_print_tuple = config::PRINT_ERROR_TUPLE;
+        const bool enable_detailed_info = config::PRINT_DETAILED_ERROR;
+        std::priority_queue<ErrorEntry, std::vector<ErrorEntry>, std::greater<ErrorEntry> > errors;
+        bool useCout;
+        std::ofstream fsOut;
+        bool watch;
+
+    public:
+        ErrorManager();
+        ErrorManager(const std::string & fOut);
+        ~ErrorManager();
+
+    public:
+        void insertError(const int & row, const int & column, const config::ErrorType & type, const std::string & description);
+        void printAllErrors();
+        void watchErrors();
+        bool queryWatch() const;
+    };
+```
+
 
 
 ## 优化方案
