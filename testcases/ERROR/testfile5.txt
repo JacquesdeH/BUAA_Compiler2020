@@ -1,0 +1,19 @@
+void fun(int x){
+  call();
+}
+
+int call()
+{
+char call = 'b';
+return ((call));
+}
+
+void main(){
+    char a=1;
+  fun(a);
+  printf(x);
+}
+
+
+
+

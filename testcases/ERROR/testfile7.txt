@@ -1,0 +1,25 @@
+char Func(int n)
+{
+    int k;
+    if (n == 1)
+    {
+        scanf(k);
+    }
+    for (k=1; k<=n; k=k+1)
+    {
+        if (k+1==('*'))
+        {
+            {
+                k = k - k*k+('1');
+            }
+            {return ((funC(k)));}
+        }
+
+    }
+    return ('+');
+}
+
+void maiN()
+{
+    printf(Func(233+9*7));
+}

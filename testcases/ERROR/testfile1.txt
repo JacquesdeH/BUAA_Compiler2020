@@ -1,0 +1,29 @@
+const int const1 = 1, const2 = -100;
+const char const3 = '?';
+int change1;
+char change3;
+int array[15[2];
+int gets1(int var1,int var2){
+   change1 = var1 + var2          return (change1);
+}
+void haha(char haha
+{
+    int newint = 3;
+    newint = array[3]['a'];
+    return ;
+}
+void main(){
+   int tarr[3][4] = {
+   {2,3,4,5},
+   {3,4,5,6},
+   {4,5,'6',7}
+   }
+   change1 = 10;
+   scanf(const1);
+   switch (change1+'1')
+   {
+    case '1': printf(change1);
+   }
+   printf("Hello World");
+   printf(gets1(10, 20);
+}
