@@ -20,7 +20,7 @@
 
 特别地，**整个工程项目的参数控制通过include-config.h进行控制，便于管理和部分功能的开关**。
 
-<img src="image/Structure.png" style="zoom: 60%;" />
+<img src="image/Structure.png" style="zoom: 80%;" />
 
 ## 各部分设计
 
@@ -392,9 +392,15 @@ pass
 
 #### 动态子表结构
 
-进入子结构（类C语言中目前只有函数和主函数需要）建立新的子表，执行定位和重定位操作，查表按照从里到外的顺序查表。
+##### 设计思路
 
-在编码后的具体实现上，通过SymbolManager类对整个符号表进行管理，用变量curTable标出当前所在子表层次，便于进行动态管理，如下为符号表的整体接口情况：
+进入子结构（类C语言中目前只有函数和主函数需要）建立新的子表，执行定位和重定位操作，查表按照从里到外的顺序查表，但是为了**实现更普遍的情况**，此**编译器的符号表采用支持分程序结构的符号表**设计思路，按照子表结构进行管理；查找时从里到外的作用域逐渐查找，直到找到标识符或者发现当前查询的标识符未定义为止；插入时总是插入到当前最内层的作用域对应的子表中。
+
+##### 编码实现
+
+通过SymbolManager类对整个符号表进行管理，用变量curTable标出当前所在子表层次，便于进行动态管理；而定位和重定位操作通过$pushNewScope()$和$popCurScope()$实现，分别为建立一个作用域和删除最里层作用域。
+
+如下为符号表的整体接口情况：
 
 ```cpp
 class SymbolManager
@@ -409,14 +415,21 @@ class SymbolManager
     public:
         bool hasSymbolInScope(const string& symbol) const;
         bool hasSymbolInAll(const string& symbol) const;
-        Info getInfoInAll(const string& symbol) const;
+        Info& getInfoInAll(const string& symbol) const;
+        Info& getInfoFromLastScope(const string& symbol) const;
         bool declareSymbol(const string& symbol, const Info& info);
+        void pushNewScope();
+        void popCurScope();
     };
 ```
 
 #### 表内元素管理
 
-使用挂链法的哈希表进行子表内部结构管理，通过标识符作为Key，能够对应唯一的属性信息Value。
+##### 设计思路
+
+对于每一个子表，使用挂链法的哈希表进行子表内部结构管理，以标识符作为Key，能够找到对应唯一的属性信息Value；每一次查找当前表内有无元素时，通过hash函数映射到bucket编号上， 查询目标bucket对应的链表中有无带查找元素，如果没有便是未找到；插入时同理。
+
+##### 编码实现
 
 在具体实现上，通过Table类进行子表管理，如下为相应接口：
 
@@ -431,24 +444,31 @@ class Table
 
     public:
         bool hasKey(const string& _key) const;
-        Info getInfo(const string& key) const;
+        Info& getInfo(const string& key) const;
         bool insertRecord(const string& key, const Info& info);
     };
 ```
 
 #### 属性信息
 
-| 属性名称             | 属性意义                                                  |
-| -------------------- | --------------------------------------------------------- |
-| $symbolType$         | 区别CONST，VAR，FUNCTION三种符号类型                      |
-| $dataType$           | 区别INT，CHAR，VOID三种取值类型                           |
-| $arrayDim$           | 如果是非函数类型，表示数组维数，其中非数组标识为维数dim=0 |
-| $dimLimit_{0,1}$     | 用于表示数组定义时相应维度定义的长度                      |
-| $declareRow$         | 标识符定义的时候对应的行数                                |
-| $referRows_{\cdots}$ | 表示标识符引用的时候对应的行数列表                        |
-| $address$            | 用于表示分配的内存地址，数组则是内存中的数组首地址        |
+##### 设计思路
 
-具体实现上，由于符号表Entry属性的填充是动态更新的，添加两个控制标签$ctrlDeclared$和$ctrlAddressed$分别表示该标识符是否已经完善了定义、该标识符是否已经进行了地址分配，并通过assert进行保护，避免意想不到的情况出现，声明结构如下：
+通过名字可以找到唯一的一个属性信息结构，其中记录了如下字段和相应表示的信息：
+
+| 属性名称                | 属性意义                                                     |
+| ----------------------- | ------------------------------------------------------------ |
+| $symbolType$            | 区别CONST，VAR，FUNCTION三种符号类型                         |
+| $dataType$              | 区别INT，CHAR，VOID三种取值类型                              |
+| $arrayDim$              | 如果是非函数类型，表示数组维数，其中非数组标识为维数dim=0    |
+| $dimLimit_{0,1}$        | 用于表示数组定义时相应维度定义的长度，即数组模板信息         |
+| $declareRow$            | 标识符定义的时候对应的行数                                   |
+| $referRows_{\cdots}$    | 表示标识符引用的时候对应的行数列表                           |
+| $funcParamDataTypeList$ | 如果当前信息记录的是函数，那么还需要记录函数参数表的个数和相应参数类型向量，个数通过向量长度确定 |
+| $address$               | 用于表示分配的内存地址，数组则是内存中的数组首地址           |
+
+##### 编码实现
+
+由于符号表Entry属性的填充是**动态更新**的，很多信息需要回填，在实现上添加三个控制标签$ctrlDeclared$和$ctrlAddressed$和$ctrlParamListFilled$分别表示该标识符**是否已经完善了定义、该标识符是否已经进行了地址分配、该标识符是否回填了参数表的信息**，并通过手工assert断言进行保护，避免意想不到的情况出现，声明结构如下：
 
 ```cpp
 class Info
@@ -460,29 +480,146 @@ class Info
         uint dimLimit[2];
         uint declareRow;
         vector<uint> referRows;
+        vector<config::DataType> funcParamDataTypeList;
         uint address;
 
     private:
         bool ctrlDeclared;
+        bool ctrlParamListFilled;
         bool ctrlAddressed;
 
     public:
         Info();
         Info(const config::SymbolType &_symbolType, const config::DataType &_dataType, const uint &_declareRow,
-             const uint &_arrayDim = 0, const uint &_dim0 = 0, const uint &_dim1 = 0);
+             const uint &_arrayDim = 0, const uint &_dim0 = 0, const uint &_dim1 = 0,
+             const std::initializer_list<config::DataType> & _funcParamDataTypeList = {});
 
     public:
         void logReference(const uint& _row);
         void logAddress(const uint& _address);
+        void logFuncParam(const vector<config::DataType> &_paramList);
         bool checkDeclared() const;
         bool checkAddressed() const;
         void assertDeclared() const;
         void assertAddressed() const;
+        void assertParamFilled() const;
         bool isFunction() const;
         bool isValuedFunction() const;
         bool isVoidFunction() const;
+        bool isSymbolTypeOf(const config::SymbolType & _symbolType) const;
+        bool isDataTypeOf(const config::DataType & _dataType) const;
+        config::DataType queryDataType() const;
+        bool isDimOf(const int & _dims, const int & _dimLim0 = 0, const int & _dimLim1 = 0) const;
+        int queryFuncParamCount() const;
+        bool checkFuncParamMatchAt(const int & _index, const config::DataType & _dataType);
+        vector<config::DataType> queryParamDataTypeListOfFunction() const;
     };
 ```
+
+### 错误处理设计
+
+#### 错误细分设计表
+
+<table>
+    <tr><th>Code</th><th>ErrorType</th><th>Description</th><th></th></tr>
+    <tr><td rowspan=4>A</td><td>IllegalLetterChar</td><td>字符常量中出现非法字符</td></tr>
+    <tr><td>IllegalLetterString</td><td>字符串中出现非法字符</td></tr>
+    <tr><td>EmptyCharOrString</td><td>字符常量或字符串中为空</td></tr>
+    <tr><td>CharLengthError</td><td>字符常量单引号中的字符个数超过1</td></tr>
+    <tr><td rowspan=1>B</td><td>DuplicatedName</td><td>标识符重复定义</td></tr>
+    <tr><td rowspan=1>C</td><td>UndefinedName</td><td>引用未定义的标识符</td></tr>
+    <tr><td rowspan=1>D</td><td>FunctionParamCountMismatch</td><td>函数调用中传入参数的个数与函数模板中的个数不匹配</td></tr>
+    <tr><td rowspan=1>E</td><td>FunctionParamTypeMismatch</td><td>函数调用中传入参数的类型存在与模板不匹配的情况</td></tr>
+    <tr><td rowspan=1>F</td><td>IllegalTypeInCondition</td><td>条件中比较的两端类型存在非int的情况</td></tr>
+    <tr><td rowspan=2>G</td><td>VoidFunctionWithParents</td><td>无返回值函数存在return ();的语句</td></tr>
+    <tr><td>VoidFunctionWithValue</td><td>无返回值函数存在return(表达式);的语句</td></tr>
+    <tr><td rowspan=4>H</td><td>ValuedFunctionWithoutReturn</td><td>有返回值函数中不存在return语句</td></tr>
+    <tr><td>ValuedFunctionWithVoid</td><td>有返回值函数中存在return;的语句</td></tr>
+    <tr><td>ValuedFunctionWithParents</td><td>有返回值函数中存在return();的语句</td></tr>
+    <tr><td>ValuedFunctionReturnTypeMismatch</td><td>有返回值函数中存在返回值类型不匹配的return语句</td></tr>
+    <tr><td rowspan=1>I</td><td>ArraySubIndexTypeNotInt</td><td>数组引用时下标不为int类型</td></tr>
+    <tr><td rowspan=2>J</td><td>ModifyConstWithAssign</td><td>赋值语句中对常量标识符进行修改</td></tr>
+    <tr><td>ModifyConstWithScanf</td><td>读语句中对常量标识符进行修改</td></tr>
+    <tr><td rowspan=3>K</td><td>ExpectSemicnInStatementEnd</td><td>在七种语句结尾缺少;</td></tr>
+    <tr><td>ExpectSemicnInFor</td><td>在for语句圆括号内缺少;</td></tr>
+    <tr><td>ExpectSemicnAtConstVarDeclarationEnd</td><td>在常量定义或变量定义末尾处缺少;</td></tr>
+    <tr><td rowspan=11>L</td><td>ExpectRParentAtFunctionCall</td><td>函数调用处缺少)</td></tr>
+    <tr><td>ExpectRParentAtFunctionDeclaration</td><td>函数定义处缺少)</td></tr>
+    <tr><td>ExpectRParentAtMain</td><td>Main函数定义处缺少)</td></tr>
+    <tr><td>ExpectRParentAtExpression</td><td>在带括号表达式缺少中缺少右端的;</td></tr>
+    <tr><td>ExpectRParentAtIf</td><td>在if括号内缺少右端;</td></tr>
+    <tr><td>ExpectRParentAtWhile</td><td>在while括号内缺少右端;</td></tr>
+    <tr><td>ExpectRParentAtFor</td><td>在for括号内缺少右端;</td></tr>
+    <tr><td>ExpectRParentAtSwitch</td><td>在switch括号内缺少右端;</td></tr>
+    <tr><td>ExpectRParentAtScanf</td><td>在scanf括号内缺少右端;</td></tr>
+    <tr><td>ExpectRParentAtPrintf</td><td>在printf括号内缺少右端;</td></tr>
+    <tr><td>ExpectRParentAtReturn</td><td>在return括号内缺少右端;</td></tr>
+    <tr><td rowspan=3>M</td><td>ExpectRBrackAtArrayDeclaration</td><td>在数组定义时缺少某个右端]</td></tr>
+    <tr><td>ExpectRBrackAtArrayUseInFactor</td><td>因子中在数组引用时缺少某个右端]</td></tr>
+    <tr><td>ExpectRBrackAtArrayUseInAssignLeft</td><td>在赋值语句左端部分引用数组时缺少]</td></tr>
+    <tr><td rowspan=1>N</td><td>ArrayInitMismatchWithTemplate</td><td>数组定义及初始化时初始化内容任一维度的元素个数不匹配或缺少某一维的元素</td></tr>
+    <tr><td rowspan=2>O</td><td>ConstantTypeMismatchInVarDeclarationAndInit</td><td>变量定义及初始化中初始化的类型与赋值右端不匹配</td></tr>
+    <tr><td>ConstantTypeMismatchInSwitchCase</td><td>switch选择的类型与case中常量类型不一致</td></tr>
+    <tr><td rowspan=1>P</td><td>ExpectDefaultStatement</td><td>缺少缺省语句</td></tr>
+</table>
+
+#### 跳读设计表
+
+跳读分为两个层次，分别为**词法分析时产生错误**和**语法分析阶段产生错误**，两者的跳读分别为字符级别的和Token级别的。
+
+下面用None表示不需要跳读的情况。
+
+##### 词法分析跳读分析表
+
+| ErrorType           | SkipUntil (excusive of common stop chars) |
+| ------------------- | ----------------------------------------- |
+| IllegalLetterChar   | \'                                        |
+| IllegalLetterString | \"                                        |
+| EmptyCharOrString   | None                                      |
+| CharLengthError     | \'                                        |
+
+##### 语法分析跳读分析表
+
+| ErrorType                                   | SkipUntil (exclusive of common stop words) |
+| ------------------------------------------- | ------------------------------------------ |
+| DuplicatedName                              | None                                       |
+| UndefinedName                               | None                                       |
+| FunctionParamCountMismatch(more)            | COMMA, RPARENT                             |
+| FunctionParamCountMismatch(less)            | None                                       |
+| FunctionParamTypeMismatch                   | COMMA, RPARENT                             |
+| IllegalTypeInCondition                      | None                                       |
+| VoidFunctionWithParents                     | None                                       |
+| VoidFunctionWithValue                       | None                                       |
+| ValuedFunctionWithoutReturn                 | None                                       |
+| ValuedFunctionWithVoid                      | None                                       |
+| ValuedFunctionWithParents                   | None                                       |
+| ValuedFunctionReturnTypeMismatch            | None                                       |
+| ArraySubIndexTypeNotInt                     | RBRACK                                     |
+| ModifyConstWithAssign                       | None                                       |
+| ModifyConstWithScanf                        | None                                       |
+| ExpectSemicnInStatementEnd                  | None                                       |
+| ExpectSemicnInFor                           | None                                       |
+| ExpectSemicnAtConstVarDeclarationEnd        | None                                       |
+| ExpectRParentAtFunctionCall                 | None                                       |
+| ExpectRParentAtFunctionDeclaration          | None                                       |
+| ExpectRParentAtMain                         | None                                       |
+| ExpectRParentAtExpression                   | None                                       |
+| ExpectRParentAtExpression                   | None                                       |
+| ExpectRParentAtWhile                        | None                                       |
+| ExpectRParentAtFor                          | None                                       |
+| ExpectRParentAtSwitch                       | None                                       |
+| ExpectRParentAtScanf                        | None                                       |
+| ExpectRParentAtPrintf                       | None                                       |
+| ExpectRParentAtReturn                       | None                                       |
+| ExpectRBrackAtArrayDeclaration              | None                                       |
+| ExpectRBrackAtArrayUseInFactor              | None                                       |
+| ExpectRBrackAtArrayUseInAssignLeft          | None                                       |
+| ArrayInitMismatchWithTemplate               | SEMICN                                     |
+| ConstantTypeMismatchInVarDeclarationAndInit | None                                       |
+| ConstantTypeMismatchInSwitchCase            | None                                       |
+| ExpectDefaultStatement                      | None                                       |
+
+
 
 ## 优化方案
 

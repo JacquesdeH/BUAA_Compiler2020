@@ -1390,7 +1390,7 @@ void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType
             }
             // ＜表达式＞
             config::DataType curDataType = parseExpression();
-            // deal with new value
+            // deal with new value, >= coz ++ is guaranteed
             if (curIndexOfParam >= _paramDataTypeList.size())
             {
                 // ErrorManager
@@ -1409,8 +1409,8 @@ void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType
             curIndexOfParam++;
         } while (_cur().isToken(config::COMMA));
     }
-    // possibly param count is less
-    if (curIndexOfParam != _paramDataTypeList.size())
+    // possibly param count is less, with < is better to avoid multiple error
+    if (curIndexOfParam < _paramDataTypeList.size())
     {
         // ErrorManager
         errorManager->insertError(_cur().getRow(), _cur().getColumn(), config::ErrorType::FunctionParamCountMismatch,
