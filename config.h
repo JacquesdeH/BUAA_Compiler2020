@@ -146,6 +146,23 @@ namespace config
 
     const std::unordered_set<char> stopwordsChar = {EOF, '\r', '\n'};
     const std::unordered_set<TokenCode> stopwordsToken = {SEMICN};
+
+    enum IRCode
+    {
+        ADD_IR, MINUS_IR, MULT_IR, DIV_IR,
+        LOAD_IR, STORE_IR,
+        MOVE_IR,
+        BEQ_IR, BNE_IR, BLE_IR, BLT_IR,
+        FUNC_IR, FUNCEND_IR,
+        PARA_IR, PUSH_IR, CALL_IR, RET_IR, MOVERET_IR,
+        READ_IR, WRITE_IR, STRING_IR,
+        SETLABEL_IR, EXIT_IR,
+        CONST_IR, VAR_IR
+    };
+
+    const std::string tempHead = ".Temp__";
+    const std::string labelHead = "__Label__";
+    const std::string stringHead = "__String__";
 }
 
 #endif //PROJECT_CONFIG_H

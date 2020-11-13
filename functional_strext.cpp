@@ -6,6 +6,7 @@
 
 #include <cctype>
 #include <algorithm>
+#include <iostream>
 
 #include "functional_strext.h"
 #include "config.h"
@@ -37,4 +38,34 @@ string int2str(const int &_int)
     char buffer[config::BUFFER_SIZE];
     sprintf(buffer, "%d", _int);
     return string(buffer);
+}
+
+string toString(const config::DataType &type)
+{
+    string ret;
+    switch (type)
+    {
+        case config::DataType::CHAR:
+            ret = "char";
+            break;
+        case config::DataType::INT:
+            ret = "int";
+            break;
+        case config::DataType::VOID:
+            ret = "void";
+            break;
+        default:
+            std::cerr << "Unexpected dataType in toString!" << std::endl;
+    }
+    return ret;
+}
+
+string toString(const int &number)
+{
+    return std::to_string(number);
+}
+
+string toString(const char &character)
+{
+    return std::to_string(character);
 }

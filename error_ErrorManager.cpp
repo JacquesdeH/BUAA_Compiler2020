@@ -4,14 +4,16 @@
 
 #include "error_ErrorManager.h"
 
-error::ErrorManager::ErrorManager()
+error::ErrorManager::ErrorManager(semantic::Semantic* _semantic)
 {
     this->useCout = true;
+    this->semanticGenerator = _semantic;
 }
 
-error::ErrorManager::ErrorManager(const std::string &fOut)
+error::ErrorManager::ErrorManager(semantic::Semantic* _semantic, const std::string &fOut)
 {
     this->useCout = false;
+    this->semanticGenerator = _semantic;
     if (enable_print_tuple)
         this->fsOut.open(fOut);
 }
@@ -27,6 +29,7 @@ void error::ErrorManager::insertError(const int &row, const int &column, const c
 {
     watch = true;
     errors.push(ErrorEntry(row, column, type, description));
+    this->semanticGenerator->error();
 }
 
 void error::ErrorManager::printAllErrors()

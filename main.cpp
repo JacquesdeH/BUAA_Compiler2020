@@ -8,10 +8,11 @@ int main()
 {
     PeekableQueue queue;
     symbol::SymbolManager symbolManager;
-    error::ErrorManager errorManager("error.txt");
+    semantic::Semantic semanticGenerator;
+    error::ErrorManager errorManager(&semanticGenerator, "error.txt");
 
     lexic::Lexic instance_Lexic("testfile.txt", "output.txt", &queue, &errorManager);
-    syntactic::Syntactic instance_Syntactic("output.txt", &queue, &symbolManager, &errorManager);
+    syntactic::Syntactic instance_Syntactic("output.txt", &queue, &symbolManager, &errorManager, &semanticGenerator);
 
     instance_Lexic.run();
     instance_Syntactic.parseProgram();

@@ -7,13 +7,15 @@
 #include "core_syntactic_Syntactic.h"
 #include "functional_strext.h"
 
-syntactic::Syntactic::Syntactic(const string &fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager, error::ErrorManager* _errorManager)
+syntactic::Syntactic::Syntactic(const string &fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager,
+                                error::ErrorManager* _errorManager, semantic::Semantic* _semanticGenerator)
 {
     this->cacheLast = Token(config::EMPTY);
     this->printer = new Printer(fOut);
     this->queue = _queue;
     this->symbolManager = _symbolManager;
     this->errorManager = _errorManager;
+    this->semanticGenerator = _semanticGenerator;
 }
 
 syntactic::Syntactic::~Syntactic()
@@ -158,6 +160,7 @@ void syntactic::Syntactic::parseConstDeclaration()
         {
             parseInteger(intValue);
         }
+        int unifiedValue = (dataType == config::DataType::CHAR) ? (int) charValue : intValue;
         // SymbolManager
         if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
         {
@@ -167,8 +170,12 @@ void syntactic::Syntactic::parseConstDeclaration()
             // no skip
         }
         else
+        {
             symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
                     config::SymbolType::CONST, dataType, idenfr.getRow()));
+            semanticGenerator->addMIR(config::CONST_IR, idenfr.getTkvalue(), toString(dataType), toString(1));
+            semanticGenerator->addMIR(config::MOVE_IR, idenfr.getTkvalue(), toString(unifiedValue));
+        }
         isFirst = false;
     } while (_cur().isToken(config::COMMA));
 
@@ -264,6 +271,7 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
         Token idenfr;
         int dim = 0;
         int dimLim[2] = {-1, -1};
+        int totElements = 1;
         // ,
         if (!isFirst)
         {
@@ -302,6 +310,7 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
             }
             else
                 parseUnsigned(dimLim[dim]);
+            totElements *= dimLim[dim];
             // ]
             if (!_cur().isToken(config::RBRACK))
             {
@@ -324,8 +333,11 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
             // no skip
         }
         else
+        {
             symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
                     config::SymbolType::VAR, dataType, idenfr.getRow(), dim, dimLim[0], dimLim[1]));
+            semanticGenerator->addMIR(config::VAR_IR, idenfr.getTkvalue(), toString(dataType), toString(totElements));
+        }
         isFirst = false;
     } while (_cur().isToken(config::COMMA));
 
@@ -353,6 +365,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
     // '['＜无符号整数＞']'
     int dim = 0;
     int dimLim[2] = {-1, -1};
+    int totElements = 1;
     while (_cur().isToken(config::LBRACK))
     {
         // dim limit up to 2-dim arrays
@@ -374,6 +387,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
         }
         else
             parseUnsigned(dimLim[dim]);
+        totElements *= dimLim[dim];
         // ]
         if (!_cur().isToken(config::RBRACK))
         {
@@ -619,8 +633,16 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
         // no skip
     }
     else
+    {
         symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
                 config::SymbolType::VAR, dataType, idenfr.getRow(), dim, dimLim[0], dimLim[1]));
+        semanticGenerator->addMIR(config::IRCode::VAR_IR, idenfr.getTkvalue(), toString(dataType), toString(totElements));
+        for (int idx = 0; idx < params.size(); idx++)
+        {
+            const int _value = params[idx];
+            semanticGenerator->addMIR(config::IRCode::STORE_IR, toString(_value), idenfr.getTkvalue(), toString(idx));
+        }
+    }
     printer->printComponent("变量定义及初始化");
 }
 
@@ -785,6 +807,12 @@ void syntactic::Syntactic::parseReadStatement()
     }
     else
         _printAndNext();
+    // semantic
+    if (semanticGenerator->noError())
+    {
+        semanticGenerator->addMIR(config::READ_IR, idenfr.getTkvalue(),
+                                  toString(symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType()));
+    }
 
     printer->printComponent("读语句");
 }
@@ -805,23 +833,32 @@ void syntactic::Syntactic::parsePrintStatement()
     _printAndNext();
     // ＜字符串＞,＜表达式＞ | ＜字符串＞ | ＜表达式＞ by token 1 with STRCON
     string _str;
+    bool hasString = false;
+    bool hasExpr = false;
+    string strName;
+    string exprTemp;
+    config::DataType dataType;
     if (_cur().isToken(config::STRCON))
     {
         // ＜字符串＞
         parseString(_str);
+        hasString = true;
+        strName = semanticGenerator->genString(_str);
         // ,＜表达式＞
         if (_cur().isToken(config::COMMA))
         {
             // ,
             _printAndNext();
             // ＜表达式＞
-            parseExpression();
+            dataType = parseExpression(exprTemp);
+            hasExpr = true;
         }
     }
     else
     {
         // ＜表达式＞
-        parseExpression();
+        dataType = parseExpression(exprTemp);
+        hasExpr = true;
     }
     // )
     if (!_cur().isToken(config::RPARENT))
@@ -833,6 +870,19 @@ void syntactic::Syntactic::parsePrintStatement()
     }
     else
         _printAndNext();
+    // semantic
+    if (semanticGenerator->noError())
+    {
+        if (hasString)
+        {
+            semanticGenerator->addMIR(config::STRING_IR, strName);
+        }
+        if (hasExpr)
+        {
+            semanticGenerator->addMIR(config::WRITE_IR, exprTemp, toString(dataType));
+        }
+        semanticGenerator->addMIR(config::WRITE_IR, toString((int) '\n'), toString(config::DataType::CHAR));
+    }
 
     printer->printComponent("写语句");
 }
@@ -852,7 +902,8 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     }
     _printAndNext();
     // ＜表达式＞
-    config::DataType exprDataType = parseExpression();
+    string exprTemp;
+    config::DataType exprDataType = parseExpression(exprTemp);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -870,6 +921,7 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     }
     _printAndNext();
     // ＜情况表＞
+    // TODO: semantic
     parseCaseList(hasReturned, insideFuncAndType, exprDataType);
     // ＜缺省＞
     if (!_cur().isToken(config::DEFAULTTK))
@@ -927,7 +979,8 @@ void syntactic::Syntactic::parseReturnStatement(bool & hasReturned, config::Data
         // ＜表达式＞
         else
         {
-            config::DataType exprDataType = parseExpression();
+            string exprTemp;
+            config::DataType exprDataType = parseExpression(exprTemp);
             if (config::isValuedDataType(insideFuncAndType))
             {
                 if (exprDataType != insideFuncAndType)
@@ -968,6 +1021,7 @@ void syntactic::Syntactic::parseReturnStatement(bool & hasReturned, config::Data
             // no skip
         }
     }
+    // TODO: semantic
 
     printer->printComponent("返回语句");
     hasReturned = true;
@@ -1012,7 +1066,8 @@ void syntactic::Syntactic::parseAssignStatement()
         // [
         _printAndNext();
         // ＜表达式＞
-        config::DataType exprDataType = parseExpression();
+        string exprTemp;
+        config::DataType exprDataType = parseExpression(exprTemp);
         if (exprDataType != config::DataType::INT)
         {
             // ErrorManager
@@ -1030,6 +1085,7 @@ void syntactic::Syntactic::parseAssignStatement()
         }
         else
             _printAndNext();
+        // TODO: semantic array assign
         // increase dim
         dim++;
     }
@@ -1041,7 +1097,18 @@ void syntactic::Syntactic::parseAssignStatement()
     }
     _printAndNext();
     // ＜表达式＞
-    parseExpression();
+    string exprR;
+    parseExpression(exprR);
+    // semantic
+    if (dim == 0)
+    {
+        // single var
+        semanticGenerator->addMIR(config::MOVE_IR, idenfr.getTkvalue(), exprR);
+    }
+    else
+    {
+        // TODO: semantic array use
+    }
 
     printer->printComponent("赋值语句");
 }
@@ -1168,7 +1235,8 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     }
     _printAndNext();
     // ＜表达式＞
-    parseExpression();
+    string exprTemp;
+    parseExpression(exprTemp);
     // ;
     if (!_cur().isToken(config::SEMICN))
     {
@@ -1267,7 +1335,8 @@ void syntactic::Syntactic::parseCondition()
     Token tmpToken;
     // ＜表达式＞
     tmpToken = _cur();
-    tmpDataType = parseExpression();
+    string exprTempL;
+    tmpDataType = parseExpression(exprTempL);
     if (tmpDataType != config::DataType::INT)
     {
         // ErrorManager with not INT of condition
@@ -1284,7 +1353,8 @@ void syntactic::Syntactic::parseCondition()
     _printAndNext();
     // ＜表达式＞
     tmpToken = _cur();
-    tmpDataType = parseExpression();
+    string exprTempR;
+    tmpDataType = parseExpression(exprTempR);
     if (tmpDataType != config::DataType::INT)
     {
         // ErrorManager with not INT of condition
@@ -1389,7 +1459,8 @@ void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType
                 _printAndNext();
             }
             // ＜表达式＞
-            config::DataType curDataType = parseExpression();
+            string exprTemp;
+            config::DataType curDataType = parseExpression(exprTemp);
             // deal with new value, >= coz ++ is guaranteed
             if (curIndexOfParam >= _paramDataTypeList.size())
             {
@@ -1474,6 +1545,9 @@ void syntactic::Syntactic::parseMainFunction()
     _printAndNext();
     // SymbolManager into a new scope
     symbolManager->pushNewScope();
+    // semantic
+    semanticGenerator->newProc();
+    semanticGenerator->addMIR(config::FUNC_IR, idenfr.getTkvalue(), toString(config::DataType::VOID));
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1501,6 +1575,8 @@ void syntactic::Syntactic::parseMainFunction()
     _printAndNext();
     // SymbolManager recover to original scope
     symbolManager->popCurScope();
+    // semantic
+    semanticGenerator->addMIR(config::FUNCEND_IR);
 
     printer->printComponent("主函数");
 }
@@ -1915,11 +1991,12 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
     printer->printComponent("语句");
 }
 
-config::DataType syntactic::Syntactic::parseExpression()
+config::DataType syntactic::Syntactic::parseExpression(string & temp)
 {
     bool hasError = false;
     config::DataType retDataType = config::DataType::CHAR;
     bool isFirst = true;
+    string sumTemp;
     do
     {
         // not a single term must be an int expr
@@ -1941,25 +2018,44 @@ config::DataType syntactic::Syntactic::parseExpression()
             hasError = true;
         }
         // ＜项＞
-        config::DataType termDataType = parseTerm();
+        string termTemp;
+        config::DataType termDataType = parseTerm(termTemp);
         // update if term is not a char
         if (termDataType == config::DataType::INT)
             retDataType = config::DataType::INT;
         else if (termDataType == config::DataType::DATA_DEFAULT)
             hasError = true;
         // deal with this term related expression
+        if (isFirst)
+        {
+            sumTemp = termTemp;
+            if (flag == -1)
+            {
+                sumTemp = semanticGenerator->genTemp();
+                semanticGenerator->addMIR(config::IRCode::MINUS_IR, sumTemp, toString(0), termTemp);
+            }
+        }
+        else
+        {
+            string newTemp = semanticGenerator->genTemp();
+            semanticGenerator->addMIR((flag==1) ? config::IRCode::ADD_IR : config::IRCode::MINUS_IR, newTemp, sumTemp, termTemp);
+            sumTemp = newTemp;
+        }
         isFirst = false;
     } while (_cur().isPlusMinusOp());
 
     printer->printComponent("表达式");
+    temp = sumTemp;
     return hasError ? config::DataType::DATA_DEFAULT : retDataType;
 }
 
-config::DataType syntactic::Syntactic::parseTerm()
+config::DataType syntactic::Syntactic::parseTerm(string & temp)
 {
     bool hasError = false;
     config::DataType retDataType = config::DataType::CHAR;
     bool isFirst = true;
+    string prodTemp;
+    bool isMultOp;
     do
     {
         // *|/
@@ -1970,26 +2066,39 @@ config::DataType syntactic::Syntactic::parseTerm()
                 // TODO: ErrorManager
                 hasError = true;
             }
+            isMultOp = _cur().isToken(config::TokenCode::MULT);
             _printAndNext();
             // with * and / must be an expr
             retDataType = config::DataType::INT;
         }
         // ＜因子＞
-        config::DataType factorDataType = parseFactor();
+        string factorTemp;
+        config::DataType factorDataType = parseFactor(factorTemp);
         // Factor is a int type
         if (factorDataType == config::DataType::INT)
             retDataType = config::DataType::INT;
         else if (factorDataType == config::DataType::DATA_DEFAULT)
             hasError = true;
         // deal with factor related term
+        if (isFirst)
+        {
+            prodTemp = factorTemp;
+        }
+        else
+        {
+            string newTemp = semanticGenerator->genTemp();
+            semanticGenerator->addMIR((isMultOp) ? config::IRCode::MULT_IR : config::IRCode::DIV_IR, newTemp, prodTemp, factorTemp);
+            prodTemp = newTemp;
+        }
         isFirst = false;
     } while (_cur().isMultDivOp());
 
     printer->printComponent("项");
+    temp = prodTemp;
     return hasError ? config::DataType::DATA_DEFAULT : retDataType;
 }
 
-config::DataType syntactic::Syntactic::parseFactor()
+config::DataType syntactic::Syntactic::parseFactor(string & temp)
 {
     bool hasError = false;
     config::DataType retDataType = config::DataType::DATA_DEFAULT;
@@ -1999,6 +2108,8 @@ config::DataType syntactic::Syntactic::parseFactor()
         // ＜字符＞
         char _ch = _cur().getTkvalue()[0];
         _printAndNext();
+        temp = semanticGenerator->genTemp();
+        semanticGenerator->addMIR(config::MOVE_IR, temp, toString((int) _ch));
         // CASE 1 of single CHARCON is a char
         retDataType = config::DataType::CHAR;
     }
@@ -2008,6 +2119,8 @@ config::DataType syntactic::Syntactic::parseFactor()
         // ＜整数＞
         int _int = 0;
         parseInteger(_int);
+        temp = semanticGenerator->genTemp();
+        semanticGenerator->addMIR(config::MOVE_IR, temp, toString(_int));
         // not a char for sure
         retDataType = config::DataType::INT;
     }
@@ -2017,7 +2130,8 @@ config::DataType syntactic::Syntactic::parseFactor()
         // (
         _printAndNext();
         // ＜表达式＞
-        config::DataType exprDataType = parseExpression();
+        string exprTemp;
+        config::DataType exprDataType = parseExpression(exprTemp);
         if (exprDataType == config::DataType::DATA_DEFAULT)
             hasError = true;
         // )
@@ -2031,6 +2145,7 @@ config::DataType syntactic::Syntactic::parseFactor()
         }
         else
             _printAndNext();
+        temp = exprTemp;
         // a recursive expr must be a int type
         retDataType = config::DataType::INT;
     }
@@ -2051,6 +2166,7 @@ config::DataType syntactic::Syntactic::parseFactor()
                 hasError = true;
             else
                 retDataType = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType();
+            // TODO: valued function related push moveret temp
         }
         // ＜标识符＞ ｜ ＜标识符＞'['＜表达式＞']' | ＜标识符＞'['＜表达式＞']''['＜表达式＞']'
         else
@@ -2085,7 +2201,8 @@ config::DataType syntactic::Syntactic::parseFactor()
                 // [
                 _printAndNext();
                 // ＜表达式＞
-                config::DataType exprDataType = parseExpression();
+                string exprTemp;
+                config::DataType exprDataType = parseExpression(exprTemp);
                 if (exprDataType == config::DataType::DATA_DEFAULT)
                     hasError = true;
                 if (exprDataType != config::DataType::INT)
@@ -2115,6 +2232,16 @@ config::DataType syntactic::Syntactic::parseFactor()
                 retDataType = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType();
             else
                 retDataType = config::DATA_DEFAULT;
+            // semantic
+            if (dim == 0)
+            {
+                temp = semanticGenerator->genTemp();
+                semanticGenerator->addMIR(config::MOVE_IR, temp, idenfr.getTkvalue());
+            }
+            else
+            {
+                // TODO: array use related
+            }
         }
     }
     // error

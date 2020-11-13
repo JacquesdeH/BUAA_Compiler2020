@@ -7,6 +7,8 @@
 
 #include <string>
 
+#include "config.h"
+
 using std::string;
 
 char toLower(const char& ch);
@@ -14,5 +16,8 @@ string toLower(const string& s);
 int str2int(const string& s);
 int char2int(const char& ch);
 string int2str(const int& _int);
+string toString(const config::DataType & type);
+string toString(const int & number);
+string toString(const char & character);
 
 #endif //PROJECT_FUNCTIONAL_STREXT_H

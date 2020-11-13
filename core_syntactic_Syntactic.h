@@ -9,6 +9,7 @@
 #include "core_syntactic_Printer.h"
 #include "symbol_SymbolManager.h"
 #include "error_ErrorManager.h"
+#include "Semantic.h"
 
 namespace syntactic
 {
@@ -20,9 +21,11 @@ namespace syntactic
         Printer* printer;
         symbol::SymbolManager* symbolManager;
         error::ErrorManager* errorManager;
+        semantic::Semantic* semanticGenerator;
 
     public:
-        Syntactic(const string& fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager, error::ErrorManager* _errorManager);
+        Syntactic(const string& fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager,
+                  error::ErrorManager* _errorManager, semantic::Semantic* _semanticGenerator);
         ~Syntactic();
 
     private:
@@ -63,9 +66,9 @@ namespace syntactic
         void parseSwitchStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
         void parseReturnStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
         // Expression
-        config::DataType parseExpression();
-        config::DataType parseTerm();
-        config::DataType parseFactor();
+        config::DataType parseExpression(string & temp);
+        config::DataType parseTerm(string & temp);
+        config::DataType parseFactor(string & temp);
         // Parameter
         vector<config::DataType> parseParameterDeclarationList();
         void parseParameterValueList(const vector<config::DataType> & _paramDataTypeList);

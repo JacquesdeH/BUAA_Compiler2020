@@ -10,6 +10,7 @@
 #include <fstream>
 
 #include "error_ErrorEntry.h"
+#include "Semantic.h"
 
 namespace error
 {
@@ -22,10 +23,11 @@ namespace error
         bool useCout;
         std::ofstream fsOut;
         bool watch;
+        semantic::Semantic* semanticGenerator;
 
     public:
-        ErrorManager();
-        ErrorManager(const std::string & fOut);
+        ErrorManager(semantic::Semantic* _semantic);
+        ErrorManager(semantic::Semantic* _semantic, const std::string & fOut);
         ~ErrorManager();
 
     public:
