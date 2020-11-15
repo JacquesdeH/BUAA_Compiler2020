@@ -3,7 +3,7 @@
 //
 
 #include "config.h"
-#include "Mips.h"
+#include "core_mips_Mips.h"
 
 mips::Mips::Mips()
 {

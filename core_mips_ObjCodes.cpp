@@ -2,7 +2,7 @@
 // Created by JacquesdeH on 2020/11/15.
 //
 
-#include "ObjCodes.h"
+#include "core_mips_ObjCodes.h"
 #include "config.h"
 
 mips::ObjCodes::ObjCodes()

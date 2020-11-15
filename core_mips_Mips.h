@@ -2,13 +2,13 @@
 // Created by JacquesdeH on 2020/11/15.
 //
 
-#ifndef PROJECT_MIPS_H
-#define PROJECT_MIPS_H
+#ifndef PROJECT_CORE_MIPS_MIPS_H
+#define PROJECT_CORE_MIPS_MIPS_H
 
 #include <vector>
 #include <string>
 
-#include "ObjCodes.h"
+#include "core_mips_ObjCodes.h"
 
 namespace mips
 {
@@ -26,4 +26,4 @@ namespace mips
 }
 
 
-#endif //PROJECT_MIPS_H
+#endif //PROJECT_CORE_MIPS_MIPS_H

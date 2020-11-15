@@ -2,8 +2,8 @@
 // Created by JacquesdeH on 2020/11/15.
 //
 
-#ifndef PROJECT_OBJCODES_H
-#define PROJECT_OBJCODES_H
+#ifndef PROJECT_CORE_MIPS_OBJCODES_H
+#define PROJECT_CORE_MIPS_OBJCODES_H
 
 #include <string>
 #include <vector>
@@ -26,4 +26,4 @@ namespace mips
 }
 
 
-#endif //PROJECT_OBJCODES_H
+#endif //PROJECT_CORE_MIPS_OBJCODES_H
