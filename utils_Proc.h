@@ -2,13 +2,13 @@
 // Created by JacquesdeH on 2020/11/11.
 //
 
-#ifndef PROJECT_PROC_H
-#define PROJECT_PROC_H
+#ifndef PROJECT_UTILS_PROC_H
+#define PROJECT_UTILS_PROC_H
 
 #include <vector>
 
-#include "Quad.h"
-#include "Block.h"
+#include "utils_Quad.h"
+#include "utils_Block.h"
 
 namespace inter
 {
@@ -28,4 +28,4 @@ namespace inter
 }
 
 
-#endif //PROJECT_PROC_H
+#endif //PROJECT_UTILS_PROC_H

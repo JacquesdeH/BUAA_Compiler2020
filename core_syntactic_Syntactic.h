@@ -9,7 +9,7 @@
 #include "core_syntactic_Printer.h"
 #include "symbol_SymbolManager.h"
 #include "error_ErrorManager.h"
-#include "Semantic.h"
+#include "core_semantic_Semantic.h"
 
 namespace syntactic
 {

@@ -2,12 +2,12 @@
 // Created by JacquesdeH on 2020/11/11.
 //
 
-#ifndef PROJECT_BLOCK_H
-#define PROJECT_BLOCK_H
+#ifndef PROJECT_UTILS_BLOCK_H
+#define PROJECT_UTILS_BLOCK_H
 
 #include <vector>
 
-#include "Quad.h"
+#include "utils_Quad.h"
 
 namespace inter
 {
@@ -25,4 +25,4 @@ namespace inter
 }
 
 
-#endif //PROJECT_BLOCK_H
+#endif //PROJECT_UTILS_BLOCK_H

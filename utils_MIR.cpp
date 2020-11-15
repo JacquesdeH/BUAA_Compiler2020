@@ -3,7 +3,7 @@
 //
 
 #include <iostream>
-#include "MIR.h"
+#include "utils_MIR.h"
 
 inter::MIR::MIR(const bool & _sealed)
 {

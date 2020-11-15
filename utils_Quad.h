@@ -2,8 +2,8 @@
 // Created by JacquesdeH on 2020/11/11.
 //
 
-#ifndef PROJECT_QUAD_H
-#define PROJECT_QUAD_H
+#ifndef PROJECT_UTILS_QUAD_H
+#define PROJECT_UTILS_QUAD_H
 
 #include "config.h"
 
@@ -25,4 +25,4 @@ namespace inter
 }
 
 
-#endif //PROJECT_QUAD_H
+#endif //PROJECT_UTILS_QUAD_H

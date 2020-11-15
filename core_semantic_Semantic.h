@@ -2,12 +2,12 @@
 // Created by JacquesdeH on 2020/11/11.
 //
 
-#ifndef PROJECT_SEMANTIC_H
-#define PROJECT_SEMANTIC_H
+#ifndef PROJECT_CORE_SEMANTIC_SEMANTIC_H
+#define PROJECT_CORE_SEMANTIC_SEMANTIC_H
 
 #include <string>
 
-#include "MIR.h"
+#include "utils_MIR.h"
 
 namespace semantic
 {
@@ -36,4 +36,4 @@ namespace semantic
 }
 
 
-#endif //PROJECT_SEMANTIC_H
+#endif //PROJECT_CORE_SEMANTIC_SEMANTIC_H

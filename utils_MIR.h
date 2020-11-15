@@ -2,15 +2,15 @@
 // Created by JacquesdeH on 2020/11/11.
 //
 
-#ifndef PROJECT_MIR_H
-#define PROJECT_MIR_H
+#ifndef PROJECT_UTILS_MIR_H
+#define PROJECT_UTILS_MIR_H
 
 #include <string>
 #include <vector>
 #include <map>
 
-#include "Proc.h"
-#include "Quad.h"
+#include "utils_Proc.h"
+#include "utils_Quad.h"
 
 namespace inter
 {
@@ -34,4 +34,4 @@ namespace inter
 }
 
 
-#endif //PROJECT_MIR_H
+#endif //PROJECT_UTILS_MIR_H

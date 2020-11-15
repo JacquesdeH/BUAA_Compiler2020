@@ -10,7 +10,7 @@
 #include <fstream>
 
 #include "error_ErrorEntry.h"
-#include "Semantic.h"
+#include "core_semantic_Semantic.h"
 
 namespace error
 {
