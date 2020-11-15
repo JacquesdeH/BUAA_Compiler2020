@@ -163,6 +163,10 @@ namespace config
     const std::string tempHead = ".Temp__";
     const std::string labelHead = "__Label__";
     const std::string stringHead = "__String__";
+
+    const std::string sep = "\t";
+
+    const std::vector<std::string> InitLocalRegs = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"};
 }
 
 #endif //PROJECT_CONFIG_H
