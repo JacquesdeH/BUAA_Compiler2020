@@ -32,8 +32,9 @@ namespace mips
     public:
         bool hasFree() const;
         void insertFree(const std::string & _reg);
-        std::string queryReg2Var(const std::string & _var);
-        std::string queryVar2Reg(const std::string & _reg);
+        std::string queryReg2Var(const std::string & _reg);
+        std::string queryVar2Reg(const std::string & _var);
+        bool hasVar(const std::string & _var) const;
         mips::ObjCodes allocReg(std::string & ret, const std::map<std::string, mips::SymbolInfo> & mipsTable,
                              const std::set<std::string> & excludeRegs = {});
         void markWriteBack(const std::string &_reg);

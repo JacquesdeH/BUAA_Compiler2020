@@ -27,24 +27,24 @@ void mips::LocalRegPool::insertFree(const string &_reg)
     this->freePool.push(_reg);
 }
 
-std::string mips::LocalRegPool::queryReg2Var(const string &_var)
+std::string mips::LocalRegPool::queryReg2Var(const string &_reg)
 {
-    if (regs2var.find(_var) == regs2var.end())
+    if (regs2var.find(_reg) == regs2var.end())
     {
         std::cerr << "Unable to find key in regs2var!" << std::endl;
         return "";
     }
-    return regs2var.at(_var);
+    return regs2var.at(_reg);
 }
 
-std::string mips::LocalRegPool::queryVar2Reg(const string &_reg)
+std::string mips::LocalRegPool::queryVar2Reg(const string &_var)
 {
-    if (var2regs.find(_reg) == var2regs.end())
+    if (var2regs.find(_var) == var2regs.end())
     {
         std::cerr << "Unable to find key in var2regs!" << std::endl;
         return "";
     }
-    return var2regs.at(_reg);
+    return var2regs.at(_var);
 }
 
 mips::ObjCodes mips::LocalRegPool::allocReg(std::string & ret, const std::map<std::string, mips::SymbolInfo> & mipsTable,
@@ -120,4 +120,9 @@ mips::ObjCodes mips::LocalRegPool::writeBack(const string &_reg, const std::map<
     int atomSize = mipsTable.at(_name).getAtomSize();
     ret.genCodeInsert(atomSize2Store(atomSize), _reg, "$sp", toString(memOff));
     return ret;
+}
+
+bool mips::LocalRegPool::hasVar(const string &_var) const
+{
+    return var2regs.find(_var) != var2regs.end();
 }

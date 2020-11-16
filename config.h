@@ -175,6 +175,7 @@ namespace config
     const std::string sep = "\t";
 
     const std::vector<std::string> InitLocalRegs = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"};
+    const std::string zeroReg = "$zero";
 }
 
 #endif //PROJECT_CONFIG_H

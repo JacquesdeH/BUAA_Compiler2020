@@ -60,10 +60,10 @@ void syntactic::Syntactic::parseProgram()
 {
     // [<常量说明>]
     if (_cur().isToken(config::CONSTTK))
-        parseConstIllustration();
+        parseConstIllustration(true);
     // [＜变量说明＞] by '(' at token 3
     if (!queue->peek(3).isToken(config::LPARENT))
-        parseVarIllustration();
+        parseVarIllustration(true);
     // {＜有返回值函数定义＞|＜无返回值函数定义＞} by MAINTK at 2
     while (!queue->peek(2).isToken(config::MAINTK))
     {
