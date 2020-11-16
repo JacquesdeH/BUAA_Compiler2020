@@ -160,11 +160,17 @@ namespace config
         CONST_IR, VAR_IR
     };
 
-    const std::string tempHead = ".Temp__";
+    const std::string tempHead = "__Temp__";
     const std::string labelHead = "__Label__";
     const std::string stringHead = "__String__";
     const std::string funcHead = "__Function__";
     const std::string globalHead = "__Global__";
+
+    bool isTemp(const std::string & _str);
+    bool isLabel(const std::string & _str);
+    bool isString(const std::string & _str);
+    bool isFunc(const std::string & _str);
+    bool isGlobal(const std::string & _str);
 
     const std::string sep = "\t";
 
