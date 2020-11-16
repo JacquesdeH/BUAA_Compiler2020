@@ -35,7 +35,7 @@ namespace inter
         const std::string &getOut() const;
         const std::string &getInl() const;
         const std::string &getInr() const;
-        mips::ObjCodes compile(mips::LocalRegPool & localRegPool, std::map<std::string, int> & memoryOffset) const;
+        mips::ObjCodes compile(mips::LocalRegPool & localRegPool, std::map<std::string, mips::SymbolInfo> & mipsTable) const;
     };
 }
 

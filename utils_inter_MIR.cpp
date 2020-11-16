@@ -74,9 +74,10 @@ mips::ObjCodes inter::MIR::compileStrings() const
 mips::ObjCodes inter::MIR::compileProcs() const
 {
     mips::ObjCodes ret;
+    std::map<std::string, mips::SymbolInfo> globalSymbols = getGlobalSymbols();
     for (const auto & procedure : procedures)
     {
-        mips::ObjCodes tmp = procedure.compile();
+        mips::ObjCodes tmp = procedure.compile(globalSymbols);
         ret.mergeCodes(tmp);
     }
     return ret;
@@ -146,4 +147,28 @@ void inter::MIR::declareGlobalChars(const std::string &_name, const int & _count
 void inter::MIR::declareGlobalInts(const std::string &_name, const int & _count, const std::vector<int> &_initValues)
 {
     this->globalInts[_name] = std::make_pair(_count, _initValues);
+}
+
+std::map<std::string, mips::SymbolInfo> inter::MIR::getGlobalSymbols() const
+{
+    std::map<std::string, mips::SymbolInfo> ret;
+
+    for (const auto & entry : globalChars)
+    {
+        const auto & _name = entry.first;
+        const auto & _pair = entry.second;
+        const auto & _count = _pair.first;
+        const auto & _initValues = _pair.second;
+        ret[_name] = mips::SymbolInfo(0, 1);
+    }
+    for (const auto & entry : globalInts)
+    {
+        const auto & _name = entry.first;
+        const auto & _pair = entry.second;
+        const auto & _count = _pair.first;
+        const auto & _initValues = _pair.second;
+        ret[_name] = mips::SymbolInfo(0, 4);
+    }
+
+    return ret;
 }

@@ -28,7 +28,7 @@ namespace inter
         void addQuad(const Quad & _quad);
         void buildBlocks();
         std::vector<inter::Block> queryBlocks();
-        mips::ObjCodes compile() const;
+        mips::ObjCodes compile(const std::map<std::string, mips::SymbolInfo> & globalSymbols) const;
     };
 }
 

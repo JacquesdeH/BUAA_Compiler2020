@@ -8,7 +8,11 @@
 #include <queue>
 #include <string>
 #include <set>
+#include <map>
 #include <initializer_list>
+
+#include "core_mips_ObjCodes.h"
+#include "SymbolInfo.h"
 
 namespace mips
 {
@@ -17,6 +21,7 @@ namespace mips
     private:
         std::queue <std::string> freePool;
         std::queue <std::string> allocPool;
+        std::set <std::string> writebackRegs;
         std::unordered_map<std::string, std::string> regs2var;
         std::unordered_map<std::string, std::string> var2regs;
 
@@ -28,7 +33,11 @@ namespace mips
         void insertFree(const std::string & _reg);
         std::string queryReg2Var(const std::string & _var);
         std::string queryVar2Reg(const std::string & _reg);
-        std::string allocReg(bool & writeback, const std::set<std::string> & excludeRegs = {});
+        mips::ObjCodes allocReg(std::string & ret, const std::map<std::string, mips::SymbolInfo> & mipsTable,
+                             const std::set<std::string> & excludeRegs = {});
+        void markWriteBack(const std::string &_reg);
+        mips::ObjCodes saveWriteBackRegs(const std::map<std::string, mips::SymbolInfo> & mipsTable);
+        mips::ObjCodes writeBack(const std::string & _reg, const std::map<std::string, mips::SymbolInfo> & mipsTable);
         void updateInfo(const std::string & _reg, const std::string & _var);
     };
 }

@@ -28,6 +28,9 @@ namespace inter
     public:
         MIR(const bool & _sealed = false);
 
+    private:
+        std::map<std::string, mips::SymbolInfo> getGlobalSymbols() const;
+
     public:
         void declareString(const std::string & _strName, const std::string & _strContent);
         void declareGlobalChars(const std::string & _name, const int & _count, const std::vector<char> & _initValues = {});

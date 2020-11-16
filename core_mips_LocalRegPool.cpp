@@ -46,16 +46,22 @@ std::string mips::LocalRegPool::queryVar2Reg(const string &_reg)
     return var2regs.at(_reg);
 }
 
-std::string mips::LocalRegPool::allocReg(bool &writeback, const std::set<std::string> & excludeRegs)
+mips::ObjCodes mips::LocalRegPool::allocReg(std::string & ret, const std::map<std::string, mips::SymbolInfo> & mipsTable,
+                                         const std::set<std::string> & excludeRegs)
 {
     // TODO: mips new alloc strategies required
-    string ret;
+    mips::ObjCodes objCodes;
+    bool writeback;
     if (!freePool.empty())
     {
         writeback = false;
         ret = freePool.front();
         freePool.pop();
         allocPool.push(ret);
+        if (writebackRegs.find(ret) != writebackRegs.end())
+        {
+            std::cerr << "Unexpected writeback status for register " + ret << std::endl;
+        }
     }
     else
     {
@@ -66,12 +72,38 @@ std::string mips::LocalRegPool::allocReg(bool &writeback, const std::set<std::st
             allocPool.pop();
             allocPool.push(ret);
         } while (excludeRegs.find(ret) != excludeRegs.end());
+        if (writebackRegs.find(ret) != writebackRegs.end())
+        {
+            // only writeback when modified
+            // TODO
+            // update writeback status for a new link of reg-var
+            writebackRegs.erase(ret);
+        }
+        // un-tie original reg-var
+        // TODO
     }
-    return ret;
+    return objCodes;
 }
 
 void mips::LocalRegPool::updateInfo(const string &_reg, const string &_var)
 {
     regs2var[_reg] = _var;
     var2regs[_var] = _reg;
+}
+
+void mips::LocalRegPool::markWriteBack(const string &_reg)
+{
+    this->writebackRegs.insert(_reg);
+}
+
+mips::ObjCodes mips::LocalRegPool::saveWriteBackRegs(const std::map<std::string, mips::SymbolInfo> & mipsTable)
+{
+    // TODO: mips save back wb regs!
+    return mips::ObjCodes();
+}
+
+mips::ObjCodes mips::LocalRegPool::writeBack(const string &_reg, const std::map<std::string, mips::SymbolInfo> &mipsTable)
+{
+    // TODO: implement writeback single reg!
+    return mips::ObjCodes();
 }

@@ -37,14 +37,15 @@ std::vector<inter::Block> inter::Proc::queryBlocks()
     return this->blocks;
 }
 
-mips::ObjCodes inter::Proc::compile() const
+mips::ObjCodes inter::Proc::compile(const std::map<std::string, mips::SymbolInfo> & globalSymbols) const
 {
     assertBlockForm();
     mips::ObjCodes ret;
-    std::map<std::string, int> memoryOffset;
+    std::map<std::string, mips::SymbolInfo> mipsTable;
+    mipsTable.insert(globalSymbols.begin(), globalSymbols.end());
     for (const auto & block : blocks)
     {
-        mips::ObjCodes tmp = block.compile(memoryOffset);
+        mips::ObjCodes tmp = block.compile(mipsTable);
         ret.mergeCodes(tmp);
     }
     return ret;

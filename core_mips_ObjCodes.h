@@ -9,8 +9,6 @@
 #include <vector>
 #include <set>
 
-#include "utils_inter_Quad.h"
-
 namespace mips
 {
     class ObjCodes

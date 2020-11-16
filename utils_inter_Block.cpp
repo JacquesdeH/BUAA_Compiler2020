@@ -17,13 +17,13 @@ std::vector<inter::Quad> inter::Block::queryLines()
     return this->lines;
 }
 
-mips::ObjCodes inter::Block::compile(std::map<std::string, int> & memoryOffset) const
+mips::ObjCodes inter::Block::compile(std::map<std::string, mips::SymbolInfo> & mipsTable) const
 {
     mips::ObjCodes ret;
     mips::LocalRegPool localRegPool;
     for (const auto & line : lines)
     {
-        mips::ObjCodes tmp = line.compile(localRegPool, memoryOffset);
+        mips::ObjCodes tmp = line.compile(localRegPool, mipsTable);
         ret.mergeCodes(tmp);
     }
     return ret;

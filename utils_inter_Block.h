@@ -24,7 +24,7 @@ namespace inter
 
     public:
         std::vector<inter::Quad> queryLines();
-        mips::ObjCodes compile(std::map<std::string, int> & memoryOffset) const;
+        mips::ObjCodes compile(std::map<std::string, mips::SymbolInfo> & mipsTable) const;
     };
 }
 
