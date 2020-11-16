@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <initializer_list>
 #include <unordered_set>
+#include <vector>
 
 typedef unsigned int uint;
 
