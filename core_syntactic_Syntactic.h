@@ -43,8 +43,8 @@ namespace syntactic
 
     private:
         // Illustration
-        void parseConstIllustration();
-        void parseVarIllustration();
+        void parseConstIllustration(const bool & useGlobal = false);
+        void parseVarIllustration(const bool & useGlobal = false);
         // Function
         void parseMainFunction();
         void parseFunctionValuedDeclaration();
@@ -81,10 +81,10 @@ namespace syntactic
         void parseCondition();
         void parseStepLength(int& _step);
         // Const & Var
-        void parseConstDeclaration();
-        void parseVarDeclaration();
-        void parseVarDeclarationUninitialized();
-        void parseVarDeclarationInitialized();
+        void parseConstDeclaration(const bool & useGlobal = false);
+        void parseVarDeclaration(const bool & useGlobal = false);
+        void parseVarDeclarationUninitialized(const bool & useGlobal = false);
+        void parseVarDeclarationInitialized(const bool & useGlobal = false);
         // Values
         void parseInteger(int& _integer);
         void parseUnsigned(int& _unsigned);

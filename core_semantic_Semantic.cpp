@@ -56,8 +56,23 @@ void semantic::Semantic::newProc()
     mir.newProc();
 }
 
-void semantic::Semantic::doneGeneration()
+void semantic::Semantic::doneGenerationToBlocks()
 {
-    mir.doneGeneration();
+    mir.doneGenerationToBlocks();
+}
+
+std::string
+semantic::Semantic::genGlobalChar(const string &_name, const int &_count, const std::vector<char> &_initValues)
+{
+    string newName = config::globalHead + _name;
+    this->mir.declareGlobalChars(_name, _count, _initValues);
+    return newName;
+}
+
+std::string semantic::Semantic::genGlobalInt(const string &_name, const int &_count, const std::vector<int> &_initValues)
+{
+    string newName = config::globalHead + _name;
+    this->mir.declareGlobalInts(_name, _count, _initValues);
+    return newName;
 }
 

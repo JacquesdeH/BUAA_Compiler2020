@@ -14,6 +14,7 @@ symbol::Info::Info()
 }
 
 symbol::Info::Info(const config::SymbolType &_symbolType, const config::DataType &_dataType, const uint &_declareRow,
+                   const bool & _useGlobal,
                    const uint &_arrayDim, const uint &_dim0, const uint &_dim1,
                    const std::initializer_list<config::DataType> & _funcParamDataTypeList)
 {
@@ -28,6 +29,7 @@ symbol::Info::Info(const config::SymbolType &_symbolType, const config::DataType
     this->dimLimit[1] = _dim1;
     this->declareRow = _declareRow;
     this->funcParamDataTypeList = _funcParamDataTypeList;
+    this->useGlobal = _useGlobal;
 
     this->ctrlDeclared = true;
 
@@ -156,5 +158,10 @@ vector<config::DataType> symbol::Info::queryParamDataTypeListOfFunction() const
 config::DataType symbol::Info::queryDataType() const
 {
     return dataType;
+}
+
+bool symbol::Info::isGlobal() const
+{
+    return this->useGlobal;
 }
 

@@ -9,19 +9,19 @@
 #include <string>
 
 #include "core_mips_ObjCodes.h"
+#include "utils_inter_MIR.h"
 
 namespace mips
 {
     class Mips
     {
     private:
-        ObjCodes mipscode;
 
     public:
         Mips();
 
     public:
-        void insertCodePiece(const ObjCodes & piece);
+        static mips::ObjCodes compile(const inter::MIR & mir);
     };
 }
 

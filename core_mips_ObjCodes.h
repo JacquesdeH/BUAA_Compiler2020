@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "utils_inter_Quad.h"
+
 namespace mips
 {
     class ObjCodes
@@ -21,7 +23,7 @@ namespace mips
     public:
         void insertCode(const std::string & _code);
         void mergeCodes(const ObjCodes & _other);
-        void genCode(const std::string & op, const std::string & out = "", const std::string & in1 = "", const std::string & in2 = "");
+        void genCodeInsert(const std::string & op, const std::string & out = "", const std::string & in1 = "", const std::string & in2 = "");
     };
 }
 

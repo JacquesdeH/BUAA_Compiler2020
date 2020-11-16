@@ -6,6 +6,7 @@
 
 #include "core_syntactic_Syntactic.h"
 #include "functional_strext.h"
+#include "functional_convert.h"
 
 syntactic::Syntactic::Syntactic(const string &fOut, PeekableQueue* _queue, symbol::SymbolManager* _symbolManager,
                                 error::ErrorManager* _errorManager, semantic::Semantic* _semanticGenerator)
@@ -79,7 +80,7 @@ void syntactic::Syntactic::parseProgram()
     printer->printComponent("程序");
 }
 
-void syntactic::Syntactic::parseConstIllustration()
+void syntactic::Syntactic::parseConstIllustration(const bool & useGlobal)
 {
     do
     {
@@ -90,7 +91,7 @@ void syntactic::Syntactic::parseConstIllustration()
         }
         _printAndNext();
         // ＜常量定义＞
-        parseConstDeclaration();
+        parseConstDeclaration(useGlobal);
         // ;
         if (!_cur().isToken(config::SEMICN))
         {
@@ -106,7 +107,7 @@ void syntactic::Syntactic::parseConstIllustration()
     printer->printComponent("常量说明");
 }
 
-void syntactic::Syntactic::parseConstDeclaration()
+void syntactic::Syntactic::parseConstDeclaration(const bool & useGlobal)
 {
     config::DataType dataType;
     // char | int
@@ -172,9 +173,19 @@ void syntactic::Syntactic::parseConstDeclaration()
         else
         {
             symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
-                    config::SymbolType::CONST, dataType, idenfr.getRow()));
-            semanticGenerator->addMIR(config::CONST_IR, idenfr.getTkvalue(), toString(dataType), toString(1));
-            semanticGenerator->addMIR(config::MOVE_IR, idenfr.getTkvalue(), toString(unifiedValue));
+                    config::SymbolType::CONST, dataType, idenfr.getRow(), useGlobal));
+            if (useGlobal)
+            {
+                if (dataType == config::DataType::CHAR)
+                    semanticGenerator->genGlobalChar(idenfr.getTkvalue(), 1, {(char) unifiedValue});
+                else
+                    semanticGenerator->genGlobalInt(idenfr.getTkvalue(), 1, {(int) unifiedValue});
+            }
+            else
+            {
+                semanticGenerator->addMIR(config::CONST_IR, idenfr.getTkvalue(), toString(dataType), toString(1));
+                semanticGenerator->addMIR(config::MOVE_IR, idenfr.getTkvalue(), toString(unifiedValue));
+            }
         }
         isFirst = false;
     } while (_cur().isToken(config::COMMA));
@@ -212,14 +223,14 @@ void syntactic::Syntactic::parseUnsigned(int &_unsigned)
     printer->printComponent("无符号整数");
 }
 
-void syntactic::Syntactic::parseVarIllustration()
+void syntactic::Syntactic::parseVarIllustration(const bool & useGlobal)
 {
     // ＜变量定义＞;{＜变量定义＞;} start with ＜类型标识符＞＜标识符＞
     // should differ from following {＜有返回值函数定义＞|＜无返回值函数定义＞}＜主函数＞ by '(' at token 3
     // BUT ＜复合语句＞::=［＜常量说明＞］［＜变量说明＞］＜语句列＞ troubles to need more specification
     do
     {
-        parseVarDeclaration();
+        parseVarDeclaration(useGlobal);
         // ;
         if (!_cur().isToken(config::SEMICN))
         {
@@ -236,24 +247,24 @@ void syntactic::Syntactic::parseVarIllustration()
     printer->printComponent("变量说明");
 }
 
-void syntactic::Syntactic::parseVarDeclaration()
+void syntactic::Syntactic::parseVarDeclaration(const bool & useGlobal)
 {
     // ＜变量定义无初始化＞|＜变量定义及初始化＞ by '=' should occur before ';'
     // ＜变量定义及初始化＞
     if (_isComeFirstThan(config::ASSIGN, config::SEMICN))
     {
-        parseVarDeclarationInitialized();
+        parseVarDeclarationInitialized(useGlobal);
     }
     // ＜变量定义无初始化＞
     else
     {
-        parseVarDeclarationUninitialized();
+        parseVarDeclarationUninitialized(useGlobal);
     }
 
     printer->printComponent("变量定义");
 }
 
-void syntactic::Syntactic::parseVarDeclarationUninitialized()
+void syntactic::Syntactic::parseVarDeclarationUninitialized(const bool & useGlobal)
 {
     config::DataType dataType;
     // ＜类型标识符＞
@@ -335,8 +346,18 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
         else
         {
             symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
-                    config::SymbolType::VAR, dataType, idenfr.getRow(), dim, dimLim[0], dimLim[1]));
-            semanticGenerator->addMIR(config::VAR_IR, idenfr.getTkvalue(), toString(dataType), toString(totElements));
+                    config::SymbolType::VAR, dataType, idenfr.getRow(), useGlobal, dim, dimLim[0], dimLim[1]));
+            if (useGlobal)
+            {
+                if (dataType == config::DataType::CHAR)
+                    semanticGenerator->genGlobalChar(idenfr.getTkvalue(), totElements);
+                else
+                    semanticGenerator->genGlobalInt(idenfr.getTkvalue(), totElements);
+            }
+            else
+            {
+                semanticGenerator->addMIR(config::VAR_IR, idenfr.getTkvalue(), toString(dataType), toString(totElements));
+            }
         }
         isFirst = false;
     } while (_cur().isToken(config::COMMA));
@@ -344,7 +365,7 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized()
     printer->printComponent("变量定义无初始化");
 }
 
-void syntactic::Syntactic::parseVarDeclarationInitialized()
+void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal)
 {
     config::DataType dataType;
     // ＜类型标识符＞
@@ -635,12 +656,26 @@ void syntactic::Syntactic::parseVarDeclarationInitialized()
     else
     {
         symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
-                config::SymbolType::VAR, dataType, idenfr.getRow(), dim, dimLim[0], dimLim[1]));
-        semanticGenerator->addMIR(config::IRCode::VAR_IR, idenfr.getTkvalue(), toString(dataType), toString(totElements));
-        for (int idx = 0; idx < params.size(); idx++)
+                config::SymbolType::VAR, dataType, idenfr.getRow(), useGlobal, dim, dimLim[0], dimLim[1]));
+        if (useGlobal)
         {
-            const int _value = params[idx];
-            semanticGenerator->addMIR(config::IRCode::STORE_IR, toString(_value), idenfr.getTkvalue(), toString(idx));
+            if (dataType == config::DataType::CHAR)
+            {
+                semanticGenerator->genGlobalChar(idenfr.getTkvalue(), totElements, vectorInt2Char(params));
+            }
+            else
+            {
+                semanticGenerator->genGlobalInt(idenfr.getTkvalue(), totElements, params);
+            }
+        }
+        else
+        {
+            semanticGenerator->addMIR(config::IRCode::VAR_IR, idenfr.getTkvalue(), toString(dataType), toString(totElements));
+            for (int idx = 0; idx < params.size(); idx++)
+            {
+                const int _value = params[idx];
+                semanticGenerator->addMIR(config::IRCode::STORE_IR, toString(_value), idenfr.getTkvalue(), toString(idx));
+            }
         }
     }
     printer->printComponent("变量定义及初始化");
@@ -810,7 +845,9 @@ void syntactic::Syntactic::parseReadStatement()
     // semantic
     if (semanticGenerator->noError())
     {
-        semanticGenerator->addMIR(config::READ_IR, idenfr.getTkvalue(),
+        const bool isGlobal = symbolManager->getInfoInAll(idenfr.getTkvalue()).isGlobal();
+        const std::string ftName = isGlobal ? config::globalHead + idenfr.getTkvalue() : idenfr.getTkvalue();
+        semanticGenerator->addMIR(config::READ_IR, ftName,
                                   toString(symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType()));
     }
 
@@ -1100,14 +1137,19 @@ void syntactic::Syntactic::parseAssignStatement()
     string exprR;
     parseExpression(exprR);
     // semantic
-    if (dim == 0)
+    if (semanticGenerator->noError())
     {
-        // single var
-        semanticGenerator->addMIR(config::MOVE_IR, idenfr.getTkvalue(), exprR);
-    }
-    else
-    {
-        // TODO: semantic array use
+        const bool isGlobal = symbolManager->getInfoInAll(idenfr.getTkvalue()).isGlobal();
+        const std::string ftName = isGlobal ? config::globalHead + idenfr.getTkvalue() : idenfr.getTkvalue();
+        if (dim == 0)
+        {
+            // single var
+            semanticGenerator->addMIR(config::MOVE_IR, ftName, exprR);
+        }
+        else
+        {
+            // TODO: semantic array use
+        }
     }
 
     printer->printComponent("赋值语句");
@@ -1327,6 +1369,13 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
         _printAndNext();
     // ＜语句＞
     parseStatement(hasReturned, insideFuncAndType);
+    // semantic
+    if (semanticGenerator->noError())
+    {
+        // TODO: identify globals!
+//        const bool isGlobal = symbolManager->getInfoInAll(idenfr.getTkvalue()).isGlobal();
+//        const std::string ftName = isGlobal ? config::globalHead + idenfr.getTkvalue() : idenfr.getTkvalue();
+    }
 }
 
 void syntactic::Syntactic::parseCondition()
@@ -2233,14 +2282,19 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
             else
                 retDataType = config::DATA_DEFAULT;
             // semantic
-            if (dim == 0)
+            if (semanticGenerator->noError())
             {
-                temp = semanticGenerator->genTemp();
-                semanticGenerator->addMIR(config::MOVE_IR, temp, idenfr.getTkvalue());
-            }
-            else
-            {
-                // TODO: array use related
+                const bool isGlobal = symbolManager->getInfoInAll(idenfr.getTkvalue()).isGlobal();
+                const std::string ftName = isGlobal ? config::globalHead + idenfr.getTkvalue() : idenfr.getTkvalue();
+                if (dim == 0)
+                {
+                    temp = semanticGenerator->genTemp();
+                    semanticGenerator->addMIR(config::MOVE_IR, temp, ftName);
+                }
+                else
+                {
+                    // TODO: array use related
+                }
             }
         }
     }

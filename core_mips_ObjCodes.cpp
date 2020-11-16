@@ -23,7 +23,7 @@ void mips::ObjCodes::mergeCodes(const mips::ObjCodes &_other)
     }
 }
 
-void mips::ObjCodes::genCode(const std::string &op, const std::string &out, const std::string &in1, const std::string &in2)
+void mips::ObjCodes::genCodeInsert(const std::string &op, const std::string &out, const std::string &in1, const std::string &in2)
 {
     std::string cmd;
     if (op == "lw" || op == "sw")

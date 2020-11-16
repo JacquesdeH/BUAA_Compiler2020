@@ -24,6 +24,7 @@ namespace symbol
         uint declareRow;
         vector<uint> referRows;
         vector<config::DataType> funcParamDataTypeList;
+        bool useGlobal;
         uint address;
 
     private:
@@ -34,6 +35,7 @@ namespace symbol
     public:
         Info();
         Info(const config::SymbolType &_symbolType, const config::DataType &_dataType, const uint &_declareRow,
+             const bool & _useGlobal = false,
              const uint &_arrayDim = 0, const uint &_dim0 = 0, const uint &_dim1 = 0,
              const std::initializer_list<config::DataType> & _funcParamDataTypeList = {});
 
@@ -56,6 +58,7 @@ namespace symbol
         int queryFuncParamCount() const;
         bool checkFuncParamMatchAt(const int & _index, const config::DataType & _dataType);
         vector<config::DataType> queryParamDataTypeListOfFunction() const;
+        bool isGlobal() const;
     };
 }
 

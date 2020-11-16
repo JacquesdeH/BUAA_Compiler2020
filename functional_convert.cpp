@@ -38,3 +38,25 @@ string errorType2Code(const config::ErrorType &errorType)
     std::cerr << "Unexpected ErrorType occurred!" << std::endl;
     return "GeneralError";
 }
+
+std::vector<char> vectorInt2Char(const std::vector<int> &_vec)
+{
+    std::vector<char> ret;
+    ret.reserve(_vec.size());
+    for (const auto & _elem : _vec)
+    {
+        ret.push_back((char) _elem);
+    }
+    return ret;
+}
+
+std::vector<int> vectorChar2Int(const std::vector<char> &_vec)
+{
+    std::vector<int> ret;
+    ret.reserve(_vec.size());
+    for (const auto & _elem : _vec)
+    {
+        ret.push_back((int) _elem);
+    }
+    return ret;
+}

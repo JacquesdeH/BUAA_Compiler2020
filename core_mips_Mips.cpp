@@ -10,7 +10,21 @@ mips::Mips::Mips()
 
 }
 
-void mips::Mips::insertCodePiece(const mips::ObjCodes &piece)
+mips::ObjCodes mips::Mips::compile(const inter::MIR & mir)
 {
-    this->mipscode.mergeCodes(piece);
+    mir.assertSeal();
+
+    mips::ObjCodes dataSegment;
+    dataSegment.mergeCodes(mir.compileStrings());
+    dataSegment.mergeCodes(mir.compileGlobals());
+
+    mips::ObjCodes textSegment = mir.compileProcs();
+
+    mips::ObjCodes ret;
+    ret.insertCode(".data");
+    ret.mergeCodes(dataSegment);
+    ret.insertCode(".text");
+    ret.mergeCodes(textSegment);
+
+    return ret;
 }

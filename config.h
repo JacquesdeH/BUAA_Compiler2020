@@ -163,6 +163,8 @@ namespace config
     const std::string tempHead = ".Temp__";
     const std::string labelHead = "__Label__";
     const std::string stringHead = "__String__";
+    const std::string funcHead = "__Function__";
+    const std::string globalHead = "__Global__";
 
     const std::string sep = "\t";
 
