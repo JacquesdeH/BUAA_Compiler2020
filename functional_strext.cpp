@@ -67,5 +67,7 @@ string toString(const int &number)
 
 string toString(const char &character)
 {
-    return std::to_string(character);
+    string ret;
+    ret.insert(ret.begin(), character);
+    return ret;
 }
