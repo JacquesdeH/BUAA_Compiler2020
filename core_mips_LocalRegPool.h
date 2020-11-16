@@ -13,6 +13,7 @@
 
 #include "core_mips_ObjCodes.h"
 #include "SymbolInfo.h"
+#include "functional_convert.h"
 
 namespace mips
 {

@@ -17,5 +17,7 @@ config::TokenCode text2token(const string& token);
 string errorType2Code(const config::ErrorType& errorType);
 std::vector<char> vectorInt2Char(const std::vector<int> &_vec);
 std::vector<int> vectorChar2Int(const std::vector<char> &_vec);
+std::string atomSize2Store(const int & atomSize);
+std::string atomSize2Load(const int & atomSize);
 
 #endif //PROJECT_FUNCTIONAL_CONVERT_H

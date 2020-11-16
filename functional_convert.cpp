@@ -60,3 +60,33 @@ std::vector<int> vectorChar2Int(const std::vector<char> &_vec)
     }
     return ret;
 }
+
+std::string atomSize2Store(const int &atomSize)
+{
+    switch (atomSize)
+    {
+        case 1:
+            return "sb";
+        case 2:
+            return "sh";
+        case 4:
+            return "sw";
+        default:
+            return "";
+    }
+}
+
+std::string atomSize2Load(const int &atomSize)
+{
+    switch (atomSize)
+    {
+        case 1:
+            return "lb";
+        case 2:
+            return "lh";
+        case 4:
+            return "lw";
+        default:
+            return "";
+    }
+}

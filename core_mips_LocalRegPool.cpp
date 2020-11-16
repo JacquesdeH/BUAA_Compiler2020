@@ -5,6 +5,7 @@
 #include <iostream>
 #include "config.h"
 #include "core_mips_LocalRegPool.h"
+#include "functional_strext.h"
 
 using std::string;
 
@@ -75,12 +76,14 @@ mips::ObjCodes mips::LocalRegPool::allocReg(std::string & ret, const std::map<st
         if (writebackRegs.find(ret) != writebackRegs.end())
         {
             // only writeback when modified
-            // TODO
+            objCodes.mergeCodes(writeBack(ret, mipsTable));
             // update writeback status for a new link of reg-var
             writebackRegs.erase(ret);
         }
         // un-tie original reg-var
-        // TODO
+        std::string _name = regs2var[ret];
+        regs2var.erase(ret);
+        var2regs.erase(_name);
     }
     return objCodes;
 }
@@ -98,12 +101,23 @@ void mips::LocalRegPool::markWriteBack(const string &_reg)
 
 mips::ObjCodes mips::LocalRegPool::saveWriteBackRegs(const std::map<std::string, mips::SymbolInfo> & mipsTable)
 {
-    // TODO: mips save back wb regs!
-    return mips::ObjCodes();
+    mips::ObjCodes ret;
+    for (const auto & _reg : writebackRegs)
+    {
+        mips::ObjCodes tmp = writeBack(_reg, mipsTable);
+        ret.mergeCodes(tmp);
+    }
+    return ret;
 }
 
 mips::ObjCodes mips::LocalRegPool::writeBack(const string &_reg, const std::map<std::string, mips::SymbolInfo> &mipsTable)
 {
-    // TODO: implement writeback single reg!
-    return mips::ObjCodes();
+    if (writebackRegs.find(_reg) == writebackRegs.end())
+        std::cerr << "Writing back not needed reg !" << std::endl;
+    mips::ObjCodes ret;
+    std::string _name = regs2var[_reg];
+    int memOff = mipsTable.at(_name).getMemOffset();
+    int atomSize = mipsTable.at(_name).getAtomSize();
+    ret.genCodeInsert(atomSize2Store(atomSize), _reg, "$sp", toString(memOff));
+    return ret;
 }
