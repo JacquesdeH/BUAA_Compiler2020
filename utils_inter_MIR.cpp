@@ -99,11 +99,11 @@ mips::ObjCodes inter::MIR::compileGlobals() const
         std::string line;
         if (_initValues.empty())
         {
-            line = _name + ": .space " + toString(_count*sizeBase);
+            line = config::globalHead + _name + ": .space " + toString(_count*sizeBase);
         }
         else
         {
-            line = _name + ": .byte";
+            line = config::globalHead + _name + ": .byte";
             for (const auto & _char : _initValues)
             {
                 line += " \'" + toString(_char) + "\'";
@@ -123,11 +123,11 @@ mips::ObjCodes inter::MIR::compileGlobals() const
         std::string line;
         if (_initValues.empty())
         {
-            line = _name + ": .space " + toString(_count*sizeBase);
+            line = config::globalHead + _name + ": .space " + toString(_count*sizeBase);
         }
         else
         {
-            line = _name + ": .word";
+            line = config::globalHead + _name + ": .word";
             for (const auto & _int : _initValues)
             {
                 line += " " + toString(_int);
@@ -171,4 +171,12 @@ std::map<std::string, mips::SymbolInfo> inter::MIR::getGlobalSymbols() const
     }
 
     return ret;
+}
+
+void inter::MIR::buildBlocks()
+{
+    for (auto & proc : procedures)
+    {
+        proc.buildBlocks();
+    }
 }

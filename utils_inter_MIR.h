@@ -44,6 +44,7 @@ namespace inter
         mips::ObjCodes compileStrings() const;
         mips::ObjCodes compileGlobals() const;
         mips::ObjCodes compileProcs() const;
+        void buildBlocks();
     };
 }
 

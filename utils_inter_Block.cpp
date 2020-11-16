@@ -12,7 +12,7 @@ inter::Block::Block(std::vector<inter::Quad>::iterator _begin, std::vector<inter
     }
 }
 
-std::vector<inter::Quad> inter::Block::queryLines()
+std::vector<inter::Quad> inter::Block::queryLines() const
 {
     return this->lines;
 }

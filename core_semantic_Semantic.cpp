@@ -76,3 +76,8 @@ std::string semantic::Semantic::genGlobalInt(const string &_name, const int &_co
     return newName;
 }
 
+const inter::MIR &semantic::Semantic::getMir() const
+{
+    return mir;
+}
+

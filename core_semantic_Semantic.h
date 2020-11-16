@@ -34,6 +34,8 @@ namespace semantic
         void addMIR(const config::IRCode & _op, const std::string & _out = "", const std::string & _inl = "", const std::string & _inr = "");
         void newProc();
         void doneGenerationToBlocks();
+
+        const inter::MIR &getMir() const;
     };
 }
 

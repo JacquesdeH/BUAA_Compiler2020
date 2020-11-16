@@ -3,6 +3,7 @@
 //
 
 #include <initializer_list>
+#include <fstream>
 
 #include "core_mips_ObjCodes.h"
 #include "config.h"
@@ -48,4 +49,15 @@ void mips::ObjCodes::genCodeInsert(const std::string &op, const std::string &out
 bool mips::ObjCodes::_isIn(const std::string &target, const std::set<std::string> &options)
 {
     return options.find(target) != options.end();
+}
+
+void mips::ObjCodes::print(const std::string &fOut)
+{
+    std::ofstream fsOut;
+    fsOut.open(fOut);
+    for (const auto & cmd : codes)
+    {
+        fsOut << cmd << std::endl;
+    }
+    fsOut.close();
 }

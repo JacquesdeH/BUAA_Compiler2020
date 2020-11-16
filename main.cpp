@@ -3,6 +3,7 @@
 #include "core_syntactic_Syntactic.h"
 #include "utils_PeekableQueue.h"
 #include "error_ErrorManager.h"
+#include "core_mips_Mips.h"
 
 int main()
 {
@@ -18,6 +19,13 @@ int main()
     instance_Syntactic.parseProgram();
 
     errorManager.printAllErrors();
+
+    inter::MIR mir = semanticGenerator.getMir();
+    mir.buildBlocks();
+    mips::Mips objDumper;
+
+    mips::ObjCodes objCodes = mips::Mips::compile(mir);
+    objCodes.print("mips.txt");
 
     return 0;
 }
