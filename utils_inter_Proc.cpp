@@ -3,6 +3,9 @@
 //
 
 #include <iostream>
+#include <map>
+#include <string>
+
 #include "utils_inter_Proc.h"
 
 inter::Proc::Proc(const bool &_isBlockForm)
@@ -38,9 +41,10 @@ mips::ObjCodes inter::Proc::compile() const
 {
     assertBlockForm();
     mips::ObjCodes ret;
+    std::map<std::string, int> memoryOffset;
     for (const auto & block : blocks)
     {
-        mips::ObjCodes tmp = block.compile();
+        mips::ObjCodes tmp = block.compile(memoryOffset);
         ret.mergeCodes(tmp);
     }
     return ret;

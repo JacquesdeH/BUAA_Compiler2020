@@ -7,7 +7,8 @@
 
 #include <queue>
 #include <string>
-#include <unordered_map>
+#include <set>
+#include <initializer_list>
 
 namespace mips
 {
@@ -27,7 +28,7 @@ namespace mips
         void insertFree(const std::string & _reg);
         std::string queryReg2Var(const std::string & _var);
         std::string queryVar2Reg(const std::string & _reg);
-        std::string allocReg(bool & writeback);
+        std::string allocReg(bool & writeback, const std::set<std::string> & excludeRegs = {});
         void updateInfo(const std::string & _reg, const std::string & _var);
     };
 }

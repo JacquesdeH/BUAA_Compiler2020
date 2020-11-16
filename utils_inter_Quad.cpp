@@ -35,7 +35,7 @@ const std::string &inter::Quad::getInr() const
     return inr;
 }
 
-mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool) const
+mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<std::string, int> & memoryOffset) const
 {
     mips::ObjCodes ret;
     switch (this->op)

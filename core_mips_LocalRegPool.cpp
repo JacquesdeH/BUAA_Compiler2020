@@ -46,8 +46,9 @@ std::string mips::LocalRegPool::queryVar2Reg(const string &_reg)
     return var2regs.at(_reg);
 }
 
-std::string mips::LocalRegPool::allocReg(bool &writeback)
+std::string mips::LocalRegPool::allocReg(bool &writeback, const std::set<std::string> & excludeRegs)
 {
+    // TODO: mips new alloc strategies required
     string ret;
     if (!freePool.empty())
     {
@@ -59,9 +60,12 @@ std::string mips::LocalRegPool::allocReg(bool &writeback)
     else
     {
         writeback = true;
-        ret = allocPool.front();
-        allocPool.pop();
-        allocPool.push(ret);
+        do
+        {
+            ret = allocPool.front();
+            allocPool.pop();
+            allocPool.push(ret);
+        } while (excludeRegs.find(ret) != excludeRegs.end());
     }
     return ret;
 }

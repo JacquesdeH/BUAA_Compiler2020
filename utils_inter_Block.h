@@ -6,6 +6,8 @@
 #define PROJECT_UTILS_INTER_BLOCK_H
 
 #include <vector>
+#include <map>
+#include <string>
 
 #include "utils_inter_Quad.h"
 #include "core_mips_ObjCodes.h"
@@ -22,7 +24,7 @@ namespace inter
 
     public:
         std::vector<inter::Quad> queryLines();
-        mips::ObjCodes compile() const;
+        mips::ObjCodes compile(std::map<std::string, int> & memoryOffset) const;
     };
 }
 
