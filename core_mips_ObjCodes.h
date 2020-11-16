@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 #include "utils_inter_Quad.h"
 
@@ -19,6 +20,9 @@ namespace mips
 
     public:
         ObjCodes();
+
+    private:
+        static bool _isIn(const std::string & target, const std::set<std::string> & options);
 
     public:
         void insertCode(const std::string & _code);

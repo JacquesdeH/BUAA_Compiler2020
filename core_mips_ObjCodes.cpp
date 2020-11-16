@@ -2,6 +2,8 @@
 // Created by JacquesdeH on 2020/11/15.
 //
 
+#include <initializer_list>
+
 #include "core_mips_ObjCodes.h"
 #include "config.h"
 
@@ -26,7 +28,7 @@ void mips::ObjCodes::mergeCodes(const mips::ObjCodes &_other)
 void mips::ObjCodes::genCodeInsert(const std::string &op, const std::string &out, const std::string &in1, const std::string &in2)
 {
     std::string cmd;
-    if (op == "lw" || op == "sw")
+    if (_isIn(op, {"lw", "sw", "lh", "sh", "lb", "sb"}))
     {
         cmd = op + config::sep + out + config::sep + in2 + "(" + in1 + ")";
     }
@@ -41,4 +43,9 @@ void mips::ObjCodes::genCodeInsert(const std::string &op, const std::string &out
             cmd += config::sep + in2;
     }
     this->codes.push_back(cmd);
+}
+
+bool mips::ObjCodes::_isIn(const std::string &target, const std::set<std::string> &options)
+{
+    return options.find(target) != options.end();
 }
