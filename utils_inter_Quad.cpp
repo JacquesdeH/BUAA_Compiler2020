@@ -336,12 +336,9 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
 
 bool inter::Quad::_isNumeric(const std::string &_str)
 {
-    for (const char _ch : _str)
-    {
-        if (!isdigit(_ch))
-            return false;
-    }
-    return true;
+    char *p = nullptr;
+    strtol(_str.c_str(), &p, 10);
+    return (*p) == '\0';
 }
 
 int inter::Quad::_toNumeric(const std::string &_str)
