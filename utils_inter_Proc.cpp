@@ -53,7 +53,7 @@ mips::ObjCodes inter::Proc::compile(const std::map<std::string, mips::SymbolInfo
             if (line.getOp() == config::CONST_IR || line.getOp() == config::VAR_IR)
             {
                 int addr = offset;
-                offset += str2int(line.getInr()) * (4);
+                offset += str2int(line.getInr()) * (line.getInl() == "int" ? 4 : 1);
                 mipsTable.insert(std::make_pair(line.getOut(), mips::SymbolInfo(addr, (line.getInl() == "int" ? 4 : 1))));
             }
         }
