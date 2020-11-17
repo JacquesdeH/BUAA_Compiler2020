@@ -12,19 +12,7 @@ inter::Block::Block(std::vector<inter::Quad>::iterator _begin, std::vector<inter
     }
 }
 
-std::vector<inter::Quad> inter::Block::queryLines() const
+const std::vector<inter::Quad> & inter::Block::queryLines() const
 {
     return this->lines;
-}
-
-mips::ObjCodes inter::Block::compile(std::map<std::string, mips::SymbolInfo> & mipsTable) const
-{
-    mips::ObjCodes ret;
-    mips::LocalRegPool localRegPool;
-    for (const auto & line : lines)
-    {
-        mips::ObjCodes tmp = line.compile(localRegPool, mipsTable);
-        ret.mergeCodes(tmp);
-    }
-    return ret;
 }

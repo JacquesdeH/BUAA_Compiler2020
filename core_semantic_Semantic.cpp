@@ -43,11 +43,11 @@ std::string semantic::Semantic::genLabel()
     return config::labelHead + toString(labelIdx);
 }
 
-std::string semantic::Semantic::genString(const std::string & _strContent)
+std::string semantic::Semantic::genGlobalString(const std::string & _strContent)
 {
     stringIdx++;
     string name = config::stringHead + toString(stringIdx);
-    mir.declareString(name, _strContent);
+    mir.declareGlobalString(name, _strContent);
     return name;
 }
 

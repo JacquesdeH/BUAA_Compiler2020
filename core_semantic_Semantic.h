@@ -28,7 +28,7 @@ namespace semantic
         bool noError() const;
         std::string genTemp();
         std::string genLabel();
-        std::string genString(const std::string & _strContent);
+        std::string genGlobalString(const std::string & _strContent);
         std::string genGlobalChar(const std::string & _name, const int & _count, const std::vector<char> & _initValues = {});
         std::string genGlobalInt(const std::string & _name, const int & _count, const std::vector<int> & _initValues = {});
         void addMIR(const config::IRCode & _op, const std::string & _out = "", const std::string & _inl = "", const std::string & _inr = "");

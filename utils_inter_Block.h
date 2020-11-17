@@ -23,8 +23,7 @@ namespace inter
         Block(std::vector<inter::Quad>::iterator _begin, std::vector<inter::Quad>::iterator _end);
 
     public:
-        std::vector<inter::Quad> queryLines() const;
-        mips::ObjCodes compile(std::map<std::string, mips::SymbolInfo> & mipsTable) const;
+        const std::vector<inter::Quad> & queryLines() const;
     };
 }
 

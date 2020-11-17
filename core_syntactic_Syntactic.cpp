@@ -76,6 +76,8 @@ void syntactic::Syntactic::parseProgram()
     }
     // ＜主函数＞
     parseMainFunction();
+    // semantic
+    semanticGenerator->doneGenerationToBlocks();
 
     printer->printComponent("程序");
 }
@@ -880,7 +882,7 @@ void syntactic::Syntactic::parsePrintStatement()
         // ＜字符串＞
         parseString(_str);
         hasString = true;
-        strName = semanticGenerator->genString(_str);
+        strName = semanticGenerator->genGlobalString(_str);
         // ,＜表达式＞
         if (_cur().isToken(config::COMMA))
         {

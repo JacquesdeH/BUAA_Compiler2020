@@ -71,3 +71,16 @@ string toString(const char &character)
     ret.insert(ret.begin(), character);
     return ret;
 }
+
+string deEscape(const string &s)
+{
+    string ret;
+    for (const auto & _ch : s)
+    {
+        int repeat = 1;
+        if (_ch == '\\')
+            repeat = 2;
+        ret.append(repeat, _ch);
+    }
+    return ret;
+}

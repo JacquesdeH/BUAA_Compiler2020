@@ -12,10 +12,10 @@ inter::MIR::MIR(const bool & _sealed)
     this->sealed = _sealed;
 }
 
-void inter::MIR::declareString(const std::string &_strName, const std::string &_strContent)
+void inter::MIR::declareGlobalString(const std::string &_strName, const std::string &_strContent)
 {
     assertSeal();
-    strings[_strName] = _strContent;
+    globalStrings[_strName] = _strContent;
 }
 
 void inter::MIR::newProc()
@@ -50,96 +50,6 @@ void inter::MIR::assertSeal() const
         std::cerr << "Modifying sealed MIR !" << std::endl;
 }
 
-std::map<std::string, std::string> inter::MIR::queryStrings()
-{
-    return this->strings;
-}
-
-std::vector<inter::Proc> inter::MIR::queryProcs()
-{
-    return this->procedures;
-}
-
-mips::ObjCodes inter::MIR::compileStrings() const
-{
-    mips::ObjCodes ret;
-    ret.insertCode(".align 2"); // align with word
-    for (const auto & entry : strings)
-    {
-        std::string _code = entry.first + ": .asciiz " + "\"" + entry.second + "\"";
-        ret.insertCode(_code);
-    }
-    return ret;
-}
-
-mips::ObjCodes inter::MIR::compileProcs() const
-{
-    mips::ObjCodes ret;
-    std::map<std::string, mips::SymbolInfo> globalSymbols = getGlobalSymbols();
-    for (const auto & procedure : procedures)
-    {
-        mips::ObjCodes tmp = procedure.compile(globalSymbols);
-        ret.mergeCodes(tmp);
-    }
-    return ret;
-}
-
-mips::ObjCodes inter::MIR::compileGlobals() const
-{
-    mips::ObjCodes ret;
-    int sizeBase;
-
-    sizeBase = 1;
-    ret.insertCode(".align 2"); // align with word
-    for (const auto & entry : globalChars)
-    {
-        const auto & _name = entry.first;
-        const auto & _pair = entry.second;
-        const auto & _count = _pair.first;
-        const auto & _initValues = _pair.second;
-        std::string line;
-        if (_initValues.empty())
-        {
-            line = config::globalHead + _name + ": .space " + toString(_count*sizeBase);
-        }
-        else
-        {
-            line = config::globalHead + _name + ": .byte";
-            for (const auto & _char : _initValues)
-            {
-                line += " \'" + toString(_char) + "\'";
-            }
-        }
-        ret.insertCode(line);
-    }
-
-    sizeBase = 4;
-    ret.insertCode(".align 2"); // align with word
-    for (const auto & entry : globalInts)
-    {
-        const auto & _name = entry.first;
-        const auto & _pair = entry.second;
-        const auto & _count = _pair.first;
-        const auto & _initValues = _pair.second;
-        std::string line;
-        if (_initValues.empty())
-        {
-            line = config::globalHead + _name + ": .space " + toString(_count*sizeBase);
-        }
-        else
-        {
-            line = config::globalHead + _name + ": .word";
-            for (const auto & _int : _initValues)
-            {
-                line += " " + toString(_int);
-            }
-        }
-        ret.insertCode(line);
-    }
-
-    return ret;
-}
-
 void inter::MIR::declareGlobalChars(const std::string &_name, const int & _count, const std::vector<char> &_initValues)
 {
     this->globalChars[_name] = std::make_pair(_count, _initValues);
@@ -150,34 +60,29 @@ void inter::MIR::declareGlobalInts(const std::string &_name, const int & _count,
     this->globalInts[_name] = std::make_pair(_count, _initValues);
 }
 
-std::map<std::string, mips::SymbolInfo> inter::MIR::getGlobalSymbols() const
+const inter::MapGlobalString &inter::MIR::queryGlobalStrings() const
 {
-    std::map<std::string, mips::SymbolInfo> ret;
+    return globalStrings;
+}
 
-    for (const auto & entry : globalChars)
-    {
-        const auto & _name = entry.first;
-        const auto & _pair = entry.second;
-        const auto & _count = _pair.first;
-        const auto & _initValues = _pair.second;
-        ret.insert(std::make_pair(config::globalHead + _name, mips::SymbolInfo(0, 1)));
-    }
-    for (const auto & entry : globalInts)
-    {
-        const auto & _name = entry.first;
-        const auto & _pair = entry.second;
-        const auto & _count = _pair.first;
-        const auto & _initValues = _pair.second;
-        ret.insert(std::make_pair(config::globalHead + _name, mips::SymbolInfo(0, 4)));
-    }
+const inter::MapGlobalChar &inter::MIR::queryGlobalChars() const
+{
+    return globalChars;
+}
 
+const inter::MapGlobalInt &inter::MIR::queryGlobalInts() const
+{
+    return globalInts;
+}
+
+std::vector<inter::Proc> inter::MIR::queryFunctions() const
+{
+    std::vector<inter::Proc> ret = procedures;
+    ret.pop_back();
     return ret;
 }
 
-void inter::MIR::buildBlocks()
+const inter::Proc &inter::MIR::queryMainProc() const
 {
-    for (auto & proc : procedures)
-    {
-        proc.buildBlocks();
-    }
+    return procedures.back();
 }

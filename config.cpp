@@ -2,6 +2,7 @@
 // Created by JacquesdeH on 2020/10/23.
 //
 
+#include <iostream>
 #include "config.h"
 
 namespace config
@@ -39,6 +40,23 @@ namespace config
     bool isGlobal(const std::string &_str)
     {
         return _str.find(config::globalHead) == 0;
+    }
+
+    bool isNumeric(const std::string &_str)
+    {
+        char *p = nullptr;
+        strtol(_str.c_str(), &p, 10);
+        return (*p) == '\0';
+    }
+
+    int toNumeric(const std::string &_str)
+    {
+        if (!isNumeric(_str))
+        {
+            std::cerr << "Not a numeric when converting to numeric!" << std::endl;
+        }
+        char *p = nullptr;
+        return strtol(_str.c_str(), &p, 10);
     }
 
 }

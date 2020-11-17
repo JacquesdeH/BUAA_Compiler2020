@@ -61,3 +61,8 @@ void mips::ObjCodes::print(const std::string &fOut)
     }
     fsOut.close();
 }
+
+void mips::ObjCodes::nextLine()
+{
+    codes.emplace_back("\n");
+}

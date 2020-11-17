@@ -24,11 +24,13 @@ namespace inter
         Proc(const bool & _isBlockForm = false);
 
     public:
+        const std::vector<inter::Quad> &queryLines() const;
+
+        const std::vector<inter::Block> &queryBlocks() const;
+
         void assertBlockForm() const;
         void addQuad(const Quad & _quad);
         void buildBlocks();
-        std::vector<inter::Block> queryBlocks();
-        mips::ObjCodes compile(const std::map<std::string, mips::SymbolInfo> & globalSymbols) const;
     };
 }
 

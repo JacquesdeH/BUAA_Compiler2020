@@ -19,5 +19,6 @@ string int2str(const int& _int);
 string toString(const config::DataType & type);
 string toString(const int & number);
 string toString(const char & character);
+string deEscape(const string & s);
 
 #endif //PROJECT_FUNCTIONAL_STREXT_H
