@@ -361,19 +361,20 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized(const bool & useGlob
         // semantic
         if (semanticGenerator->noError())
         {
+            std::string _mark;
             if (useGlobal)
             {
                 if (dataType == config::DataType::CHAR)
-                    semanticGenerator->genGlobalChar(idenfr.getTkvalue(), totElements);
+                    _mark = semanticGenerator->genGlobalChar(idenfr.getTkvalue(), totElements);
                 else
-                    semanticGenerator->genGlobalInt(idenfr.getTkvalue(), totElements);
+                    _mark = semanticGenerator->genGlobalInt(idenfr.getTkvalue(), totElements);
             }
             else
             {
                 if (dataType == config::DataType::CHAR)
-                    semanticGenerator->genLocalChar(idenfr.getTkvalue(), totElements);
+                    _mark = semanticGenerator->genLocalChar(idenfr.getTkvalue(), totElements);
                 else
-                    semanticGenerator->genLocalInt(idenfr.getTkvalue(), totElements);
+                    _mark = semanticGenerator->genLocalInt(idenfr.getTkvalue(), totElements);
             }
         }
         isFirst = false;
