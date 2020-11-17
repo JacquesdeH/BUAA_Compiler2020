@@ -244,12 +244,6 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
         case config::BLT_IR:
             // TODO: compile
             break;
-        case config::FUNC_IR:
-            // TODO: compile
-            break;
-        case config::FUNCEND_IR:
-            // TODO: compile
-            break;
         case config::PARA_IR:
             // TODO: compile
             break;
@@ -309,12 +303,6 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
             break;
         case config::SETLABEL_IR:
             break;
-        case config::EXIT_IR:
-            break;
-        case config::CONST_IR:
-            break;
-        case config::VAR_IR:
-            break;
         default: ;
     }
     return ret;
@@ -336,38 +324,52 @@ mips::ObjCodes mips::Mips::_compileBlock(const inter::Block &_block)
 mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
 {
     mips::ObjCodes ret;
-    // mipsTable filled with globals
-    // alloc mem
-    int offset = 0;
+    // mipsTable already filled with globals
+    // alloc mem of local variables
+    stackOffset = 0;
+    for (const auto & _entry : _proc.queryLocalChars())
+    {
+        const std::string & _mark = _entry.first;
+        const inter::InitChar & _init = _entry.second;
+        const int & _count = _init.first;
+        const std::vector<char> & _initList = _init.second;
+        int addr = stackOffset;
+        stackOffset += _count * config::atomSizeChar;
+        mipsTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, config::atomSizeChar)));
+    }
+    _alignStack("word");
+    for (const auto & _entry : _proc.queryLocalInts())
+    {
+        const std::string & _mark = _entry.first;
+        const inter::InitInt & _init = _entry.second;
+        const int & _count = _init.first;
+        const std::vector<int> & _initList = _init.second;
+        int addr = stackOffset;
+        stackOffset += _count * config::atomSizeInt;
+        mipsTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, config::atomSizeInt)));
+    }
+    // alloc temp variables
     for (const auto & block : _proc.queryBlocks())
     {
-        for (const auto & line : block.queryLines())
-        {
-            if (line.op == config::CONST_IR || line.op == config::VAR_IR)
-            {
-                int addr = offset;
-                offset += str2int(line.inr) * (line.inl == "int" ? 4 : 1);
-                mipsTable.insert(std::make_pair(line.out, mips::SymbolInfo(addr, (line.inl == "int" ? 4 : 1))));
-            }
-        }
         for (const auto & line : block.queryLines())
         {
             if (config::isTemp(line.out))
             {
                 const std::string& temp = line.out;
-                int addr = offset;
-                offset += 4;
-                mipsTable.insert(std::make_pair(temp, mips::SymbolInfo(addr, 4)));
+                int addr = stackOffset;
+                stackOffset += config::atomSizeTemp;
+                mipsTable.insert(std::make_pair(temp, mips::SymbolInfo(addr, config::atomSizeTemp)));
             }
         }
     }
-    ret.genCodeInsert("subu", "$sp", "$sp", toString(offset));
+    // actually alloc memory
+    ret.genCodeInsert("subu", "$sp", "$sp", toString(stackOffset));
     for (const auto & block : _proc.queryBlocks())
     {
         mips::ObjCodes tmp = _compileBlock(block);
         ret.mergeCodes(tmp);
     }
-    ret.genCodeInsert("addu", "$sp", "$sp", toString(offset));
+    ret.genCodeInsert("addu", "$sp", "$sp", toString(stackOffset));
     ret.nextLine();
     return ret;
 }
@@ -375,7 +377,7 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
 mips::ObjCodes mips::Mips::_compileStrings(const inter::MapDeclareString &mapGlobalString)
 {
     mips::ObjCodes ret;
-    ret.mergeCodes(_align("word"));
+    ret.mergeCodes(_alignData("word"));
     for (const auto & entry : mapGlobalString)
     {
         std::string mark = entry.first;
@@ -509,14 +511,29 @@ mips::ObjCodes mips::Mips::compile()
     return ret;
 }
 
-mips::ObjCodes mips::Mips::_align(const string &_type)
+mips::ObjCodes mips::Mips::_alignData(const string &_type)
 {
     int alignWidth =
             (_type == "byte") ? 1 :
             (_type == "half") ? 2 :
             (_type == "word") ? 4 :
             0;
+    if (alignWidth == 0)
+        std::cerr << "Unexpected align type in _alignData" << std::endl;
     mips::ObjCodes ret;
     ret.insertCode(".align " + toString(alignWidth));
     return ret;
+}
+
+void mips::Mips::_alignStack(const string &_type)
+{
+    int alignWidth =
+            (_type == "byte") ? 1 :
+            (_type == "half") ? 2 :
+            (_type == "word") ? 4 :
+            0;
+    if (alignWidth == 0)
+        std::cerr << "Unexpected align type in _alignStack" << std::endl;
+    while (stackOffset % alignWidth != 0)
+        stackOffset ++;
 }

@@ -154,12 +154,14 @@ namespace config
         LOAD_IR, STORE_IR,
         MOVE_IR,
         BEQ_IR, BNE_IR, BLE_IR, BLT_IR,
-        FUNC_IR, FUNCEND_IR,
         PARA_IR, PUSH_IR, CALL_IR, RET_IR, MOVERET_IR,
         READ_IR, WRITE_IR, STRING_IR,
-        SETLABEL_IR, EXIT_IR,
-        CONST_IR, VAR_IR
+        SETLABEL_IR
     };
+
+    const int atomSizeChar = 1;
+    const int atomSizeInt = 4;
+    const int atomSizeTemp = 4;
 
     const std::string tempHead = "___Temp__";
     const std::string labelHead = "___Label__";

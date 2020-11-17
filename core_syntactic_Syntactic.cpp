@@ -1617,7 +1617,6 @@ void syntactic::Syntactic::parseMainFunction()
     symbolManager->pushNewScope();
     // semantic
     semanticGenerator->newProc(idenfr.getTkvalue());
-    semanticGenerator->addMIR(config::FUNC_IR, idenfr.getTkvalue(), toString(config::DataType::VOID));
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1646,7 +1645,6 @@ void syntactic::Syntactic::parseMainFunction()
     // SymbolManager recover to original scope
     symbolManager->popCurScope();
     // semantic
-    semanticGenerator->addMIR(config::FUNCEND_IR);
 
     printer->printComponent("主函数");
 }

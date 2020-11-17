@@ -21,16 +21,17 @@ namespace mips
     {
     private:
         inter::MIR mir;
-        MipsTable mipsTable;
-        LocalRegPool localRegPool;
-        int stackOffset;
-        int globalOffset;
+        MipsTable mipsTable; // no reset but update at each proc
+        LocalRegPool localRegPool; // reset every block
+        int stackOffset; // reset every proc
+        int globalOffset; // no reset for $gp use
 
     public:
         Mips(const inter::MIR & _mir);
 
     private:
-        mips::ObjCodes _align(const std::string & _type);
+        void _alignStack(const std::string & _type);
+        mips::ObjCodes _alignData(const std::string & _type);
         mips::ObjCodes _compileMain(const inter::Proc & _main);
         mips::ObjCodes _compileFuncs(const std::vector<inter::Proc> & funcs);
         mips::ObjCodes _compileProc(const inter::Proc & _proc);
