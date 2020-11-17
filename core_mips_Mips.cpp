@@ -407,7 +407,7 @@ mips::ObjCodes mips::Mips::_compileGlobalChars(const inter::MapDeclareChar &mapG
 {
     mips::ObjCodes ret;
     const int sizeBase = config::atomSizeChar;
-    _alignData("byte");
+    ret.mergeCodes(_alignData("byte"));
     for (const auto & entry : mapGlobalChar)
     {
         const auto & _mark = entry.first;
@@ -440,7 +440,7 @@ mips::ObjCodes mips::Mips::_compileGlobalInts(const inter::MapDeclareInt &mapGlo
 {
     mips::ObjCodes ret;
     const int sizeBase = config::atomSizeInt;
-    _alignData("word");
+    ret.mergeCodes(_alignData("word"));
     for (const auto & entry : mapGlobalInt)
     {
         const auto & _mark = entry.first;
@@ -501,6 +501,7 @@ mips::ObjCodes mips::Mips::_compileMain(const inter::Proc &_main)
 mips::ObjCodes mips::Mips::compileDataSegment()
 {
     mips::ObjCodes ret;
+    this->resetGlobalOffset();
     ret.insertCode(".data");
     ret.mergeCodes(_compileGlobalStrings(mir.queryGlobalStrings()));
     ret.mergeCodes(_compileGlobals(mir.queryGlobalChars(), mir.queryGlobalInts()));
