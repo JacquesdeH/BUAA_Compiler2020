@@ -410,18 +410,18 @@ mips::ObjCodes mips::Mips::_compileGlobalChars(const inter::MapDeclareChar &mapG
     _alignData("byte");
     for (const auto & entry : mapGlobalChar)
     {
-        const auto & _name = entry.first;
+        const auto & _mark = entry.first;
         const auto & _pair = entry.second;
         const auto & _count = _pair.first;
         const auto & _initValues = _pair.second;
         std::string line;
         if (_initValues.empty())
         {
-            line = config::globalHead + _name + ": .space " + toString(_count*sizeBase);
+            line = _mark + ": .space " + toString(_count*sizeBase);
         }
         else
         {
-            line = config::globalHead + _name + ": .byte";
+            line = _mark + ": .byte";
             for (const auto & _char : _initValues)
             {
                 line += " \'" + toString(_char) + "\'";
@@ -431,7 +431,7 @@ mips::ObjCodes mips::Mips::_compileGlobalChars(const inter::MapDeclareChar &mapG
         int memoryUse = _count*sizeBase;
         int addr = globalOffset;
         globalOffset += memoryUse;
-        mipsTable.insert(std::make_pair(_name, mips::SymbolInfo(addr, memoryUse)));
+        mipsTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, memoryUse)));
     }
     return ret;
 }
@@ -443,18 +443,18 @@ mips::ObjCodes mips::Mips::_compileGlobalInts(const inter::MapDeclareInt &mapGlo
     _alignData("word");
     for (const auto & entry : mapGlobalInt)
     {
-        const auto & _name = entry.first;
+        const auto & _mark = entry.first;
         const auto & _pair = entry.second;
         const auto & _count = _pair.first;
         const auto & _initValues = _pair.second;
         std::string line;
         if (_initValues.empty())
         {
-            line = config::globalHead + _name + ": .space " + toString(_count*sizeBase);
+            line = _mark + ": .space " + toString(_count*sizeBase);
         }
         else
         {
-            line = config::globalHead + _name + ": .word";
+            line = _mark + ": .word";
             for (const auto & _int : _initValues)
             {
                 line += " " + toString(_int);
@@ -464,7 +464,7 @@ mips::ObjCodes mips::Mips::_compileGlobalInts(const inter::MapDeclareInt &mapGlo
         int memoryUse = _count*sizeBase;
         int addr = globalOffset;
         globalOffset += memoryUse;
-        mipsTable.insert(std::make_pair(_name, mips::SymbolInfo(addr, memoryUse)));
+        mipsTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, memoryUse)));
     }
     return ret;
 }
