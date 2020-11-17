@@ -24,6 +24,7 @@ namespace mips
 
     public:
         void insertCode(const std::string & _code);
+        void insertLabel(const std::string & _label);
         void mergeCodes(const ObjCodes & _other);
         void genCodeInsert(const std::string & op, const std::string & out = "", const std::string & in1 = "", const std::string & in2 = "");
         void nextLine();

@@ -323,11 +323,10 @@ mips::ObjCodes mips::Mips::_compileBlock(const inter::Block &_block)
 
 mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
 {
-    mips::ObjCodes ret;
     // mipsTable already filled with globals
     // subTable is reversed in new proc
     MipsTable subTable;
-    // alloc mem of local variables
+    // pre alloc mem of local variables
     this->resetStackOffset();
     for (const auto & _entry : _proc.queryLocalChars())
     {
@@ -350,7 +349,7 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
         stackOffset += _count * config::atomSizeInt;
         subTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, config::atomSizeInt)));
     }
-    // alloc temp variables
+    // pre alloc temp variables
     for (const auto & block : _proc.queryBlocks())
     {
         for (const auto & line : block.queryLines())
@@ -364,6 +363,9 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
             }
         }
     }
+    // **************************** objCodeRet modification begin **************************************
+    mips::ObjCodes ret;
+    ret.insertLabel(_proc.queryProcName());
     // actually alloc memory
     mipsTable.insert(subTable.begin(), subTable.end());
     ret.genCodeInsert("subu", "$sp", "$sp", toString(stackOffset));

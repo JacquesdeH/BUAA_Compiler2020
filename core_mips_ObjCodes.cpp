@@ -66,3 +66,8 @@ void mips::ObjCodes::nextLine()
 {
     codes.emplace_back("\n");
 }
+
+void mips::ObjCodes::insertLabel(const std::string &_label)
+{
+    codes.emplace_back(_label + ":");
+}
