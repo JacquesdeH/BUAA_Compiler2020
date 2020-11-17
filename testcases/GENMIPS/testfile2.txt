@@ -1,0 +1,18 @@
+const char happy = '-';
+int test;
+void main(){
+    const char theChar = '+';
+    int goodFellow;
+    int tmps = 2333;
+
+    printf("Hello World", theChar);
+    printf("Fuck you!");
+    scanf(goodFellow);
+    printf(goodFellow*goodFellow);
+    test = -goodFellow + (happy);
+    printf(test);
+    scanf(test);
+    printf(test);
+    printf(((test + (tmps))));
+    printf(('2'));
+}
