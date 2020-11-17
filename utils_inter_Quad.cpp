@@ -206,8 +206,15 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             // TODO: compile
             break;
         case config::STORE_IR:
-            ret.genCodeInsert("ori", "$t0", config::zeroReg, toString(mipsTable.at(inr).getMemOffset()));
-            if (mipsTable.at(inr).getAtomSize() == 4)
+            if (_isNumeric(inr))
+            {
+                ret.genCodeInsert("li", "$t0", inr);
+            }
+            else
+            {
+                ret.genCodeInsert("ori", "$t0", config::zeroReg, toString(mipsTable.at(inr).getMemOffset()));
+            }
+            if (mipsTable.at(inl).getAtomSize() == 4)
                 ret.genCodeInsert("sll", "$t0", "$t0", toString(2));
             if (_isNumeric(out))
             {
