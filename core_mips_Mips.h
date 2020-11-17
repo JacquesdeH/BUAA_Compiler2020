@@ -10,6 +10,7 @@
 #include <map>
 
 #include "core_mips_ObjCodes.h"
+#include "utils_inter_typedef.h"
 #include "utils_inter_MIR.h"
 
 namespace mips
@@ -35,11 +36,11 @@ namespace mips
         mips::ObjCodes _compileProc(const inter::Proc & _proc);
         mips::ObjCodes _compileBlock(const inter::Block & _block);
         mips::ObjCodes _compileQuad(const inter::Quad & _quad);
-        mips::ObjCodes _compileStrings(const inter::MapGlobalString & mapGlobalString);
-        mips::ObjCodes _compileChars(const inter::MapGlobalChar & mapGlobalChar);
-        mips::ObjCodes _compileInts(const inter::MapGlobalInt & mapGlobalInt);
-        mips::ObjCodes _compileGlobals(const inter::MapGlobalChar & mapGlobalChar,
-                                       const inter::MapGlobalInt & mapGlobalInt);
+        mips::ObjCodes _compileStrings(const inter::MapDeclareString & mapGlobalString);
+        mips::ObjCodes _compileChars(const inter::MapDeclareChar & mapGlobalChar);
+        mips::ObjCodes _compileInts(const inter::MapDeclareInt & mapGlobalInt);
+        mips::ObjCodes _compileGlobals(const inter::MapDeclareChar & mapGlobalChar,
+                                       const inter::MapDeclareInt & mapGlobalInt);
 
     private:
         mips::ObjCodes compileDataSegment();

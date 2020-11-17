@@ -372,7 +372,7 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
     return ret;
 }
 
-mips::ObjCodes mips::Mips::_compileStrings(const inter::MapGlobalString &mapGlobalString)
+mips::ObjCodes mips::Mips::_compileStrings(const inter::MapDeclareString &mapGlobalString)
 {
     mips::ObjCodes ret;
     ret.mergeCodes(_align("word"));
@@ -386,7 +386,7 @@ mips::ObjCodes mips::Mips::_compileStrings(const inter::MapGlobalString &mapGlob
     return ret;
 }
 
-mips::ObjCodes mips::Mips::_compileChars(const inter::MapGlobalChar &mapGlobalChar)
+mips::ObjCodes mips::Mips::_compileChars(const inter::MapDeclareChar &mapGlobalChar)
 {
     mips::ObjCodes ret;
     const int sizeBase = 1;
@@ -415,7 +415,7 @@ mips::ObjCodes mips::Mips::_compileChars(const inter::MapGlobalChar &mapGlobalCh
     return ret;
 }
 
-mips::ObjCodes mips::Mips::_compileInts(const inter::MapGlobalInt &mapGlobalInt)
+mips::ObjCodes mips::Mips::_compileInts(const inter::MapDeclareInt &mapGlobalInt)
 {
     mips::ObjCodes ret;
     const int sizeBase = 4;
@@ -445,7 +445,7 @@ mips::ObjCodes mips::Mips::_compileInts(const inter::MapGlobalInt &mapGlobalInt)
 }
 
 mips::ObjCodes
-mips::Mips::_compileGlobals(const inter::MapGlobalChar &mapGlobalChar, const inter::MapGlobalInt &mapGlobalInt)
+mips::Mips::_compileGlobals(const inter::MapDeclareChar &mapGlobalChar, const inter::MapDeclareInt &mapGlobalInt)
 {
     mips::ObjCodes ret;
     ret.mergeCodes(_compileChars(mapGlobalChar));

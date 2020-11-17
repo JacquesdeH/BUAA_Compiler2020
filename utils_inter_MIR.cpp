@@ -18,10 +18,10 @@ void inter::MIR::declareGlobalString(const std::string &_strName, const std::str
     globalStrings[_strName] = _strContent;
 }
 
-void inter::MIR::newProc()
+void inter::MIR::newProc(const std::string & _procName)
 {
     assertSeal();
-    this->procedures.emplace_back();
+    this->procedures.emplace_back(_procName);
 }
 
 void inter::MIR::doneGenerationToBlocks()
@@ -50,27 +50,27 @@ void inter::MIR::assertSeal() const
         std::cerr << "Modifying sealed MIR !" << std::endl;
 }
 
-void inter::MIR::declareGlobalChars(const std::string &_name, const int & _count, const std::vector<char> &_initValues)
+void inter::MIR::declareGlobalChar(const std::string &_name, const int & _count, const std::vector<char> &_initValues)
 {
     this->globalChars[_name] = std::make_pair(_count, _initValues);
 }
 
-void inter::MIR::declareGlobalInts(const std::string &_name, const int & _count, const std::vector<int> &_initValues)
+void inter::MIR::declareGlobalInt(const std::string &_name, const int & _count, const std::vector<int> &_initValues)
 {
     this->globalInts[_name] = std::make_pair(_count, _initValues);
 }
 
-const inter::MapGlobalString &inter::MIR::queryGlobalStrings() const
+const inter::MapDeclareString &inter::MIR::queryGlobalStrings() const
 {
     return globalStrings;
 }
 
-const inter::MapGlobalChar &inter::MIR::queryGlobalChars() const
+const inter::MapDeclareChar &inter::MIR::queryGlobalChars() const
 {
     return globalChars;
 }
 
-const inter::MapGlobalInt &inter::MIR::queryGlobalInts() const
+const inter::MapDeclareInt &inter::MIR::queryGlobalInts() const
 {
     return globalInts;
 }
@@ -85,4 +85,14 @@ std::vector<inter::Proc> inter::MIR::queryFunctions() const
 const inter::Proc &inter::MIR::queryMainProc() const
 {
     return procedures.back();
+}
+
+void inter::MIR::declareLocalChar(const string &name, const inter::InitChar &initChar)
+{
+    procedures.back().addLocalChar(name, initChar);
+}
+
+void inter::MIR::declareLocalInt(const string &name, const inter::InitInt &initInt)
+{
+    procedures.back().addLocalInt(name, initInt);
 }

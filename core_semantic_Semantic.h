@@ -32,7 +32,7 @@ namespace semantic
         std::string genGlobalChar(const std::string & _name, const int & _count, const std::vector<char> & _initValues = {});
         std::string genGlobalInt(const std::string & _name, const int & _count, const std::vector<int> & _initValues = {});
         void addMIR(const config::IRCode & _op, const std::string & _out = "", const std::string & _inl = "", const std::string & _inr = "");
-        void newProc();
+        void newProc(const std::string & _procName);
         void doneGenerationToBlocks();
 
         const inter::MIR &getMir() const;

@@ -3,15 +3,13 @@
 //
 
 #include <iostream>
-#include <map>
-#include <string>
 
 #include "utils_inter_Proc.h"
-#include "functional_strext.h"
 
-inter::Proc::Proc(const bool &_isBlockForm)
+inter::Proc::Proc(const std::string & _procName, const bool &_isBlockForm)
 {
     this->isBlockForm = _isBlockForm;
+    this->procName = _procName;
 }
 
 void inter::Proc::addQuad(const inter::Quad &_quad)
@@ -47,4 +45,29 @@ const std::vector<inter::Block> &inter::Proc::queryBlocks() const
 {
     assertBlockForm();
     return blocks;
+}
+
+void inter::Proc::addLocalChar(const std::string & name, const inter::InitChar &initChar)
+{
+    this->localChars.insert(std::make_pair(name, initChar));
+}
+
+void inter::Proc::addLocalInt(const std::string & name, const inter::InitInt &initInt)
+{
+    this->localInts.insert(std::make_pair(name, initInt));
+}
+
+const string &inter::Proc::queryProcName() const
+{
+    return procName;
+}
+
+const inter::MapDeclareChar &inter::Proc::queryLocalChars() const
+{
+    return localChars;
+}
+
+const inter::MapDeclareInt &inter::Proc::queryLocalInts() const
+{
+    return localInts;
 }

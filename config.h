@@ -164,10 +164,10 @@ namespace config
     const std::string tempHead = "___Temp__";
     const std::string labelHead = "___Label__";
     const std::string stringHead = "___String__";
-    const std::string funcHead = "___Function__";
+    const std::string procHead = "___Procedure__";
     const std::string globalHead = "___Global__";
 
-    const std::string mainLabel = funcHead + "main";
+    const std::string mainLabel = procHead + "main";
 
     bool isTemp(const std::string & _str);
     bool isLabel(const std::string & _str);

@@ -1597,7 +1597,7 @@ void syntactic::Syntactic::parseMainFunction()
     // SymbolManager into a new scope
     symbolManager->pushNewScope();
     // semantic
-    semanticGenerator->newProc();
+    semanticGenerator->newProc(idenfr.getTkvalue());
     semanticGenerator->addMIR(config::FUNC_IR, idenfr.getTkvalue(), toString(config::DataType::VOID));
     // )
     if (!_cur().isToken(config::RPARENT))

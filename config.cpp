@@ -34,7 +34,7 @@ namespace config
 
     bool isFunc(const std::string &_str)
     {
-        return _str.find(config::funcHead) == 0;
+        return _str.find(config::procHead) == 0;
     }
 
     bool isGlobal(const std::string &_str)
