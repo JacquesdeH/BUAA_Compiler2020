@@ -160,7 +160,7 @@ std::map<std::string, mips::SymbolInfo> inter::MIR::getGlobalSymbols() const
         const auto & _pair = entry.second;
         const auto & _count = _pair.first;
         const auto & _initValues = _pair.second;
-        ret.insert(std::make_pair(_name, mips::SymbolInfo(0, 1)));
+        ret.insert(std::make_pair(config::globalHead + _name, mips::SymbolInfo(0, 1)));
     }
     for (const auto & entry : globalInts)
     {
@@ -168,7 +168,7 @@ std::map<std::string, mips::SymbolInfo> inter::MIR::getGlobalSymbols() const
         const auto & _pair = entry.second;
         const auto & _count = _pair.first;
         const auto & _initValues = _pair.second;
-        ret.insert(std::make_pair(_name, mips::SymbolInfo(0, 4)));
+        ret.insert(std::make_pair(config::globalHead + _name, mips::SymbolInfo(0, 4)));
     }
 
     return ret;
