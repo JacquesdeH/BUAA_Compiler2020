@@ -14,19 +14,19 @@ inter::MIR::MIR(const bool & _sealed)
 
 void inter::MIR::declareGlobalString(const std::string &_strName, const std::string &_strContent)
 {
-    assertSeal();
+    assertNotSeal();
     globalStrings[_strName] = _strContent;
 }
 
 void inter::MIR::newProc(const std::string & _procName)
 {
-    assertSeal();
+    assertNotSeal();
     this->procedures.emplace_back(_procName);
 }
 
 void inter::MIR::doneGenerationToBlocks()
 {
-    assertSeal();
+    assertNotSeal();
     for (auto & procedure : procedures)
     {
         procedure.buildBlocks();
@@ -36,7 +36,7 @@ void inter::MIR::doneGenerationToBlocks()
 
 void inter::MIR::addQuad(const inter::Quad &_quad)
 {
-    assertSeal();
+    assertNotSeal();
     if (procedures.empty())
     {
         std::cerr << "No sub procedures allowed before addQuad is called !" << std::endl;
@@ -44,10 +44,16 @@ void inter::MIR::addQuad(const inter::Quad &_quad)
     this->procedures.back().addQuad(_quad);
 }
 
-void inter::MIR::assertSeal() const
+void inter::MIR::assertNotSeal() const
 {
     if (this->sealed)
         std::cerr << "Modifying sealed MIR !" << std::endl;
+}
+
+void inter::MIR::assertIsSeal() const
+{
+    if (!(this->sealed))
+        std::cerr << "GenObjCode on not sealed MIR !" << std::endl;
 }
 
 void inter::MIR::declareGlobalChar(const std::string &_name, const int & _count, const std::vector<char> &_initValues)

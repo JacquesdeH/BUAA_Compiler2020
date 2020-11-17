@@ -45,7 +45,8 @@ namespace inter
         void newProc(const std::string & _procName);
         void doneGenerationToBlocks();
         void addQuad(const Quad & _quad);
-        void assertSeal() const;
+        void assertNotSeal() const;
+        void assertIsSeal() const;
     };
 }
 

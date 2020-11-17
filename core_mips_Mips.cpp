@@ -500,7 +500,7 @@ mips::ObjCodes mips::Mips::compileTextSegment()
 
 mips::ObjCodes mips::Mips::compile()
 {
-    mir.assertSeal();
+    mir.assertIsSeal();
 
     mips::ObjCodes dataSegment = compileDataSegment();
     mips::ObjCodes textSegment = compileTextSegment();
