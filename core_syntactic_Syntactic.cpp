@@ -180,20 +180,21 @@ void syntactic::Syntactic::parseConstDeclaration(const bool & useGlobal)
         // semantic
         if (semanticGenerator->noError())
         {
+            std::string _mark;
             if (useGlobal)
             {
                 if (dataType == config::DataType::CHAR)
-                    semanticGenerator->genGlobalChar(idenfr.getTkvalue(), 1, {(char) unifiedValue});
+                    _mark = semanticGenerator->genGlobalChar(idenfr.getTkvalue(), 1, {(char) unifiedValue});
                 else
-                    semanticGenerator->genGlobalInt(idenfr.getTkvalue(), 1, {(int) unifiedValue});
+                    _mark = semanticGenerator->genGlobalInt(idenfr.getTkvalue(), 1, {(int) unifiedValue});
             }
             else
             {
                 if (dataType == config::DataType::CHAR)
-                    semanticGenerator->genLocalChar(idenfr.getTkvalue(), 1, {(char) unifiedValue});
+                    _mark = semanticGenerator->genLocalChar(idenfr.getTkvalue(), 1, {(char) unifiedValue});
                 else
-                    semanticGenerator->genLocalInt(idenfr.getTkvalue(), 1, {(int) unifiedValue});
-                semanticGenerator->addMIR(config::MOVE_IR, idenfr.getTkvalue(), toString(unifiedValue));
+                    _mark = semanticGenerator->genLocalInt(idenfr.getTkvalue(), 1, {(int) unifiedValue});
+                semanticGenerator->addMIR(config::MOVE_IR, _mark, toString(unifiedValue));
             }
         }
         isFirst = false;
@@ -677,24 +678,24 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
     // semantic
     if (semanticGenerator->noError())
     {
+        std::string _mark;
         if (useGlobal)
         {
             if (dataType == config::DataType::CHAR)
-                semanticGenerator->genGlobalChar(idenfr.getTkvalue(), totElements, vectorInt2Char(params));
+                _mark = semanticGenerator->genGlobalChar(idenfr.getTkvalue(), totElements, vectorInt2Char(params));
             else
-                semanticGenerator->genGlobalInt(idenfr.getTkvalue(), totElements, params);
+                _mark = semanticGenerator->genGlobalInt(idenfr.getTkvalue(), totElements, params);
         }
         else
         {
-            std::string mark;
             if (dataType == config::DataType::CHAR)
-                mark = semanticGenerator->genLocalChar(idenfr.getTkvalue(), totElements, vectorInt2Char(params));
+                _mark = semanticGenerator->genLocalChar(idenfr.getTkvalue(), totElements, vectorInt2Char(params));
             else
-                mark = semanticGenerator->genLocalInt(idenfr.getTkvalue(), totElements, params);
+                _mark = semanticGenerator->genLocalInt(idenfr.getTkvalue(), totElements, params);
             for (int idx = 0; idx < params.size(); idx++)
             {
                 const int _value = params[idx];
-                semanticGenerator->addMIR(config::IRCode::STORE_IR, toString(_value), mark, toString(idx));
+                semanticGenerator->addMIR(config::IRCode::STORE_IR, toString(_value), _mark, toString(idx));
             }
         }
     }
@@ -867,8 +868,8 @@ void syntactic::Syntactic::parseReadStatement()
     if (semanticGenerator->noError())
     {
         const bool isGlobal = symbolManager->getInfoInAll(idenfr.getTkvalue()).isGlobal();
-        const std::string ftName = isGlobal ? config::globalHead + idenfr.getTkvalue() : idenfr.getTkvalue();
-        semanticGenerator->addMIR(config::READ_IR, ftName,
+        const std::string _mark = semanticGenerator->generateExtended(idenfr.getTkvalue(), isGlobal ? "global" : "local");
+        semanticGenerator->addMIR(config::READ_IR, _mark,
                                   toString(symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType()));
     }
 
@@ -1161,11 +1162,11 @@ void syntactic::Syntactic::parseAssignStatement()
     if (semanticGenerator->noError())
     {
         const bool isGlobal = symbolManager->getInfoInAll(idenfr.getTkvalue()).isGlobal();
-        const std::string ftName = isGlobal ? config::globalHead + idenfr.getTkvalue() : idenfr.getTkvalue();
+        const std::string _mark = semanticGenerator->generateExtended(idenfr.getTkvalue(), isGlobal ? "global" : "local");
         if (dim == 0)
         {
             // single var
-            semanticGenerator->addMIR(config::MOVE_IR, ftName, exprR);
+            semanticGenerator->addMIR(config::MOVE_IR, _mark, exprR);
         }
         else
         {
@@ -2304,11 +2305,11 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
             if (semanticGenerator->noError())
             {
                 const bool isGlobal = symbolManager->getInfoInAll(idenfr.getTkvalue()).isGlobal();
-                const std::string ftName = isGlobal ? config::globalHead + idenfr.getTkvalue() : idenfr.getTkvalue();
+                const std::string _mark = semanticGenerator->generateExtended(idenfr.getTkvalue(), isGlobal ? "global" : "local");
                 if (dim == 0)
                 {
                     temp = semanticGenerator->genTemp();
-                    semanticGenerator->addMIR(config::MOVE_IR, temp, ftName);
+                    semanticGenerator->addMIR(config::MOVE_IR, temp, _mark);
                 }
                 else
                 {

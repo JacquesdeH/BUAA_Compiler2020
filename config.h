@@ -166,7 +166,7 @@ namespace config
     const std::string tempHead = "___Temp__";
     const std::string labelHead = "___Label__";
     const std::string stringHead = "___String__";
-    const std::string procHead = "___Procedure__";
+    const std::string procHead = "___Proc__";
     const std::string globalHead = "___Global__";
     const std::string localHead = "___Local__";
 

@@ -96,3 +96,21 @@ std::string semantic::Semantic::genLocalInt(const string &_name, const int &_cou
     return _mark;
 }
 
+std::string semantic::Semantic::generateExtended(const string &_name, const string &_type)
+{
+    std::string lowerName = toLower(_name);
+    if (_type == "global")
+        return config::globalHead + lowerName;
+    else if (_type == "local")
+        return config::localHead + lowerName;
+    else if (_type == "proc")
+        return config::procHead + lowerName;
+    else if (_type == "temp")
+        return config::tempHead + lowerName;
+    else if (_type == "label")
+        return config::labelHead + lowerName;
+    else if (_type == "string")
+        return config::stringHead + lowerName;
+    return lowerName;
+}
+
