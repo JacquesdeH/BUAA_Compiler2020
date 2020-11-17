@@ -59,4 +59,9 @@ namespace config
         return strtol(_str.c_str(), &p, 10);
     }
 
+    bool isLocal(const std::string &_str)
+    {
+        return _str.find(config::localHead) == 0;
+    }
+
 }

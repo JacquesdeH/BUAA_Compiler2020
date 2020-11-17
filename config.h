@@ -166,6 +166,7 @@ namespace config
     const std::string stringHead = "___String__";
     const std::string procHead = "___Procedure__";
     const std::string globalHead = "___Global__";
+    const std::string localHead = "___Local__";
 
     const std::string mainLabel = procHead + "main";
 
@@ -174,6 +175,7 @@ namespace config
     bool isString(const std::string & _str);
     bool isFunc(const std::string & _str);
     bool isGlobal(const std::string & _str);
+    bool isLocal(const std::string & _str);
     bool isNumeric(const std::string & _str);
     int toNumeric(const std::string & _str);
 

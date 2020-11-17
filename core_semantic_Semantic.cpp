@@ -53,7 +53,7 @@ std::string semantic::Semantic::genGlobalString(const std::string & _strContent)
 
 void semantic::Semantic::newProc(const std::string & _procName)
 {
-    mir.newProc(config::procHead + _procName);
+    mir.newProc(config::procHead + toLower(_procName));
 }
 
 void semantic::Semantic::doneGenerationToBlocks()
@@ -64,14 +64,14 @@ void semantic::Semantic::doneGenerationToBlocks()
 std::string
 semantic::Semantic::genGlobalChar(const string &_name, const int &_count, const std::vector<char> &_initValues)
 {
-    string newName = config::globalHead + _name;
+    string newName = config::globalHead + toLower(_name);
     this->mir.declareGlobalChar(_name, _count, _initValues);
     return newName;
 }
 
 std::string semantic::Semantic::genGlobalInt(const string &_name, const int &_count, const std::vector<int> &_initValues)
 {
-    string newName = config::globalHead + _name;
+    string newName = config::globalHead + toLower(_name);
     this->mir.declareGlobalInt(_name, _count, _initValues);
     return newName;
 }
@@ -79,5 +79,20 @@ std::string semantic::Semantic::genGlobalInt(const string &_name, const int &_co
 const inter::MIR &semantic::Semantic::getMir() const
 {
     return mir;
+}
+
+std::string
+semantic::Semantic::genLocalChar(const string &_name, const int &_count, const std::vector<char> &_initValues)
+{
+    string mark = config::localHead + toLower(_name);
+    this->mir.declareLocalChar(_name, std::make_pair(_count, _initValues));
+    return mark;
+}
+
+std::string semantic::Semantic::genLocalInt(const string &_name, const int &_count, const std::vector<int> &_initValues)
+{
+    string mark = config::localHead + toLower(_name);
+    this->mir.declareLocalInt(_name, std::make_pair(_count, _initValues));
+    return mark;
 }
 
