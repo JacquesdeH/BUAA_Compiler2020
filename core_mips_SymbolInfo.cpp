@@ -2,7 +2,7 @@
 // Created by JacquesdeH on 2020/11/16.
 //
 
-#include "SymbolInfo.h"
+#include "core_mips_SymbolInfo.h"
 
 mips::SymbolInfo::SymbolInfo(const int &_memOffset, const int &_atomSize)
 {

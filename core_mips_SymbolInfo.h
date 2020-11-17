@@ -2,8 +2,8 @@
 // Created by JacquesdeH on 2020/11/16.
 //
 
-#ifndef PROJECT_SYMBOLINFO_H
-#define PROJECT_SYMBOLINFO_H
+#ifndef PROJECT_CORE_MIPS_SYMBOLINFO_H
+#define PROJECT_CORE_MIPS_SYMBOLINFO_H
 
 
 namespace mips
@@ -24,4 +24,4 @@ namespace mips
 }
 
 
-#endif //PROJECT_SYMBOLINFO_H
+#endif //PROJECT_CORE_MIPS_SYMBOLINFO_H
