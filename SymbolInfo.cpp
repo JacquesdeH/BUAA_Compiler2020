@@ -4,7 +4,7 @@
 
 #include "SymbolInfo.h"
 
-mips::SymbolInfo::SymbolInfo(int _memOffset, int _atomSize)
+mips::SymbolInfo::SymbolInfo(const int &_memOffset, const int &_atomSize)
 {
     this->memOffset = _memOffset;
     this->atomSize = _atomSize;

@@ -15,7 +15,7 @@ namespace mips
         int atomSize;
 
     public:
-        SymbolInfo(int _memOffset = 0, int _atomSize = 0);
+        SymbolInfo(const int &_memOffset, const int &_atomSize);
 
     public:
         int getMemOffset() const;

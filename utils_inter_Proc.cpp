@@ -54,7 +54,7 @@ mips::ObjCodes inter::Proc::compile(const std::map<std::string, mips::SymbolInfo
             {
                 int addr = offset;
                 offset += str2int(line.getInr()) * (4);
-                mipsTable[line.getOut()] = mips::SymbolInfo(addr, (line.getInl() == "int" ? 4 : 1));
+                mipsTable.insert(std::make_pair(line.getOut(), mips::SymbolInfo(addr, (line.getInl() == "int" ? 4 : 1))));
             }
         }
         for (const auto & line : block.queryLines())
@@ -64,7 +64,7 @@ mips::ObjCodes inter::Proc::compile(const std::map<std::string, mips::SymbolInfo
                 const std::string& temp = line.getOut();
                 int addr = offset;
                 offset += 4;
-                mipsTable[temp] = mips::SymbolInfo(addr, 4);
+                mipsTable.insert(std::make_pair(temp, mips::SymbolInfo(addr, 4)));
             }
         }
     }

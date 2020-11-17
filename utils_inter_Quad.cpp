@@ -48,13 +48,13 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else if (config::isGlobal(inl))
             {
-                ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "lb" : "lw",
+                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
                                   "$t0", config::zeroReg, inl);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t0", "$sp", toString(mipsTable[inl].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
+                                  "$t0", "$sp", toString(mipsTable.at(inl).getMemOffset()));
             }
             if (_isNumeric(inr))
             {
@@ -62,23 +62,23 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else if (config::isGlobal(inr))
             {
-                ret.genCodeInsert((mipsTable[inr].getAtomSize() == 1) ? "lb" : "lw",
+                ret.genCodeInsert((mipsTable.at(inr).getAtomSize() == 1) ? "lb" : "lw",
                                   "$t1", config::zeroReg, inr);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[inr].getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t1", "$sp", toString(mipsTable[inr].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(inr).getAtomSize() == 1) ? "lb" : "lw",
+                                  "$t1", "$sp", toString(mipsTable.at(inr).getMemOffset()));
             }
             ret.genCodeInsert("addu", "$t2", "$t0", "$t1");
             if (config::isGlobal(out))
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw", "$t2", config::zeroReg, out);
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw", "$t2", config::zeroReg, out);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw",
-                                  "$t2", "$sp", toString(mipsTable[out].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw",
+                                  "$t2", "$sp", toString(mipsTable.at(out).getMemOffset()));
             }
             break;
         case config::MINUS_IR:
@@ -88,13 +88,13 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else if (config::isGlobal(inl))
             {
-                ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "lb" : "lw",
+                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
                                   "$t0", config::zeroReg, inl);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t0", "$sp", toString(mipsTable[inl].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
+                                  "$t0", "$sp", toString(mipsTable.at(inl).getMemOffset()));
             }
             if (_isNumeric(inr))
             {
@@ -102,23 +102,23 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else if (config::isGlobal(inr))
             {
-                ret.genCodeInsert((mipsTable[inr].getAtomSize() == 1) ? "lb" : "lw",
+                ret.genCodeInsert((mipsTable.at(inr).getAtomSize() == 1) ? "lb" : "lw",
                                   "$t1", config::zeroReg, inr);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[inr].getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t1", "$sp", toString(mipsTable[inr].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(inr).getAtomSize() == 1) ? "lb" : "lw",
+                                  "$t1", "$sp", toString(mipsTable.at(inr).getMemOffset()));
             }
             ret.genCodeInsert("subu", "$t2", "$t0", "$t1");
             if (config::isGlobal(out))
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw", "$t2", config::zeroReg, out);
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw", "$t2", config::zeroReg, out);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw",
-                                  "$t2", "$sp", toString(mipsTable[out].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw",
+                                  "$t2", "$sp", toString(mipsTable.at(out).getMemOffset()));
             }
             break;
         case config::MULT_IR:
@@ -128,13 +128,13 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else if (config::isGlobal(inl))
             {
-                ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "lb" : "lw",
+                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
                                   "$t0", config::zeroReg, inl);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t0", "$sp", toString(mipsTable[inl].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
+                                  "$t0", "$sp", toString(mipsTable.at(inl).getMemOffset()));
             }
             if (_isNumeric(inr))
             {
@@ -142,23 +142,23 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else if (config::isGlobal(inr))
             {
-                ret.genCodeInsert((mipsTable[inr].getAtomSize() == 1) ? "lb" : "lw",
+                ret.genCodeInsert((mipsTable.at(inr).getAtomSize() == 1) ? "lb" : "lw",
                                   "$t1", config::zeroReg, inr);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[inr].getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t1", "$sp", toString(mipsTable[inr].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(inr).getAtomSize() == 1) ? "lb" : "lw",
+                                  "$t1", "$sp", toString(mipsTable.at(inr).getMemOffset()));
             }
             ret.genCodeInsert("mul", "$t2", "$t0", "$t1");
             if (config::isGlobal(out))
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw", "$t2", config::zeroReg, out);
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw", "$t2", config::zeroReg, out);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw",
-                                  "$t2", "$sp", toString(mipsTable[out].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw",
+                                  "$t2", "$sp", toString(mipsTable.at(out).getMemOffset()));
             }
             break;
         case config::DIV_IR:
@@ -168,13 +168,13 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else if (config::isGlobal(inl))
             {
-                ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "lb" : "lw",
+                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
                                   "$t0", config::zeroReg, inl);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t0", "$sp", toString(mipsTable[inl].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
+                                  "$t0", "$sp", toString(mipsTable.at(inl).getMemOffset()));
             }
             if (_isNumeric(inr))
             {
@@ -182,32 +182,32 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else if (config::isGlobal(inr))
             {
-                ret.genCodeInsert((mipsTable[inr].getAtomSize() == 1) ? "lb" : "lw",
+                ret.genCodeInsert((mipsTable.at(inr).getAtomSize() == 1) ? "lb" : "lw",
                                   "$t1", config::zeroReg, inr);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[inr].getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t1", "$sp", toString(mipsTable[inr].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(inr).getAtomSize() == 1) ? "lb" : "lw",
+                                  "$t1", "$sp", toString(mipsTable.at(inr).getMemOffset()));
             }
             ret.genCodeInsert("div", "", "$t0", "$t1");
             ret.genCodeInsert("mflo", "$t2");
             if (config::isGlobal(out))
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw", "$t2", config::zeroReg, out);
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw", "$t2", config::zeroReg, out);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw",
-                                  "$t2", "$sp", toString(mipsTable[out].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw",
+                                  "$t2", "$sp", toString(mipsTable.at(out).getMemOffset()));
             }
             break;
         case config::LOAD_IR:
             // TODO: compile
             break;
         case config::STORE_IR:
-            ret.genCodeInsert("ori", "$t0", config::zeroReg, toString(mipsTable[inr].getMemOffset()));
-            if (mipsTable[inr].getAtomSize() == 4)
+            ret.genCodeInsert("ori", "$t0", config::zeroReg, toString(mipsTable.at(inr).getMemOffset()));
+            if (mipsTable.at(inr).getAtomSize() == 4)
                 ret.genCodeInsert("sll", "$t0", "$t0", toString(2));
             if (_isNumeric(out))
             {
@@ -215,11 +215,11 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "lb" : "lw", "$t1", "$sp", toString(mipsTable[out].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "lb" : "lw", "$t1", "$sp", toString(mipsTable.at(out).getMemOffset()));
             }
-            ret.genCodeInsert("addiu", "$t0", "$t0", toString(mipsTable[inl].getMemOffset()));
+            ret.genCodeInsert("addiu", "$t0", "$t0", toString(mipsTable.at(inl).getMemOffset()));
             ret.genCodeInsert("addu", "$t0", "$t0", "$sp");
-            ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "sb" : "sw", "$t1", "$t0", toString(0));
+            ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "sb" : "sw", "$t1", "$t0", toString(0));
             break;
         case config::MOVE_IR:
             if (_isNumeric(inl))
@@ -228,22 +228,22 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else if (config::isGlobal(inl))
             {
-                ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "lb" : "lw",
+                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
                                   "$t0", config::zeroReg, inl);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[inl].getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t0", "$sp", toString(mipsTable[inl].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
+                                  "$t0", "$sp", toString(mipsTable.at(inl).getMemOffset()));
             }
             if (config::isGlobal(out))
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw", "$t0", config::zeroReg, out);
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw", "$t0", config::zeroReg, out);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw",
-                                  "$t0", "$sp", toString(mipsTable[out].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw",
+                                  "$t0", "$sp", toString(mipsTable.at(out).getMemOffset()));
             }
             break;
         case config::BEQ_IR:
@@ -284,12 +284,12 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             ret.genCodeInsert("syscall");
             if (config::isGlobal(out))
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw", "$v0", config::zeroReg, out);
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw", "$v0", config::zeroReg, out);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "sb" : "sw",
-                                  "$v0", "$sp", toString(mipsTable[out].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw",
+                                  "$v0", "$sp", toString(mipsTable.at(out).getMemOffset()));
             }
             if (inl == "char")
             {
@@ -305,13 +305,13 @@ mips::ObjCodes inter::Quad::compile(mips::LocalRegPool & localRegPool, std::map<
             }
             else if (config::isGlobal(out))
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "lb" : "lw",
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "lb" : "lw",
                                   "$a0", config::zeroReg, out);
             }
             else
             {
-                ret.genCodeInsert((mipsTable[out].getAtomSize() == 1) ? "lb" : "lw",
-                                  "$a0", "$sp", toString(mipsTable[out].getMemOffset()));
+                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "lb" : "lw",
+                                  "$a0", "$sp", toString(mipsTable.at(out).getMemOffset()));
             }
             ret.genCodeInsert("li", "$v0", toString((inl == "int") ? 1 : 11));
             ret.genCodeInsert("syscall");
