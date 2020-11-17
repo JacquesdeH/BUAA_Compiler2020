@@ -325,8 +325,10 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
 {
     mips::ObjCodes ret;
     // mipsTable already filled with globals
+    // subTable is reversed in new proc
+    MipsTable subTable;
     // alloc mem of local variables
-    stackOffset = 0;
+    this->resetStackOffset();
     for (const auto & _entry : _proc.queryLocalChars())
     {
         const std::string & _mark = _entry.first;
@@ -335,7 +337,7 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
         const std::vector<char> & _initList = _init.second;
         int addr = stackOffset;
         stackOffset += _count * config::atomSizeChar;
-        mipsTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, config::atomSizeChar)));
+        subTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, config::atomSizeChar)));
     }
     _alignStack("word");
     for (const auto & _entry : _proc.queryLocalInts())
@@ -346,7 +348,7 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
         const std::vector<int> & _initList = _init.second;
         int addr = stackOffset;
         stackOffset += _count * config::atomSizeInt;
-        mipsTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, config::atomSizeInt)));
+        subTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, config::atomSizeInt)));
     }
     // alloc temp variables
     for (const auto & block : _proc.queryBlocks())
@@ -358,11 +360,12 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
                 const std::string& temp = line.out;
                 int addr = stackOffset;
                 stackOffset += config::atomSizeTemp;
-                mipsTable.insert(std::make_pair(temp, mips::SymbolInfo(addr, config::atomSizeTemp)));
+                subTable.insert(std::make_pair(temp, mips::SymbolInfo(addr, config::atomSizeTemp)));
             }
         }
     }
     // actually alloc memory
+    mipsTable.insert(subTable.begin(), subTable.end());
     ret.genCodeInsert("subu", "$sp", "$sp", toString(stackOffset));
     for (const auto & block : _proc.queryBlocks())
     {
@@ -370,11 +373,17 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
         ret.mergeCodes(tmp);
     }
     ret.genCodeInsert("addu", "$sp", "$sp", toString(stackOffset));
+    for (const auto & entry : subTable)
+    {
+        const std::string & _name = entry.first;
+        mipsTable.erase(_name);
+    }
+
     ret.nextLine();
     return ret;
 }
 
-mips::ObjCodes mips::Mips::_compileStrings(const inter::MapDeclareString &mapGlobalString)
+mips::ObjCodes mips::Mips::_compileGlobalStrings(const inter::MapDeclareString &mapGlobalString)
 {
     mips::ObjCodes ret;
     ret.mergeCodes(_alignData("word"));
@@ -382,17 +391,21 @@ mips::ObjCodes mips::Mips::_compileStrings(const inter::MapDeclareString &mapGlo
     {
         std::string mark = entry.first;
         std::string content = deEscape(entry.second);
+        int memoryUse = calcMemoryUse(entry.second, true);
         std::string _code = mark + ": .asciiz \"" + content + "\"";
         ret.insertCode(_code);
+        int addr = globalOffset;
+        globalOffset += memoryUse;
+        mipsTable.insert(std::make_pair(mark, mips::SymbolInfo(addr, memoryUse)));
     }
     return ret;
 }
 
-mips::ObjCodes mips::Mips::_compileChars(const inter::MapDeclareChar &mapGlobalChar)
+mips::ObjCodes mips::Mips::_compileGlobalChars(const inter::MapDeclareChar &mapGlobalChar)
 {
     mips::ObjCodes ret;
-    const int sizeBase = 1;
-    ret.insertCode(".align 1"); // align with byte
+    const int sizeBase = config::atomSizeChar;
+    _alignData("byte");
     for (const auto & entry : mapGlobalChar)
     {
         const auto & _name = entry.first;
@@ -413,15 +426,19 @@ mips::ObjCodes mips::Mips::_compileChars(const inter::MapDeclareChar &mapGlobalC
             }
         }
         ret.insertCode(line);
+        int memoryUse = _count*sizeBase;
+        int addr = globalOffset;
+        globalOffset += memoryUse;
+        mipsTable.insert(std::make_pair(_name, mips::SymbolInfo(addr, memoryUse)));
     }
     return ret;
 }
 
-mips::ObjCodes mips::Mips::_compileInts(const inter::MapDeclareInt &mapGlobalInt)
+mips::ObjCodes mips::Mips::_compileGlobalInts(const inter::MapDeclareInt &mapGlobalInt)
 {
     mips::ObjCodes ret;
-    const int sizeBase = 4;
-    ret.insertCode(".align 2"); // align with word
+    const int sizeBase = config::atomSizeInt;
+    _alignData("word");
     for (const auto & entry : mapGlobalInt)
     {
         const auto & _name = entry.first;
@@ -442,6 +459,10 @@ mips::ObjCodes mips::Mips::_compileInts(const inter::MapDeclareInt &mapGlobalInt
             }
         }
         ret.insertCode(line);
+        int memoryUse = _count*sizeBase;
+        int addr = globalOffset;
+        globalOffset += memoryUse;
+        mipsTable.insert(std::make_pair(_name, mips::SymbolInfo(addr, memoryUse)));
     }
     return ret;
 }
@@ -450,15 +471,15 @@ mips::ObjCodes
 mips::Mips::_compileGlobals(const inter::MapDeclareChar &mapGlobalChar, const inter::MapDeclareInt &mapGlobalInt)
 {
     mips::ObjCodes ret;
-    ret.mergeCodes(_compileChars(mapGlobalChar));
-    ret.mergeCodes(_compileInts(mapGlobalInt));
+    ret.mergeCodes(_compileGlobalChars(mapGlobalChar));
+    ret.mergeCodes(_compileGlobalInts(mapGlobalInt));
     return ret;
 }
 
 mips::ObjCodes mips::Mips::_compileFuncs(const std::vector<inter::Proc> &funcs)
 {
     mips::ObjCodes ret;
-    // global symbols should be gathered before
+    // global symbols already stored in mipsTable
     for (const auto & _func : funcs)
     {
         mips::ObjCodes tmp = _compileProc(_func);
@@ -479,21 +500,20 @@ mips::ObjCodes mips::Mips::compileDataSegment()
 {
     mips::ObjCodes ret;
     ret.insertCode(".data");
-    ret.mergeCodes(_compileStrings(mir.queryGlobalStrings()));
+    ret.mergeCodes(_compileGlobalStrings(mir.queryGlobalStrings()));
     ret.mergeCodes(_compileGlobals(mir.queryGlobalChars(), mir.queryGlobalInts()));
     return ret;
 }
 
 mips::ObjCodes mips::Mips::compileTextSegment()
 {
-    mips::ObjCodes funcsObj = _compileFuncs(mir.queryFunctions());
-    mips::ObjCodes mainObj = _compileMain(mir.queryMainProc());
-
     mips::ObjCodes ret;
     ret.insertCode(".text");
     ret.genCodeInsert("j", config::mainLabel);
     ret.nextLine();
+    mips::ObjCodes funcsObj = _compileFuncs(mir.queryFunctions());
     ret.mergeCodes(funcsObj);
+    mips::ObjCodes mainObj = _compileMain(mir.queryMainProc());
     ret.mergeCodes(mainObj);
     return ret;
 }
@@ -502,11 +522,11 @@ mips::ObjCodes mips::Mips::compile()
 {
     mir.assertIsSeal();
 
-    mips::ObjCodes dataSegment = compileDataSegment();
-    mips::ObjCodes textSegment = compileTextSegment();
-
     mips::ObjCodes ret;
+    mips::ObjCodes dataSegment = compileDataSegment();
     ret.mergeCodes(dataSegment);
+    ret.nextLine();
+    mips::ObjCodes textSegment = compileTextSegment();
     ret.mergeCodes(textSegment);
     return ret;
 }
@@ -518,14 +538,21 @@ mips::ObjCodes mips::Mips::_alignData(const string &_type)
             (_type == "half") ? 2 :
             (_type == "word") ? 4 :
             0;
+    int alignCode =
+            (_type == "byte") ? 0 :
+            (_type == "half") ? 1 :
+            (_type == "word") ? 2 :
+            -1;
     if (alignWidth == 0)
         std::cerr << "Unexpected align type in _alignData" << std::endl;
     mips::ObjCodes ret;
-    ret.insertCode(".align " + toString(alignWidth));
+    ret.insertCode(".align " + toString(alignCode));
+    while (globalOffset % alignWidth != 0)
+        globalOffset ++;
     return ret;
 }
 
-void mips::Mips::_alignStack(const string &_type)
+mips::ObjCodes mips::Mips::_alignStack(const string &_type)
 {
     int alignWidth =
             (_type == "byte") ? 1 :
@@ -536,4 +563,15 @@ void mips::Mips::_alignStack(const string &_type)
         std::cerr << "Unexpected align type in _alignStack" << std::endl;
     while (stackOffset % alignWidth != 0)
         stackOffset ++;
+    return mips::ObjCodes();
+}
+
+void mips::Mips::resetStackOffset()
+{
+    stackOffset = 0;
+}
+
+void mips::Mips::resetGlobalOffset()
+{
+    globalOffset = 0;
 }

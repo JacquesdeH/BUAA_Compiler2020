@@ -84,3 +84,11 @@ string deEscape(const string &s)
     }
     return ret;
 }
+
+int calcMemoryUse(const string &s, const bool &countEnd)
+{
+    int ret = s.size();
+    if (countEnd)
+        ret ++;
+    return ret;
+}

@@ -11,7 +11,7 @@ namespace mips
     class SymbolInfo
     {
     private:
-        int memOffset;
+        int memOffset; // global->offset_from_$gp and local->offset_from_$sp
         int atomSize;
 
     public:

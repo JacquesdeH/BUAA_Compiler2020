@@ -20,5 +20,6 @@ string toString(const config::DataType & type);
 string toString(const int & number);
 string toString(const char & character);
 string deEscape(const string & s);
+int calcMemoryUse(const string & s, const bool & countEnd);
 
 #endif //PROJECT_FUNCTIONAL_STREXT_H

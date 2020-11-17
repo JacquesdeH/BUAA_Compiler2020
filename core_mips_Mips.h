@@ -30,16 +30,18 @@ namespace mips
         Mips(const inter::MIR & _mir);
 
     private:
-        void _alignStack(const std::string & _type);
+        void resetStackOffset();
+        void resetGlobalOffset();
+        mips::ObjCodes _alignStack(const std::string & _type);
         mips::ObjCodes _alignData(const std::string & _type);
         mips::ObjCodes _compileMain(const inter::Proc & _main);
         mips::ObjCodes _compileFuncs(const std::vector<inter::Proc> & funcs);
         mips::ObjCodes _compileProc(const inter::Proc & _proc);
         mips::ObjCodes _compileBlock(const inter::Block & _block);
         mips::ObjCodes _compileQuad(const inter::Quad & _quad);
-        mips::ObjCodes _compileStrings(const inter::MapDeclareString & mapGlobalString);
-        mips::ObjCodes _compileChars(const inter::MapDeclareChar & mapGlobalChar);
-        mips::ObjCodes _compileInts(const inter::MapDeclareInt & mapGlobalInt);
+        mips::ObjCodes _compileGlobalStrings(const inter::MapDeclareString & mapGlobalString);
+        mips::ObjCodes _compileGlobalChars(const inter::MapDeclareChar & mapGlobalChar);
+        mips::ObjCodes _compileGlobalInts(const inter::MapDeclareInt & mapGlobalInt);
         mips::ObjCodes _compileGlobals(const inter::MapDeclareChar & mapGlobalChar,
                                        const inter::MapDeclareInt & mapGlobalInt);
 
