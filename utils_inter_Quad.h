@@ -11,7 +11,7 @@
 
 #include "config.h"
 #include "core_mips_ObjCodes.h"
-#include "core_mips_LocalRegPool.h"
+#include "core_mips_BlockRegPool.h"
 
 namespace inter
 {

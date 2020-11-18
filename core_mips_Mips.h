@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <initializer_list>
 
 #include "core_mips_ObjCodes.h"
 #include "utils_inter_typedef.h"
@@ -22,7 +23,7 @@ namespace mips
     private:
         inter::MIR mir;
         MipsTable mipsTable; // no reset but update at each proc
-        LocalRegPool localRegPool; // reset every block
+        BlockRegPool blockRegPool; // reset every block
         int stackOffset; // reset every proc
         int globalOffset; // no reset for $gp use
 
@@ -30,10 +31,15 @@ namespace mips
         Mips(const inter::MIR & _mir);
 
     private:
-        void resetStackOffset();
-        void resetGlobalOffset();
+        void _resetStackOffset();
+        void _resetGlobalOffset();
+        void _resetBlockRegPool();
         mips::ObjCodes _alignStack(const std::string & _type);
         mips::ObjCodes _alignData(const std::string & _type);
+        mips::ObjCodes _toReg(std::string & _reg, const std::string &_mark,
+                              const std::set<std::string> &_excludedRegs = {});
+
+    private:
         mips::ObjCodes _compileMain(const inter::Proc & _main);
         mips::ObjCodes _compileFuncs(const std::vector<inter::Proc> & funcs);
         mips::ObjCodes _compileProc(const inter::Proc & _proc);
@@ -48,6 +54,11 @@ namespace mips
     private:
         mips::ObjCodes compileDataSegment();
         mips::ObjCodes compileTextSegment();
+
+    private:
+        mips::ObjCodes _compileMathOp(const inter::Quad &_quad);
+        mips::ObjCodes _compileBranchJumpOp(const inter::Quad &_quad);
+        mips::ObjCodes _compileLoadStoreOp(const inter::Quad &_quad);
 
     public:
         mips::ObjCodes compile();
