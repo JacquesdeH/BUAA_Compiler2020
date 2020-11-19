@@ -82,7 +82,6 @@ void lexic::Lexic::_skipBlank()
 
 void lexic::Lexic::_logtoken(const config::TokenCode &tkcode, const string &value, const int &row, const int& column)
 {
-    // TODO: update Table
     this->queue->push(Token(tkcode, value, row, column));
     this->printer->print(tkcode, value);
 }
@@ -270,7 +269,7 @@ bool lexic::Lexic::_parseTk()
             }
             else
             {
-                // TODO: log ErrorManager with dangling char '!'
+                // log ErrorManager with dangling char '!'
             }
         }
         else
@@ -281,7 +280,7 @@ bool lexic::Lexic::_parseTk()
     }
     else
     {
-        // TODO: ErrorManager with un-recognized char
+        // ErrorManager with un-recognized char
         _readNext();
     }
 

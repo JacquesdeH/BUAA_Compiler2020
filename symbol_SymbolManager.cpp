@@ -37,7 +37,7 @@ bool symbol::SymbolManager::declareSymbol(const string& symbol, const symbol::In
     string lowerSymbol = toLower(symbol);
     if (hasSymbolInScope(lowerSymbol))
     {
-        // TODO: ErrorManager
+        std::cerr << "Declaring existing idenfr in scope dup definition" << std::endl;
         return false;
     }
     tables[curTable].insertRecord(lowerSymbol, info);

@@ -89,7 +89,7 @@ void syntactic::Syntactic::parseConstIllustration(const bool & useGlobal)
         // const
         if (!_cur().isToken(config::CONSTTK))
         {
-            // TODO: ErrorManager
+            // ErrorManager
         }
         _printAndNext();
         // ＜常量定义＞
@@ -115,7 +115,7 @@ void syntactic::Syntactic::parseConstDeclaration(const bool & useGlobal)
     // char | int
     if (!_cur().isValuedType())
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     dataType = (_cur().getTkcode() == config::INTTK) ? config::DataType::INT : config::DataType::CHAR;
     _printAndNext();
@@ -131,21 +131,21 @@ void syntactic::Syntactic::parseConstDeclaration(const bool & useGlobal)
         {
             if (!_cur().isToken(config::COMMA))
             {
-                // TODO: ErrorManager
+                // ErrorManager
             }
             _printAndNext();
         }
         // ＜标识符＞
         if (!_cur().isToken(config::IDENFR))
         {
-            // TODO: ErrorManager
+            // ErrorManager
         }
         idenfr = _cur();
         _printAndNext();
         // =
         if (!_cur().isToken(config::ASSIGN))
         {
-            // TODO: ErrorManager
+            // ErrorManager
         }
         _printAndNext();
         // ＜字符＞
@@ -153,7 +153,7 @@ void syntactic::Syntactic::parseConstDeclaration(const bool & useGlobal)
         {
             if (!_cur().isToken(config::CHARCON))
             {
-                // TODO: ErrorManager
+                // ErrorManager
             }
             charValue = _cur().getTkvalue()[0];
             _printAndNext();
@@ -225,7 +225,7 @@ void syntactic::Syntactic::parseUnsigned(int &_unsigned)
     // ＜无符号整数＞
     if (!_cur().isToken(config::INTCON))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _unsigned = str2int(_cur().getTkvalue());
     _printAndNext();
@@ -280,7 +280,7 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized(const bool & useGlob
     // ＜类型标识符＞
     if (!_cur().isValuedType())
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     dataType = (_cur().isToken(config::CHARTK)) ? config::DataType::CHAR : config::DataType::INT;
     _printAndNext();
@@ -298,14 +298,14 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized(const bool & useGlob
         {
             if (!_cur().isToken(config::COMMA))
             {
-                // TODO: ErrorManager
+                // ErrorManager
             }
             _printAndNext();
         }
         // ＜标识符＞
         if (!_cur().isToken(config::IDENFR))
         {
-            // TODO: ErrorManager
+            // ErrorManager
         }
         idenfr = _cur();
         _printAndNext();
@@ -315,7 +315,7 @@ void syntactic::Syntactic::parseVarDeclarationUninitialized(const bool & useGlob
             // dim limit up to 2-dim arrays
             if (dim >= 2)
             {
-                // TODO: ErrorManager
+                // ErrorManager
                 break;
             }
             // [
@@ -389,7 +389,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
     // ＜类型标识符＞
     if (!_cur().isValuedType())
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     dataType = (_cur().isToken(config::CHARTK)) ? config::DataType::CHAR : config::DataType::INT;
     _printAndNext();
@@ -397,7 +397,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
     Token idenfr;
     if (!_cur().isToken(config::IDENFR))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     idenfr = _cur();
     _printAndNext();
@@ -410,7 +410,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
         // dim limit up to 2-dim arrays
         if (dim >= 2)
         {
-            // TODO: ErrorManager
+            // ErrorManager
             break;
         }
         // [
@@ -443,7 +443,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
     // =
     if (!_cur().isToken(config::ASSIGN))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜常量＞ | '{'＜常量＞{,＜常量＞}'}' | '{''{'＜常量＞{,＜常量＞}'}'{,'{'＜常量＞{,＜常量＞}'}'}'}'
@@ -508,7 +508,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
                 {
                     if (!_cur().isToken(config::COMMA))
                     {
-                        // TODO: ErrorManager
+                        // ErrorManager
                     }
                     _printAndNext();
                 }
@@ -545,7 +545,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
             // }
             if (!_cur().isToken(config::RBRACE))
             {
-                // TODO: ErrorManager
+                // ErrorManager
             }
             _printAndNext();
         }
@@ -574,7 +574,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
                 {
                     if (!_cur().isToken(config::COMMA))
                     {
-                        // TODO: ErrorManager
+                        // ErrorManager
                     }
                     _printAndNext();
                 }
@@ -608,7 +608,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
                     {
                         if (!_cur().isToken(config::COMMA))
                         {
-                            // TODO: ErrorManager
+                            // ErrorManager
                         }
                         _printAndNext();
                     }
@@ -620,7 +620,8 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
                         // ErrorManager
                         errorManager->insertError(_last().getRow(), _last().getColumn(), config::ErrorType::ConstantTypeMismatchInVarDeclarationAndInit,
                                                   "Init type mismatch with array template at dim=2");
-                        // no skip// TODO: ErrorManager
+                        // no skip
+                        // ErrorManager
                     }
                     params.push_back(_value);
                 } while (_cur().isToken(config::COMMA));
@@ -636,7 +637,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
                 // }
                 if (!_cur().isToken(config::RBRACE))
                 {
-                    // TODO: ErrorManager
+                    // ErrorManager
                 }
                 _printAndNext();
 
@@ -654,7 +655,7 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
             // }
             if (!_cur().isToken(config::RBRACE))
             {
-                // TODO: ErrorManager
+                // ErrorManager
             }
             _printAndNext();
         }
@@ -709,7 +710,7 @@ void syntactic::Syntactic::parseString(string &_str)
     // STRCON
     if (!_cur().isToken(config::STRCON))
     {
-        // TODO: ErrorManaer
+        // ErrorManaer
     }
     _str = _cur().getTkvalue();
     _printAndNext();
@@ -755,7 +756,7 @@ void syntactic::Syntactic::parseCaseSubStatement(bool & hasReturned, config::Dat
     // case
     if (!_cur().isToken(config::CASETK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜常量＞
@@ -772,7 +773,7 @@ void syntactic::Syntactic::parseCaseSubStatement(bool & hasReturned, config::Dat
     // :
     if (!_cur().isToken(config::COLON))
     {
-        // TODO: ErrorMAnager
+        // ErrorManager
     }
     _printAndNext();
     // ＜语句＞
@@ -786,13 +787,13 @@ void syntactic::Syntactic::parseDefault(bool & hasReturned, config::DataType ins
     // default
     if (!_cur().isToken(config::DEFAULTTK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // :
     if (!_cur().isToken(config::COLON))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜语句＞
@@ -818,19 +819,19 @@ void syntactic::Syntactic::parseReadStatement()
     // scanf
     if (!_cur().isToken(config::SCANFTK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜标识符＞
     if (!_cur().isToken(config::IDENFR))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     Token idenfr = _cur();
     if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
@@ -851,7 +852,7 @@ void syntactic::Syntactic::parseReadStatement()
         }
         if (!(symbolManager->getInfoInAll(idenfr.getTkvalue()).isDimOf(0)))
         {
-            // TODO: ErrorManager with dim in scanf not 0
+            // ErrorManager with dim in scanf not 0
         }
     }
     _printAndNext();
@@ -882,13 +883,13 @@ void syntactic::Syntactic::parsePrintStatement()
     // printf
     if (!_cur().isToken(config::PRINTFTK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜字符串＞,＜表达式＞ | ＜字符串＞ | ＜表达式＞ by token 1 with STRCON
@@ -952,13 +953,13 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     // switch
     if (!_cur().isToken(config::SWITCHTK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜表达式＞
@@ -977,7 +978,7 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     // {
     if (!_cur().isToken(config::LBRACE))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜情况表＞
@@ -996,7 +997,7 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     // }
     if (!_cur().isToken(config::RBRACE))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
 
@@ -1009,7 +1010,7 @@ void syntactic::Syntactic::parseReturnStatement(bool & hasReturned, config::Data
     Token returnToken = _cur();
     if (!_cur().isToken(config::RETURNTK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ['('＜表达式＞')'] by '[' existence
@@ -1093,7 +1094,7 @@ void syntactic::Syntactic::parseAssignStatement()
     Token idenfr;
     if (!_cur().isToken(config::IDENFR))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     idenfr = _cur();
     if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
@@ -1120,7 +1121,7 @@ void syntactic::Syntactic::parseAssignStatement()
     {
         if (dim >= 2)
         {
-            // TODO: ErrorManager
+            // ErrorManager
             break;
         }
         // [
@@ -1145,15 +1146,15 @@ void syntactic::Syntactic::parseAssignStatement()
         }
         else
             _printAndNext();
-        // TODO: semantic array assign
+        // semantic array assign
         // increase dim
         dim++;
     }
-    // TODO: ErrorManager with SymbolManager
+    // ErrorManager with SymbolManager
     // =
     if (!_cur().isToken(config::ASSIGN))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜表达式＞
@@ -1183,13 +1184,13 @@ void syntactic::Syntactic::parseConditionStatement(bool & hasReturned, config::D
     // if
     if (!_cur().isToken(config::IFTK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜条件＞
@@ -1239,13 +1240,13 @@ void syntactic::Syntactic::parseWhileStatement(bool & hasReturned, config::DataT
     // while
     if (!_cur().isToken(config::WHILETK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜条件＞
@@ -1269,20 +1270,20 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     // for
     if (!_cur().isToken(config::FORTK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜标识符＞
     Token idenfr1;
     if (!_cur().isToken(config::IDENFR))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     idenfr1 = _cur();
     if (!symbolManager->hasSymbolInAll(idenfr1.getTkvalue()))
@@ -1296,7 +1297,7 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     // =
     if (!_cur().isToken(config::ASSIGN))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜表达式＞
@@ -1328,7 +1329,7 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     Token idenfr2;
     if (!_cur().isToken(config::IDENFR))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     idenfr2 = _cur();
     if (!symbolManager->hasSymbolInAll(idenfr2.getTkvalue()))
@@ -1340,20 +1341,20 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     }
     if (idenfr1.getTkvalue() != idenfr2.getTkvalue())
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // =
     if (!_cur().isToken(config::ASSIGN))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜标识符＞
     Token idenfr3;
     if (!_cur().isToken(config::IDENFR))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     idenfr3 = _cur();
     if (!symbolManager->hasSymbolInAll(idenfr3.getTkvalue()))
@@ -1365,13 +1366,13 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     }
     if (idenfr1.getTkvalue() != idenfr3.getTkvalue())
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // +|-
     if (!_cur().isPlusMinusOp())
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     int flag = 1;
     if (_cur().isToken(config::MINU))
@@ -1419,7 +1420,7 @@ void syntactic::Syntactic::parseCondition()
     // ＜关系运算符＞
     if (!_cur().isCmpOp())
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     Token cmpOp = _cur();
     _printAndNext();
@@ -1467,21 +1468,21 @@ vector<config::DataType> syntactic::Syntactic::parseParameterDeclarationList()
             {
                 if (!_cur().isToken(config::COMMA))
                 {
-                    // TODO: ErrorManager
+                    // ErrorManager
                 }
                 _printAndNext();
             }
             // ＜类型标识符＞
             if (!_cur().isValuedType())
             {
-                // TODO: ErrorManager
+                // ErrorManager
             }
             dataType = (_cur().isToken(config::CHARTK)) ? config::DataType::CHAR : config::DataType::INT;
             _printAndNext();
             //  ＜标识符＞
             if (!_cur().isToken(config::IDENFR))
             {
-                // TODO: ErrorManager
+                // ErrorManager
             }
             idenfr = _cur();
             _printAndNext();
@@ -1526,7 +1527,7 @@ void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType
             {
                 if (!_cur().isToken(config::COMMA))
                 {
-                    // TODO: ErrorManager
+                    // ErrorManager
                 }
                 _printAndNext();
             }
@@ -1588,13 +1589,13 @@ void syntactic::Syntactic::parseMainFunction()
     // void
     if (!_cur().isToken(config::VOIDTK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // main
     if (!_cur().isToken(config::MAINTK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     idenfr = _cur();
     _printAndNext();
@@ -1612,7 +1613,7 @@ void syntactic::Syntactic::parseMainFunction()
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // SymbolManager into a new scope
@@ -1632,7 +1633,7 @@ void syntactic::Syntactic::parseMainFunction()
     // {
     if (!_cur().isToken(config::LBRACE))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜复合语句＞
@@ -1641,7 +1642,7 @@ void syntactic::Syntactic::parseMainFunction()
     // }
     if (!_cur().isToken(config::RBRACE))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // SymbolManager recover to original scope
@@ -1658,7 +1659,7 @@ config::DataType syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
     config::DataType dataType;
     if (!_cur().isValuedType())
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     dataType = (_cur().isToken(config::CHARTK)) ? config::DataType::CHAR : config::DataType::INT;
     _printAndNext();
@@ -1666,7 +1667,7 @@ config::DataType syntactic::Syntactic::parseDeclarationHead(string &_idenfr)
     Token idenfr;
     if (!_cur().isToken(config::IDENFR))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     idenfr = _cur();
     _idenfr = idenfr.getTkvalue();
@@ -1696,7 +1697,7 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // SymbolManager new scope
@@ -1717,7 +1718,7 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     // {
     if (!_cur().isToken(config::LBRACE))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜复合语句＞
@@ -1733,7 +1734,7 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     // }
     if (!_cur().isToken(config::RBRACE))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // SymbolManager recover original scope
@@ -1747,14 +1748,14 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     // void
     if (!_cur().isToken(config::VOIDTK))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜标识符＞
     Token idenfr;
     if (!_cur().isToken(config::IDENFR))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     idenfr = _cur();
     _printAndNext();
@@ -1773,7 +1774,7 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // SymbolManager new scope
@@ -1794,7 +1795,7 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     // {
     if (!_cur().isToken(config::LBRACE))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜复合语句＞
@@ -1803,7 +1804,7 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     // }
     if (!_cur().isToken(config::RBRACE))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // SymbolManager recover original scope
@@ -1818,7 +1819,7 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
     Token idenfr;
     if (!_cur().isToken(config::IDENFR))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     idenfr = _cur();
     if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
@@ -1830,13 +1831,13 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
     }
     else if (!symbolManager->getInfoInAll(idenfr.getTkvalue()).isValuedFunction())
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜值参数表＞
@@ -1864,7 +1865,7 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     Token idenfr;
     if (!_cur().isToken(config::IDENFR))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     idenfr = _cur();
     if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
@@ -1876,13 +1877,13 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     }
     else if (!symbolManager->getInfoInAll(idenfr.getTkvalue()).isVoidFunction())
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // (
     if (!_cur().isToken(config::LPARENT))
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
     _printAndNext();
     // ＜值参数表＞
@@ -1930,7 +1931,7 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
         // }
         if (!_cur().isToken(config::RBRACE))
         {
-            // TODO: ErrorManager
+            // ErrorManager
         }
         _printAndNext();
     }
@@ -2030,7 +2031,7 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
                 }
                 else
                 {
-                    // TODO: ErrorManager
+                    // ErrorManager
                     // not a defined function, partly processed before
                 }
             }
@@ -2055,7 +2056,7 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
     // error
     else
     {
-        // TODO: ErrorManager
+        // ErrorManager
     }
 
     printer->printComponent("语句");
@@ -2084,7 +2085,7 @@ config::DataType syntactic::Syntactic::parseExpression(string & temp)
         }
         else if (!isFirst)
         {
-            // TODO: ErrorManager where +|- is not optional
+            // ErrorManager where +|- is not optional
             hasError = true;
         }
         // ＜项＞
@@ -2133,7 +2134,7 @@ config::DataType syntactic::Syntactic::parseTerm(string & temp)
         {
             if (!_cur().isMultDivOp())
             {
-                // TODO: ErrorManager
+                // ErrorManager
                 hasError = true;
             }
             isMultOp = _cur().isToken(config::TokenCode::MULT);
@@ -2246,7 +2247,7 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
             // ＜标识符＞
             if (!_cur().isToken(config::IDENFR))
             {
-                // TODO: ErrorManager
+                // ErrorManager
                 hasError = true;
             }
             idenfr = _cur();
@@ -2264,7 +2265,7 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
             {
                 if (dim >= 2)
                 {
-                    // TODO: ErrorManager
+                    // ErrorManager
                     hasError = true;
                     break;
                 }
@@ -2322,7 +2323,7 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
     // error
     else
     {
-        // TODO: ErrorManager
+        // ErrorManager
         retDataType = config::DATA_DEFAULT;
         hasError = true;
     }
