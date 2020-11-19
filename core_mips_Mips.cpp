@@ -544,13 +544,14 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool 
         _reg = blockRegPool.queryMark2Reg(_mark);
         return ret;
     }
-    // load to a new block reg
+    // load to a new reg
     if (_mustReg.empty())
         ret.mergeCodes(blockRegPool.allocBlockReg(_reg, mipsTable, _excludedRegs));
     else
     {
         if (_link)
             std::cerr << "Should not link when selected register !" << std::endl;
+        _reg = _mustReg;
     }
     // begin toReg
     if (config::isNumeric(_mark))
