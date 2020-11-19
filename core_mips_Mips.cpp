@@ -61,46 +61,13 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
             // TODO: compile
             break;
         case config::READ_IR:
-            ret.genCodeInsert("li", "$v0", toString((inl == "int") ? 5 : 12));
-            ret.genCodeInsert("syscall");
-            if (config::isGlobal(out))
-            {
-                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw", "$v0", config::zeroReg, out);
-            }
-            else
-            {
-                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw",
-                                  "$v0", "$sp", toString(mipsTable.at(out).getMemOffset()));
-            }
-            if (inl == "char")
-            {
-                // '\n'
-                ret.genCodeInsert("li", "$v0", toString(12));
-                ret.genCodeInsert("syscall");
-            }
+            ret.mergeCodes(_compileReadOp(_quad));
             break;
         case config::WRITE_IR:
-            if (config::isNumeric(out))
-            {
-                ret.genCodeInsert("ori", "$a0", config::zeroReg, out);
-            }
-            else if (config::isGlobal(out))
-            {
-                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "lb" : "lw",
-                                  "$a0", config::zeroReg, out);
-            }
-            else
-            {
-                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "lb" : "lw",
-                                  "$a0", "$sp", toString(mipsTable.at(out).getMemOffset()));
-            }
-            ret.genCodeInsert("li", "$v0", toString((inl == "int") ? 1 : 11));
-            ret.genCodeInsert("syscall");
+            ret.mergeCodes(_compileWriteOp(_quad));
             break;
         case config::STRING_IR:
-            ret.genCodeInsert("la", "$a0", out);
-            ret.genCodeInsert("li", "$v0", toString(4));
-            ret.genCodeInsert("syscall");
+            ret.mergeCodes(_compileStringOp(_quad));
             break;
         case config::SETLABEL_IR:
             break;
@@ -385,9 +352,9 @@ mips::ObjCodes mips::Mips::_compileMathOp(const inter::Quad &_quad)
 {
     mips::ObjCodes ret;
     std::string _regOut, _regInl, _regInr;
-    ret.mergeCodes(_toReg(_regInl, _quad.inl, true, true,{}));
-    ret.mergeCodes(_toReg(_regInr, _quad.inr, true, true, {_regInl}));
-    ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regInl, _regInr}));
+    ret.mergeCodes(_toReg(_regInl, _quad.inl, true, true, {}, ""));
+    ret.mergeCodes(_toReg(_regInr, _quad.inr, true, true, {_regInl}, ""));
+    ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regInl, _regInr}, ""));
     string opcode =
             (_quad.op == config::ADD_IR) ? "addu" :
             (_quad.op == config::MINUS_IR) ? "subu" :
@@ -438,7 +405,7 @@ mips::ObjCodes mips::Mips::_compileLoadOp(const inter::Quad &_quad)
     {
         int byteOffset = str2int(_quad.inr) * (useSLL ? config::atomSizeInt : config::atomSizeChar);
         int totOffset = arrOffset + byteOffset;
-        ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {}));
+        ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {}, ""));
         ret.genCodeInsert(cmdOp, _regOut, gpOrSp, toString(totOffset));
         // update load _regOut
         blockRegPool.markWriteBack(_regOut);
@@ -446,12 +413,12 @@ mips::ObjCodes mips::Mips::_compileLoadOp(const inter::Quad &_quad)
     else if (config::isGlobal(_quad.inr) || config::isLocal(_quad.inr) || config::isTemp(_quad.inr))
     {
         std::string _regOffset;
-        ret.mergeCodes(_toReg(_regOffset, _quad.inr, false, true, {}));
+        ret.mergeCodes(_toReg(_regOffset, _quad.inr, false, true, {}, ""));
         if (useSLL)
             ret.genCodeInsert("sll", _regOffset, _regOffset, toString(config::bitsSLLInt));
         // c = arr[x] with x<<2 done, need $off+$gsp with offset of arr_relative
         ret.genCodeInsert("addu", _regOffset, _regOffset, gpOrSp);
-        ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regOffset}));
+        ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regOffset}, ""));
         ret.genCodeInsert(cmdOp, _regOut, _regOffset, toString(arrOffset));
         // update load _regOut
         blockRegPool.markWriteBack(_regOut);
@@ -474,7 +441,7 @@ mips::ObjCodes mips::Mips::_compileStoreOp(const inter::Quad &_quad)
     {
         int byteOffset = str2int(_quad.inr) * (useSLL ? config::atomSizeInt : config::atomSizeChar);
         int totOffset = arrOffset + byteOffset;
-        ret.mergeCodes(_toReg(_regOut, _quad.out, true, true, {}));
+        ret.mergeCodes(_toReg(_regOut, _quad.out, true, true, {}, ""));
         ret.genCodeInsert(cmdOp, _regOut, gpOrSp, toString(totOffset));
         // update load _regOut
         // blockRegPool.markWriteBack(_regOut);
@@ -482,12 +449,12 @@ mips::ObjCodes mips::Mips::_compileStoreOp(const inter::Quad &_quad)
     else if (config::isGlobal(_quad.inr) || config::isLocal(_quad.inr) || config::isTemp(_quad.inr))
     {
         std::string _regOffset;
-        ret.mergeCodes(_toReg(_regOffset, _quad.inr, false, true, {}));
+        ret.mergeCodes(_toReg(_regOffset, _quad.inr, false, true, {}, ""));
         if (useSLL)
             ret.genCodeInsert("sll", _regOffset, _regOffset, toString(config::bitsSLLInt));
         // c = arr[x] with x<<2 done, need $off+$gsp with offset of arr_relative
         ret.genCodeInsert("addu", _regOffset, _regOffset, gpOrSp);
-        ret.mergeCodes(_toReg(_regOut, _quad.out, true, true, {_regOffset}));
+        ret.mergeCodes(_toReg(_regOut, _quad.out, true, true, {_regOffset}, ""));
         ret.genCodeInsert(cmdOp, _regOut, _regOffset, toString(arrOffset));
         // update load _regOut
         // blockRegPool.markWriteBack(_regOut);
@@ -502,12 +469,62 @@ mips::ObjCodes mips::Mips::_compileMoveOp(const inter::Quad &_quad)
     mips::ObjCodes ret;
     std::string _regOut, _regIn;
     // prepare right expr
-    ret.mergeCodes(_toReg(_regIn, _quad.inl, true, true, {}));
+    ret.mergeCodes(_toReg(_regIn, _quad.inl, true, true, {}, ""));
     // prepare left reg
-    ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regIn}));
+    ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regIn}, ""));
     ret.genCodeInsert("move", _regOut, _regIn);
     // update WB mark
     blockRegPool.markWriteBack(_regOut);
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileReadOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    std::string _readCode = toString(
+            (_quad.inl == "int") ? config::_readInt:
+            (_quad.inl == "char") ? config::_readChar:
+            0);
+    // read idenfr
+    ret.genCodeInsert("li", "$v0", _readCode);
+    ret.genCodeInsert("syscall");
+    std::string _regOut;
+    ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {"$v0"}, ""));
+    ret.genCodeInsert("move", _regOut, "$v0");
+    blockRegPool.markWriteBack(_regOut);
+    // read '\n' only when char is read
+    if (_quad.inl == "char")
+    {
+        ret.genCodeInsert("li", "$v0", toString(config::_readChar));
+        ret.genCodeInsert("syscall");
+    }
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileWriteOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    std::string _writeCode = toString(
+            (_quad.inl == "int") ? config::_printInt:
+            (_quad.inl == "char") ? config::_printChar:
+            0);
+    std::string _regParam;
+    ret.mergeCodes(_toReg(_regParam, _quad.out, false, false, {}, "$a0"));
+    ret.genCodeInsert("li", "$v0", _writeCode);
+    ret.genCodeInsert("syscall");
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileStringOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    if (!config::isString(_quad.out))
+        std::cerr << "Not a string in Write String Op !" << std::endl;
+    // addr of string use $gp with offset addiu
+    ret.genCodeInsert("addiu", "$a0", config::globalReg,
+                      toString(mipsTable.at(_quad.out).getMemOffset()));
+    ret.genCodeInsert("li", "$v0", toString(config::_printString));
+    ret.genCodeInsert("syscall");
     return ret;
 }
 
@@ -517,7 +534,7 @@ void mips::Mips::_resetBlockRegPool()
 }
 
 mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool &_link, const bool &_init,
-                                  const std::set<std::string> &_excludedRegs)
+                                  const std::set<std::string> &_excludedRegs, const std::string &_mustReg)
 {
     mips::ObjCodes ret;
     // TODO: procRegBook early return
@@ -528,7 +545,14 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool 
         return ret;
     }
     // load to a new block reg
-    ret.mergeCodes(blockRegPool.allocBlockReg(_reg, mipsTable, _excludedRegs));
+    if (_mustReg.empty())
+        ret.mergeCodes(blockRegPool.allocBlockReg(_reg, mipsTable, _excludedRegs));
+    else
+    {
+        if (_link)
+            std::cerr << "Should not link when selected register !" << std::endl;
+    }
+    // begin toReg
     if (config::isNumeric(_mark))
     {
         ret.genCodeInsert("ori", _reg, config::zeroReg, _mark);

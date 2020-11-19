@@ -37,7 +37,7 @@ namespace mips
         mips::ObjCodes _alignStack(const std::string & _type);
         mips::ObjCodes _alignData(const std::string & _type);
         mips::ObjCodes _toReg(std::string & _reg, const std::string &_mark, const bool &_link, const bool &_init,
-                              const std::set<std::string> &_excludedRegs = {});
+                              const std::set<std::string> &_excludedRegs, const std::string &_mustReg);
 
     private:
         mips::ObjCodes _compileMain(const inter::Proc & _main);
@@ -62,6 +62,9 @@ namespace mips
         mips::ObjCodes _compileLoadOp(const inter::Quad &_quad);
         mips::ObjCodes _compileStoreOp(const inter::Quad &_quad);
         mips::ObjCodes _compileMoveOp(const inter::Quad &_quad);
+        mips::ObjCodes _compileReadOp(const inter::Quad &_quad);
+        mips::ObjCodes _compileWriteOp(const inter::Quad &_quad);
+        mips::ObjCodes _compileStringOp(const inter::Quad &_quad);
 
     public:
         mips::ObjCodes compile();

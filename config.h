@@ -191,6 +191,12 @@ namespace config
     const std::string frameReg = "$fp";
 
     const std::string gpInit = "0x10010000";
+
+    const int _readInt = 5;
+    const int _readChar = 12;
+    const int _printInt = 1;
+    const int _printChar = 11;
+    const int _printString = 4;
 }
 
 #endif //PROJECT_CONFIG_H
