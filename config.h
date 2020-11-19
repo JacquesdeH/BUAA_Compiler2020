@@ -162,6 +162,7 @@ namespace config
     const int atomSizeChar = 1;
     const int atomSizeInt = 4;
     const int atomSizeTemp = 4;
+    const int bitsSLLInt = 2;
 
     const std::string tempHead = "___Temp__";
     const std::string labelHead = "___Label__";

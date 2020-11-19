@@ -27,55 +27,11 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
             ret.mergeCodes(_compileMathOp(_quad));
             break;
         case config::LOAD_IR:
-            // TODO: compile
-            break;
         case config::STORE_IR:
-            if (config::isNumeric(inr))
-            {
-                ret.genCodeInsert("li", "$t0", inr);
-            }
-            else
-            {
-                ret.genCodeInsert("ori", "$t0", config::zeroReg, toString(mipsTable.at(inr).getMemOffset()));
-            }
-            if (mipsTable.at(inl).getAtomSize() == 4)
-                ret.genCodeInsert("sll", "$t0", "$t0", toString(2));
-            if (config::isNumeric(out))
-            {
-                ret.genCodeInsert("ori", "$t1", config::zeroReg, out);
-            }
-            else
-            {
-                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "lb" : "lw", "$t1", "$sp", toString(mipsTable.at(out).getMemOffset()));
-            }
-            ret.genCodeInsert("addiu", "$t0", "$t0", toString(mipsTable.at(inl).getMemOffset()));
-            ret.genCodeInsert("addu", "$t0", "$t0", "$sp");
-            ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "sb" : "sw", "$t1", "$t0", toString(0));
+            ret.mergeCodes(_compileLoadStoreOp(_quad));
             break;
         case config::MOVE_IR:
-            if (config::isNumeric(inl))
-            {
-                ret.genCodeInsert("ori", "$t0", config::zeroReg, inl);
-            }
-            else if (config::isGlobal(inl))
-            {
-                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t0", config::zeroReg, inl);
-            }
-            else
-            {
-                ret.genCodeInsert((mipsTable.at(inl).getAtomSize() == 1) ? "lb" : "lw",
-                                  "$t0", "$sp", toString(mipsTable.at(inl).getMemOffset()));
-            }
-            if (config::isGlobal(out))
-            {
-                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw", "$t0", config::zeroReg, out);
-            }
-            else
-            {
-                ret.genCodeInsert((mipsTable.at(out).getAtomSize() == 1) ? "sb" : "sw",
-                                  "$t0", "$sp", toString(mipsTable.at(out).getMemOffset()));
-            }
+            ret.mergeCodes(_compileMoveOp(_quad));
             break;
         case config::BEQ_IR:
             // TODO: compile
@@ -428,9 +384,9 @@ mips::ObjCodes mips::Mips::_compileMathOp(const inter::Quad &_quad)
 {
     mips::ObjCodes ret;
     std::string _regOut, _regInl, _regInr;
-    _toReg(_regInl, _quad.inl, {});
-    _toReg(_regInr, _quad.inr, {_regInl});
-    _toReg(_regOut, _quad.out, {_regInl, _regInr});
+    ret.mergeCodes(_toReg(_regInl, _quad.inl, true, true,{}));
+    ret.mergeCodes(_toReg(_regInr, _quad.inr, true, true, {_regInl}));
+    ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regInl, _regInr}));
     string opcode =
             (_quad.op == config::ADD_IR) ? "addu" :
             (_quad.op == config::MINUS_IR) ? "subu" :
@@ -458,8 +414,100 @@ mips::ObjCodes mips::Mips::_compileBranchJumpOp(const inter::Quad &_quad)
 
 mips::ObjCodes mips::Mips::_compileLoadStoreOp(const inter::Quad &_quad)
 {
-    // TODO
-    return mips::ObjCodes();
+    mips::ObjCodes ret;
+    if (_quad.op == config::IRCode::LOAD_IR)
+        ret.mergeCodes(_compileLoadOp(_quad));
+    else if (_quad.op == config::IRCode::STORE_IR)
+        ret.mergeCodes(_compileStoreOp(_quad));
+    else
+        std::cerr << "Unexpected quad op in LoadStoreOp !" << std::endl;
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileLoadOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    std::string _regOut;
+    int atomSize = mipsTable.at(_quad.inl).getAtomSize();
+    int arrOffset = mipsTable.at(_quad.inl).getMemOffset();
+    bool useSLL = atomSize != config::atomSizeChar;
+    std::string gpOrSp = (config::isGlobal(_quad.inl)) ? config::globalReg : config::stackReg;
+    std::string cmdOp = atomSize2Load(atomSize);
+    if (config::isNumeric(_quad.inr))
+    {
+        int byteOffset = str2int(_quad.inr) * (useSLL ? config::atomSizeInt : config::atomSizeChar);
+        int totOffset = arrOffset + byteOffset;
+        ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {}));
+        ret.genCodeInsert(cmdOp, _regOut, gpOrSp, toString(totOffset));
+        // update load _regOut
+        blockRegPool.markWriteBack(_regOut);
+    }
+    else if (config::isGlobal(_quad.inr) || config::isLocal(_quad.inr) || config::isTemp(_quad.inr))
+    {
+        std::string _regOffset;
+        ret.mergeCodes(_toReg(_regOffset, _quad.inr, false, true, {}));
+        if (useSLL)
+            ret.genCodeInsert("sll", _regOffset, _regOffset, toString(config::bitsSLLInt));
+        // c = arr[x] with x<<2 done, need $off+$gsp with offset of arr_relative
+        ret.genCodeInsert("addu", _regOffset, _regOffset, gpOrSp);
+        ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regOffset}));
+        ret.genCodeInsert(cmdOp, _regOut, _regOffset, toString(arrOffset));
+        // update load _regOut
+        blockRegPool.markWriteBack(_regOut);
+    }
+    else
+        std::cerr << "Unexpected quad.inr in compileLoadOp" << std::endl;
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileStoreOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    std::string _regOut;
+    int atomSize = mipsTable.at(_quad.inl).getAtomSize();
+    int arrOffset = mipsTable.at(_quad.inl).getMemOffset();
+    bool useSLL = atomSize != config::atomSizeChar;
+    std::string gpOrSp = (config::isGlobal(_quad.inl)) ? config::globalReg : config::stackReg;
+    std::string cmdOp = atomSize2Store(atomSize);
+    if (config::isNumeric(_quad.inr))
+    {
+        int byteOffset = str2int(_quad.inr) * (useSLL ? config::atomSizeInt : config::atomSizeChar);
+        int totOffset = arrOffset + byteOffset;
+        ret.mergeCodes(_toReg(_regOut, _quad.out, true, true, {}));
+        ret.genCodeInsert(cmdOp, _regOut, gpOrSp, toString(totOffset));
+        // update load _regOut
+        // blockRegPool.markWriteBack(_regOut);
+    }
+    else if (config::isGlobal(_quad.inr) || config::isLocal(_quad.inr) || config::isTemp(_quad.inr))
+    {
+        std::string _regOffset;
+        ret.mergeCodes(_toReg(_regOffset, _quad.inr, false, true, {}));
+        if (useSLL)
+            ret.genCodeInsert("sll", _regOffset, _regOffset, toString(config::bitsSLLInt));
+        // c = arr[x] with x<<2 done, need $off+$gsp with offset of arr_relative
+        ret.genCodeInsert("addu", _regOffset, _regOffset, gpOrSp);
+        ret.mergeCodes(_toReg(_regOut, _quad.out, true, true, {_regOffset}));
+        ret.genCodeInsert(cmdOp, _regOut, _regOffset, toString(arrOffset));
+        // update load _regOut
+        // blockRegPool.markWriteBack(_regOut);
+    }
+    else
+        std::cerr << "Unexpected quad.inr in compileStoreOp" << std::endl;
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileMoveOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    std::string _regOut, _regIn;
+    // prepare right expr
+    ret.mergeCodes(_toReg(_regIn, _quad.inl, true, true, {}));
+    // prepare left reg
+    ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regIn}));
+    ret.genCodeInsert("move", _regOut, _regIn);
+    // update WB mark
+    blockRegPool.markWriteBack(_regOut);
+    return ret;
 }
 
 void mips::Mips::_resetBlockRegPool()
@@ -467,7 +515,8 @@ void mips::Mips::_resetBlockRegPool()
     this->blockRegPool.reset();
 }
 
-mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const std::set<std::string> &_excludedRegs)
+mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool &_link, const bool &_init,
+                                  const std::set<std::string> &_excludedRegs)
 {
     mips::ObjCodes ret;
     // TODO: procRegBook early return
@@ -486,17 +535,20 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const std::
     else if (config::isGlobal(_mark))
     {
         SymbolInfo _info = mipsTable.at(_mark);
-        ret.genCodeInsert(atomSize2Load(_info.getAtomSize()), _reg, config::globalReg, toString(_info.getMemOffset()));
+        if (_init)
+            ret.genCodeInsert(atomSize2Load(_info.getAtomSize()), _reg, config::globalReg, toString(_info.getMemOffset()));
     }
     else if (config::isLocal(_mark))
     {
         SymbolInfo _info = mipsTable.at(_mark);
-        ret.genCodeInsert(atomSize2Load(_info.getAtomSize()), _reg, config::stackReg, toString(_info.getMemOffset()));
+        if (_init)
+            ret.genCodeInsert(atomSize2Load(_info.getAtomSize()), _reg, config::stackReg, toString(_info.getMemOffset()));
     }
     else if (config::isTemp(_mark))
     {
         SymbolInfo _info = mipsTable.at(_mark);
-        ret.genCodeInsert(atomSize2Load(_info.getAtomSize()), _reg, config::stackReg, toString(_info.getMemOffset()));
+        if (_init)
+            ret.genCodeInsert(atomSize2Load(_info.getAtomSize()), _reg, config::stackReg, toString(_info.getMemOffset()));
     }
     else if (config::isLabel(_mark))
     {
@@ -505,6 +557,7 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const std::
     else
         std::cerr << "Encountered String or Proc or nothing at all in _toReg !" << std::endl;
     // update links
-    blockRegPool.updateInfo(_reg, _mark);
+    if (_link)
+        blockRegPool.updateInfo(_reg, _mark);
     return ret;
 }

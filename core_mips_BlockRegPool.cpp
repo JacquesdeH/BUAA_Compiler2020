@@ -96,9 +96,9 @@ void mips::BlockRegPool::markWriteBack(const string &_reg)
 mips::ObjCodes mips::BlockRegPool::saveWriteBackRegs(const std::map<std::string, mips::SymbolInfo> & mipsTable)
 {
     mips::ObjCodes ret;
-    for (const auto& _reg : writebackRegs)
+    while (!writebackRegs.empty())
     {
-        mips::ObjCodes tmp = _writeBack(_reg, mipsTable);
+        mips::ObjCodes tmp = _writeBack(*(writebackRegs.begin()), mipsTable);
         ret.mergeCodes(tmp);
     }
     return ret;

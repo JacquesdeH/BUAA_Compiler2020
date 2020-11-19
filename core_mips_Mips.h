@@ -36,7 +36,7 @@ namespace mips
         void _resetBlockRegPool();
         mips::ObjCodes _alignStack(const std::string & _type);
         mips::ObjCodes _alignData(const std::string & _type);
-        mips::ObjCodes _toReg(std::string & _reg, const std::string &_mark,
+        mips::ObjCodes _toReg(std::string & _reg, const std::string &_mark, const bool &_link, const bool &_init,
                               const std::set<std::string> &_excludedRegs = {});
 
     private:
@@ -59,6 +59,9 @@ namespace mips
         mips::ObjCodes _compileMathOp(const inter::Quad &_quad);
         mips::ObjCodes _compileBranchJumpOp(const inter::Quad &_quad);
         mips::ObjCodes _compileLoadStoreOp(const inter::Quad &_quad);
+        mips::ObjCodes _compileLoadOp(const inter::Quad &_quad);
+        mips::ObjCodes _compileStoreOp(const inter::Quad &_quad);
+        mips::ObjCodes _compileMoveOp(const inter::Quad &_quad);
 
     public:
         mips::ObjCodes compile();
