@@ -136,13 +136,13 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
     ret.insertLabel(_proc.queryProcName());
     // actually alloc memory
     mipsTable.insert(subTable.begin(), subTable.end());
-    ret.genCodeInsert("subu", "$sp", "$sp", toString(stackOffset));
+    ret.genCodeInsert("addiu", "$sp", "$sp", toString(-stackOffset));
     for (const auto & block : _proc.queryBlocks())
     {
         mips::ObjCodes tmp = _compileBlock(block);
         ret.mergeCodes(tmp);
     }
-    ret.genCodeInsert("addu", "$sp", "$sp", toString(stackOffset));
+    ret.genCodeInsert("addiu", "$sp", "$sp", toString(stackOffset));
     for (const auto & entry : subTable)
     {
         const std::string & _name = entry.first;
