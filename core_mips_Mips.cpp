@@ -509,7 +509,7 @@ mips::ObjCodes mips::Mips::_compileWriteOp(const inter::Quad &_quad)
             (_quad.inl == "char") ? config::_printChar:
             0);
     std::string _regParam;
-    ret.mergeCodes(_toReg(_regParam, _quad.out, false, false, {}, "$a0"));
+    ret.mergeCodes(_toReg(_regParam, _quad.out, false, true, {}, "$a0"));
     ret.genCodeInsert("li", "$v0", _writeCode);
     ret.genCodeInsert("syscall");
     return ret;
@@ -538,11 +538,12 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool 
 {
     mips::ObjCodes ret;
     // TODO: procRegBook early return
-    // blockRegPool
+    // blockRegPool with _mustReg check!!
     if (blockRegPool.hasMark(_mark))
     {
         _reg = blockRegPool.queryMark2Reg(_mark);
-        return ret;
+        if (_reg == _mustReg)
+            return ret;
     }
     // load to a new reg
     if (_mustReg.empty())
