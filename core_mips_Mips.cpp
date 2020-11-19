@@ -313,6 +313,7 @@ mips::ObjCodes mips::Mips::compileTextSegment()
 {
     mips::ObjCodes ret;
     ret.insertCode(".text");
+    ret.genCodeInsert("li", config::globalReg, config::gpInit);
     ret.genCodeInsert("j", config::mainLabel);
     ret.nextLine();
     mips::ObjCodes funcsObj = _compileFuncs(mir.queryFunctions());

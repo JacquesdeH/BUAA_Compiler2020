@@ -189,6 +189,8 @@ namespace config
     const std::string stackReg = "$sp";
     const std::string globalReg = "$gp";
     const std::string frameReg = "$fp";
+
+    const std::string gpInit = "0x10010000";
 }
 
 #endif //PROJECT_CONFIG_H
