@@ -156,7 +156,7 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
 mips::ObjCodes mips::Mips::_compileBlock(const inter::Block &_block)
 {
     mips::ObjCodes ret;
-    this->blockRegPool.reset();
+    _resetBlockRegPool();
     for (const auto & line : _block.queryLines())
     {
         mips::ObjCodes tmp = _compileQuad(line);
