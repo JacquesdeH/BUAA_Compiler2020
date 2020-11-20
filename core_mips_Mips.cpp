@@ -65,6 +65,7 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
             ret.mergeCodes(_compileStringOp(_quad));
             break;
         case config::SETLABEL_IR:
+            ret.insertLabel(_quad.out);
             break;
         default: ;
     }
