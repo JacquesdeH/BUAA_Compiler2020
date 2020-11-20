@@ -1,0 +1,14 @@
+void main(){
+	int a3, a4;
+	int a6 = 6;
+	int a7 = 7;
+	int a8 = 8;
+	int a9 = 9;
+	int a10 = 10;
+	int a11 = 11;
+	scanf(a3);
+	printf(a3);
+	a3 = a3 * ((-'3') * (3));
+	printf(a3);
+	scanf(a6);
+}
