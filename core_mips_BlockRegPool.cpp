@@ -84,6 +84,12 @@ mips::ObjCodes mips::BlockRegPool::allocBlockReg(std::string & _reg, const std::
 
 void mips::BlockRegPool::updateInfo(const string &_reg, const string &_mark)
 {
+    if (reg2mark.find(_reg) != reg2mark.end())
+    {
+        std::string _lastMark = reg2mark.at(_reg);
+        if (mark2reg.find(_lastMark) != mark2reg.end())
+            mark2reg.erase(_lastMark);
+    }
     reg2mark[_reg] = _mark;
     mark2reg[_mark] = _reg;
 }
