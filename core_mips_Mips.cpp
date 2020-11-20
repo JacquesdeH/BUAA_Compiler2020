@@ -407,8 +407,6 @@ mips::ObjCodes mips::Mips::_compileLoadOp(const inter::Quad &_quad)
         int totOffset = arrOffset + byteOffset;
         ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {}, ""));
         ret.genCodeInsert(cmdOp, _regOut, gpOrSp, toString(totOffset));
-        // update load _regOut
-        blockRegPool.markWriteBack(_regOut);
     }
     else if (config::isGlobal(_quad.inr) || config::isLocal(_quad.inr) || config::isTemp(_quad.inr))
     {
@@ -420,11 +418,11 @@ mips::ObjCodes mips::Mips::_compileLoadOp(const inter::Quad &_quad)
         ret.genCodeInsert("addu", _regOffset, _regOffset, gpOrSp);
         ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regOffset}, ""));
         ret.genCodeInsert(cmdOp, _regOut, _regOffset, toString(arrOffset));
-        // update load _regOut
-        blockRegPool.markWriteBack(_regOut);
     }
     else
         std::cerr << "Unexpected quad.inr in compileLoadOp" << std::endl;
+    // update load _regOut
+    blockRegPool.markWriteBack(_regOut);
     return ret;
 }
 

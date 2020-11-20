@@ -31,6 +31,7 @@ namespace mips
 
     private:
         mips::ObjCodes _writeBack(const std::string & _reg, const std::map<std::string, mips::SymbolInfo> & mipsTable);
+        void _untieLinks(const std::string & _reg);
 
     public:
         void reset();

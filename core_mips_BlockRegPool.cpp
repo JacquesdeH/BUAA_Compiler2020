@@ -90,7 +90,10 @@ void mips::BlockRegPool::updateInfo(const string &_reg, const string &_mark)
 
 void mips::BlockRegPool::markWriteBack(const string &_reg)
 {
-    this->writebackRegs.insert(_reg);
+    if (config::isNumeric(reg2mark.at(_reg)))
+        _untieLinks(_reg);
+    else
+        this->writebackRegs.insert(_reg);
 }
 
 mips::ObjCodes mips::BlockRegPool::saveWriteBackRegs(const std::map<std::string, mips::SymbolInfo> & mipsTable)
@@ -124,9 +127,8 @@ mips::ObjCodes mips::BlockRegPool::_writeBack(const string &_reg, const std::map
         else
             std::cerr << "Unexpected _mark in _writeBack !" << std::endl;
     }
-    // un-tie links
-    reg2mark.erase(_reg);
-    mark2reg.erase(_mark);
+    // update
+    _untieLinks(_reg);
     writebackRegs.erase(_reg);
     return ret;
 }
@@ -154,4 +156,11 @@ void mips::BlockRegPool::reset()
     {
         this->freePool.push(_reg);
     }
+}
+
+void mips::BlockRegPool::_untieLinks(const string &_reg)
+{
+    std::string _mark = reg2mark.at(_reg);
+    reg2mark.erase(_reg);
+    mark2reg.erase(_mark);
 }
