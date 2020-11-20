@@ -543,7 +543,7 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool 
     {
         _reg = blockRegPool.queryMark2Reg(_mark);
         if (!_mustReg.empty() && _mustReg != _reg)
-            ret.genCodeInsert("move", _reg, _mustReg);
+            ret.genCodeInsert("move", _mustReg, _reg);
         return ret;
     }
     // load to a new reg
