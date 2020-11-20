@@ -542,8 +542,9 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool 
     if (blockRegPool.hasMark(_mark))
     {
         _reg = blockRegPool.queryMark2Reg(_mark);
-        if (_reg == _mustReg || _mustReg.empty())
-            return ret;
+        if (!_mustReg.empty() && _mustReg != _reg)
+            ret.genCodeInsert("move", _reg, _mustReg);
+        return ret;
     }
     // load to a new reg
     if (_mustReg.empty())
