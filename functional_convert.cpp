@@ -90,3 +90,50 @@ std::string atomSize2Load(const int &atomSize)
             return "";
     }
 }
+
+template<class T>
+bool oneOf(const T &obj, const std::vector<T> &init)
+{
+    for (const auto & item : init)
+    {
+        if (obj == item)
+            return true;
+    }
+    return false;
+}
+
+std::string branchIR2Op(config::IRCode _code)
+{
+    switch (_code)
+    {
+        case config::BEQ_IR:
+            return "beq";
+        case config::BNE_IR:
+            return "bne";
+        case config::BLT_IR:
+            return "blt";
+        case config::BLE_IR:
+            return "ble";
+        default:
+            return "";
+    }
+    return "";
+}
+
+std::string branch2oppo(const string &_op)
+{
+    if (_op == "beq")
+        return "bne";
+    else if (_op == "bne")
+        return "beq";
+    else if (_op == "blt")
+        return "bge";
+    else if (_op == "ble")
+        return "bgt";
+    else if (_op == "bgt")
+        return "ble";
+    else if (_op == "bge")
+        return "blt";
+    else
+        return "";
+}

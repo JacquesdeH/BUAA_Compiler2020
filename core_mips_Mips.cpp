@@ -34,16 +34,11 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
             ret.mergeCodes(_compileMoveOp(_quad));
             break;
         case config::BEQ_IR:
-            // TODO: compile
-            break;
         case config::BNE_IR:
-            // TODO: compile
-            break;
         case config::BLE_IR:
-            // TODO: compile
-            break;
         case config::BLT_IR:
-            // TODO: compile
+        case config::JUMP_IR:
+            ret.mergeCodes(_compileBranchJumpOp(_quad));
             break;
         case config::PARA_IR:
             // TODO: compile
@@ -376,8 +371,54 @@ mips::ObjCodes mips::Mips::_compileMathOp(const inter::Quad &_quad)
 
 mips::ObjCodes mips::Mips::_compileBranchJumpOp(const inter::Quad &_quad)
 {
-    // TODO
-    return mips::ObjCodes();
+    mips::ObjCodes ret;
+    if (_quad.op == config::JUMP_IR)
+    {
+        ret.genCodeInsert("j", _quad.out);
+        return ret;
+    }
+    std::string _regL, _regR;
+    // both non-numeric case
+    if (config::isNumeric(_quad.inl) && config::isNumeric(_quad.inr))
+    {
+        int L = str2int(_quad.inl);
+        int R = str2int(_quad.inr);
+        bool out =
+                (_quad.op == config::BEQ_IR) ? L == R :
+                (_quad.op == config::BNE_IR) ? L != R :
+                (_quad.op == config::BLT_IR) ? L <  R :
+                (_quad.op == config::BLE_IR) ? L <= R :
+                false;
+        if (out == true)
+            ret.genCodeInsert("j", _quad.out);
+    }
+    // one non-numeric case
+    else if (config::isNumeric(_quad.inl) || config::isNumeric(_quad.inr))
+    {
+        std::string _op = branchIR2Op(_quad.op);
+        std::string _inl = _quad.inl;
+        std::string _inr = _quad.inr;
+        if (config::isNumeric(_inl))
+        {
+            _op = branch2oppo(_op);
+            std::string tmp = _inl;
+            _inl = _inr;
+            _inr = tmp;
+        }
+        if (config::isNumeric(_inl) || !config::isNumeric(_inr))
+            std::cerr << "Still a numeric or right is not numeric when swapped from inl to inr !" << std::endl;
+        ret.mergeCodes(_toReg(_regR, _inr, true, true, {}, ""));
+        ret.mergeCodes(_toReg(_regL, _inl, true, true, {_regR}, ""));
+        ret.genCodeInsert(_op, _quad.out, _regL, _regR);
+    }
+    // all regs form
+    else
+    {
+        ret.mergeCodes(_toReg(_regL, _quad.inl, true, true, {}, ""));
+        ret.mergeCodes(_toReg(_regR, _quad.inr, true, true, {_regL}, ""));
+        ret.genCodeInsert(branchIR2Op(_quad.op), _quad.out, _regL, _regR);
+    }
+    return ret;
 }
 
 mips::ObjCodes mips::Mips::_compileLoadStoreOp(const inter::Quad &_quad)

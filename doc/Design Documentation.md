@@ -673,7 +673,7 @@ class ErrorManager
 | BNE_IR      | label    | exp1 | exp2 | 不等跳转                       | if exp1!=exp2 goto label  |
 | BLE_IR      | label    | exp1 | exp2 | 小于等于跳转                   | if exp1<=exp2 goto lable  |
 | BLT_IR      | label    | exp1 | exp2 | 小于跳转                       | if exp1<exp2 goto label   |
-|             |          |      |      |                                |                           |
+| JUMP_IR     | label    |      |      | 无条件跳转                     | jump label                |
 |             |          |      |      |                                |                           |
 | PARA_IR     | name     | type |      | 定义函数参数                   | para name char            |
 | PUSH_IR     | name     |      |      | 传入实参                       | push name                 |
