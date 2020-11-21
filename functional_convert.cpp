@@ -117,7 +117,6 @@ std::string branchIR2Op(config::IRCode _code)
         default:
             return "";
     }
-    return "";
 }
 
 std::string branch2oppo(const string &_op)
@@ -136,4 +135,26 @@ std::string branch2oppo(const string &_op)
         return "blt";
     else
         return "";
+}
+
+std::vector<std::string> splitMarks(const string &_combined, const string &_sep)
+{
+    std::vector<std::string> ret;
+    int pos = 0;
+    while ((pos = _combined.find(_sep, pos)) != std::string::npos)
+    {
+        int next = _combined.find(_sep, pos+1);
+        if (next == std::string::npos)
+            next = _combined.size();
+        ret.push_back(_combined.substr(pos+1, next-pos-1));
+    }
+    return ret;
+}
+
+std::string combineMarks(const std::vector<std::string> &_marks, const string &_sep)
+{
+    std::string ret;
+    for (const auto &_mark : _marks)
+        ret += _sep + _mark;
+    return ret;
 }

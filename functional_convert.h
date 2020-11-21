@@ -22,5 +22,7 @@ std::string atomSize2Store(const int & atomSize);
 std::string atomSize2Load(const int & atomSize);
 std::string branchIR2Op(config::IRCode _code);
 std::string branch2oppo(const std::string &_op);
+std::vector<std::string> splitMarks(const std::string &_combined, const std::string &_sep = "#");
+std::string combineMarks(const std::vector<std::string> &_marks, const std::string &_sep = "#");
 
 #endif //PROJECT_FUNCTIONAL_CONVERT_H

@@ -675,8 +675,8 @@ class ErrorManager
 | BLT_IR      | label    | exp1 | exp2 | 小于跳转                       | if exp1<exp2 goto label   |
 | JUMP_IR     | label    |      |      | 无条件跳转                     | jump label                |
 |             |          |      |      |                                |                           |
-| PARA_IR     | name     | type |      | 定义函数参数                   | para name char            |
-| PUSH_IR     | name     |      |      | 传入实参                       | push name                 |
+| PARA_IR     | names    | type |      | 定义函数参数列表（#分隔参数）  | para #name1#name2 char    |
+| PUSH_IR     | names    |      |      | 传入实参列表                   | push #name1#name2         |
 | CALL_IR     | funcname |      |      | 调用函数                       | call calc                 |
 | RET_IR      | x        |      |      | 函数返回值语句                 | ret x                     |
 | MOVRET_IR   | b        |      |      | 将函数返回值放入指定变量       | b = RET                   |
