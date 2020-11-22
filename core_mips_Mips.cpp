@@ -59,7 +59,7 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
             // TODO: compile
             break;
         case config::MOVERET_IR:
-            // TODO: compile
+            ret.mergeCodes(_compileMoveRetOp(_quad));
             break;
         case config::READ_IR:
             ret.mergeCodes(_compileReadOp(_quad));
@@ -717,5 +717,15 @@ mips::ObjCodes mips::Mips::_compileCallOp(const inter::Quad &_quad)
     ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(+ config::atomSizeReg * 2));
     ret.genCodeInsert(atomSize2Load(config::atomSizeReg), config::frameReg, config::stackReg, toString(- config::atomSizeReg * 1));
     ret.genCodeInsert(atomSize2Load(config::atomSizeReg), config::returnAddrReg, config::stackReg, toString(- config::atomSizeReg * 2));
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileMoveRetOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    std::string _reg;
+    ret.mergeCodes(_toReg(_reg, _quad.out, true, false, {}, ""));
+    ret.genCodeInsert("move", _reg, "$v0");
+    blockRegPool.markWriteBack(_reg);
     return ret;
 }
