@@ -49,6 +49,9 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
         case config::PUSH_IR:
             ret.mergeCodes(_compilePushOp(_quad));
             break;
+        case config::DEPUSH_IR:
+            ret.mergeCodes(_compileDepushOp(_quad));
+            break;
         case config::CALL_IR:
             // TODO: compile
             break;
@@ -684,6 +687,18 @@ mips::ObjCodes mips::Mips::_compileParaOp(const inter::Quad &_quad)
             ret.genCodeInsert(atomSize2Load(config::atomSizePush), _paramReg, config::frameReg, toString(offset));
             blockRegPool.markWriteBack(_paramReg);
         }
+    }
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileDepushOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    int paramCount = str2int(_quad.out);
+    if (paramCount > config::paramRegCnt)
+    {
+        int pushParamMemorySize = config::atomSizePush * (paramCount - config::paramRegCnt);
+        ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(+pushParamMemorySize));
     }
     return ret;
 }

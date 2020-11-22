@@ -154,7 +154,7 @@ namespace config
         LOAD_IR, STORE_IR,
         MOVE_IR,
         BEQ_IR, BNE_IR, BLE_IR, BLT_IR, JUMP_IR,
-        PARA_IR, PUSH_IR, CALL_IR, RET_IR, MOVERET_IR,
+        PARA_IR, PUSH_IR, DEPUSH_IR, CALL_IR, RET_IR, MOVERET_IR,
         READ_IR, WRITE_IR, STRING_IR,
         SETLABEL_IR
     };

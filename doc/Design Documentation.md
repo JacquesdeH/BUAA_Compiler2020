@@ -660,33 +660,33 @@ class ErrorManager
 
 采用如下的四元式中间代码：
 
-| OP          | OUT      | INL  | INR  | Meanings                       | Example                   |
-| ----------- | -------- | ---- | ---- | ------------------------------ | ------------------------- |
-| ADD_IR      | c        | a    | b    | 加法运算                       | c=a+b                     |
-| MINUS_IR    | c        | a    | b    | 减法运算                       | c=a-b                     |
-| MULT_IR     | c        | a    | b    | 乘法运算                       | c=a*b                     |
-| DIV_IR      | c        | a    | b    | 除法运算                       | c=a/b                     |
-| LOAD_IR     | c        | arr  | idx  | 取数组元素值                   | c=arr[idx]                |
-| STORE_IR    | c        | arr  | idx  | 向数组元素赋值包括单变量初始化 | arr[idx]=c                |
-| MOVE_IR     | b        | a    |      | 单变量赋值操作                 | b=a                       |
-| BEQ_IR      | label    | exp1 | exp2 | 相等跳转                       | if exp1==exp2 goto label  |
-| BNE_IR      | label    | exp1 | exp2 | 不等跳转                       | if exp1!=exp2 goto label  |
-| BLE_IR      | label    | exp1 | exp2 | 小于等于跳转                   | if exp1<=exp2 goto lable  |
-| BLT_IR      | label    | exp1 | exp2 | 小于跳转                       | if exp1<exp2 goto label   |
-| JUMP_IR     | label    |      |      | 无条件跳转                     | jump label                |
-|             |          |      |      |                                |                           |
-| PARA_IR     | names    | type |      | 定义函数参数列表（#分隔参数）  | para #name1#name2 char    |
-| PUSH_IR     | names    |      |      | 传入实参列表                   | push #name1#name2         |
-| CALL_IR     | funcname |      |      | 调用函数                       | call calc                 |
-| RET_IR      | x        |      |      | 函数返回值语句                 | ret x                     |
-| MOVRET_IR   | b        |      |      | 将函数返回值放入指定变量       | b = RET                   |
-| READ_IR     | name     | type |      | 读入指定类型的变量             | read x int                |
-| WRITE_IR    | name     | type |      | 输出指定类型的值               | write x char              |
-| STRING_IR   | newname  |      |      | 输出字符串常量                 | STRING_IR \_\_String\_\_0 |
-| SETLABEL_IR | label    |      |      | 设置标签label                  | label_0:                  |
-|             |          |      |      |                                |                           |
-|             |          |      |      |                                |                           |
-|             |          |      |      |                                |                           |
+| OP          | OUT        | INL  | INR  | Meanings                       | Example                   |
+| ----------- | ---------- | ---- | ---- | ------------------------------ | ------------------------- |
+| ADD_IR      | c          | a    | b    | 加法运算                       | c=a+b                     |
+| MINUS_IR    | c          | a    | b    | 减法运算                       | c=a-b                     |
+| MULT_IR     | c          | a    | b    | 乘法运算                       | c=a*b                     |
+| DIV_IR      | c          | a    | b    | 除法运算                       | c=a/b                     |
+| LOAD_IR     | c          | arr  | idx  | 取数组元素值                   | c=arr[idx]                |
+| STORE_IR    | c          | arr  | idx  | 向数组元素赋值包括单变量初始化 | arr[idx]=c                |
+| MOVE_IR     | b          | a    |      | 单变量赋值操作                 | b=a                       |
+| BEQ_IR      | label      | exp1 | exp2 | 相等跳转                       | if exp1==exp2 goto label  |
+| BNE_IR      | label      | exp1 | exp2 | 不等跳转                       | if exp1!=exp2 goto label  |
+| BLE_IR      | label      | exp1 | exp2 | 小于等于跳转                   | if exp1<=exp2 goto lable  |
+| BLT_IR      | label      | exp1 | exp2 | 小于跳转                       | if exp1<exp2 goto label   |
+| JUMP_IR     | label      |      |      | 无条件跳转                     | jump label                |
+| PARA_IR     | names      | type |      | 定义函数参数列表（#分隔参数）  | para #name1#name2 char    |
+| PUSH_IR     | names      |      |      | 传入实参列表                   | push #name1#name2         |
+| DEPUSH_IR   | paramcount |      |      | 弹栈参数个数占用空间           | depush 3                  |
+| CALL_IR     | funcname   |      |      | 调用函数                       | call calc                 |
+| RET_IR      | x          |      |      | 函数返回值语句                 | ret x                     |
+| MOVRET_IR   | b          |      |      | 将函数返回值放入指定变量       | b = RET                   |
+| READ_IR     | name       | type |      | 读入指定类型的变量             | read x int                |
+| WRITE_IR    | name       | type |      | 输出指定类型的值               | write x char              |
+| STRING_IR   | newname    |      |      | 输出字符串常量                 | STRING_IR \_\_String\_\_0 |
+| SETLABEL_IR | label      |      |      | 设置标签label                  | label_0:                  |
+|             |            |      |      |                                |                           |
+|             |            |      |      |                                |                           |
+|             |            |      |      |                                |                           |
 
 
 
