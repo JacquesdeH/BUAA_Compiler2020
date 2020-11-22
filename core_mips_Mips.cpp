@@ -6,6 +6,9 @@
 #include "core_mips_Mips.h"
 #include "functional_strext.h"
 
+#include <initializer_list>
+#include <cmath>
+
 mips::Mips::Mips(const inter::MIR & _mir)
 {
     this->mir = _mir;
@@ -41,10 +44,10 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
             ret.mergeCodes(_compileBranchJumpOp(_quad));
             break;
         case config::PARA_IR:
-            // TODO: compile
+            ret.mergeCodes(_compileParaOp(_quad));
             break;
         case config::PUSH_IR:
-            // TODO: compile
+            ret.mergeCodes(_compilePushOp(_quad));
             break;
         case config::CALL_IR:
             // TODO: compile
@@ -627,5 +630,38 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool 
     // update links
     if (_link)
         blockRegPool.updateInfo(_reg, _mark);
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compilePushOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    std::vector <std::string> _marks = splitMarks(_quad.out);
+    int pushParamMemorySize = config::atomSizePush * (int) (_marks.size() - config::paramRegCnt);
+    // prepare reg form param first
+    for (int i = 0; i < std::min((int) _marks.size(), config::paramRegCnt); ++i)
+    {
+        std::string _paramReg;
+        ret.mergeCodes(_toReg(_paramReg, _marks[i], true, true, {}, "$a"+toString(i)));
+    }
+    // spilled param regs to stack
+    if (_marks.size() > config::paramRegCnt)
+    {
+        for (int i = config::paramRegCnt; i < _marks.size(); ++i)
+        {
+            std::string _reg;
+            ret.mergeCodes(_toReg(_reg, _marks[i], true, true, config::ParamRegs, ""));
+            int offset = (i - config::paramRegCnt) * config::atomSizePush;
+            ret.genCodeInsert(atomSize2Store(config::atomSizePush), _reg, config::stackReg, toString(-pushParamMemorySize+offset));
+        }
+        ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(-pushParamMemorySize));
+    }
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileParaOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+
     return ret;
 }

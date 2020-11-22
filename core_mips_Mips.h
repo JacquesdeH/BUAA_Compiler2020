@@ -65,6 +65,8 @@ namespace mips
         mips::ObjCodes _compileReadOp(const inter::Quad &_quad);
         mips::ObjCodes _compileWriteOp(const inter::Quad &_quad);
         mips::ObjCodes _compileStringOp(const inter::Quad &_quad);
+        mips::ObjCodes _compilePushOp(const inter::Quad &_quad);
+        mips::ObjCodes _compileParaOp(const inter::Quad &_quad);
 
     public:
         mips::ObjCodes compile();

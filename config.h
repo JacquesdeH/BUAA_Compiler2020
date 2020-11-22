@@ -186,12 +186,14 @@ namespace config
     const std::string sep = "\t";
 
     const std::vector<std::string> InitLocalRegs = {"$t0", "$t1", "$t2", "$t3", "$t4", "$t5", "$t6", "$t7", "$t8", "$t9"};
+    const std::initializer_list<std::string> ParamRegs = {"$a0", "$a1", "$a2", "$a3"};
     const std::string zeroReg = "$zero";
     const std::string stackReg = "$sp";
     const std::string globalReg = "$gp";
     const std::string frameReg = "$fp";
 
     const std::string gpInit = "0x10010000";
+    const int paramRegCnt = 4;
 
     const int _readInt = 5;
     const int _readChar = 12;
