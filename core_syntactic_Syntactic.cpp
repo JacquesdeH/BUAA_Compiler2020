@@ -1343,9 +1343,11 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     else
         _printAndNext();
     // semantic
+    std::string _mark = semanticGenerator->generateExtended(idenfr1.getTkvalue(),
+                                                            (symbolManager->getInfoInAll(idenfr1.getTkvalue()).isGlobal()) ? "global" : "local");
     if (semanticGenerator->noError())
     {
-        semanticGenerator->addMIR(config::MOVE_IR, idenfr1.getTkvalue(), exprTemp);
+        semanticGenerator->addMIR(config::MOVE_IR, _mark, exprTemp);
     }
     // ＜条件＞
     config::TokenCode _operator;
@@ -1435,7 +1437,7 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     parseStatement(hasReturned, insideFuncAndType);
     if (semanticGenerator->noError())
     {
-        semanticGenerator->addMIR((flag == 1) ? config::ADD_IR : config::MINUS_IR, idenfr3.getTkvalue(), idenfr3.getTkvalue(), toString(_step));
+        semanticGenerator->addMIR((flag == 1) ? config::ADD_IR : config::MINUS_IR, _mark, _mark, toString(_step));
         semanticGenerator->addRecord(_records);
         semanticGenerator->addBranch(_operator, _exprL, _exprR, _labelBegin, true);
         semanticGenerator->setLabel(_labelEnd);
