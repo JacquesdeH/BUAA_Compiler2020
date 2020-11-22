@@ -53,7 +53,7 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
             ret.mergeCodes(_compileDepushOp(_quad));
             break;
         case config::CALL_IR:
-            // TODO: compile
+            ret.mergeCodes(_compileCallOp(_quad));
             break;
         case config::RET_IR:
             // TODO: compile
@@ -700,5 +700,22 @@ mips::ObjCodes mips::Mips::_compileDepushOp(const inter::Quad &_quad)
         int pushParamMemorySize = config::atomSizePush * (paramCount - config::paramRegCntLimit);
         ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(+pushParamMemorySize));
     }
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileCallOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    // prepare env
+    ret.genCodeInsert(atomSize2Store(config::atomSizeReg), config::frameReg, config::stackReg, toString(- config::atomSizeReg * 1));
+    ret.genCodeInsert(atomSize2Store(config::atomSizeReg), config::returnAddrReg, config::stackReg, toString(- config::atomSizeReg * 2));
+    ret.genCodeInsert("move", config::frameReg, config::stackReg);
+    ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(- config::atomSizeReg * 2));
+    // use jump call function
+    ret.genCodeInsert("jal", _quad.out);
+    // restore env
+    ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(+ config::atomSizeReg * 2));
+    ret.genCodeInsert(atomSize2Load(config::atomSizeReg), config::frameReg, config::stackReg, toString(- config::atomSizeReg * 1));
+    ret.genCodeInsert(atomSize2Load(config::atomSizeReg), config::returnAddrReg, config::stackReg, toString(- config::atomSizeReg * 2));
     return ret;
 }
