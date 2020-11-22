@@ -16,6 +16,7 @@ namespace inter
     typedef std::map<std::string, InitChar> MapDeclareChar;
     typedef std::map<std::string, InitInt> MapDeclareInt;
     typedef std::map<std::string, std::string> MapDeclareString;
+    typedef std::vector<std::pair<std::string, std::string> > ParasList;
 }
 
 #endif //PROJECT_UTILS_INTER_TYPEDEF_H

@@ -649,10 +649,10 @@ mips::ObjCodes mips::Mips::_compilePushOp(const inter::Quad &_quad)
     {
         for (int i = config::paramRegCnt; i < _marks.size(); ++i)
         {
-            std::string _reg;
-            ret.mergeCodes(_toReg(_reg, _marks[i], true, true, config::ParamRegs, ""));
+            std::string _paramReg;
+            ret.mergeCodes(_toReg(_paramReg, _marks[i], true, true, config::ParamRegs, ""));
             int offset = (i - config::paramRegCnt) * config::atomSizePush;
-            ret.genCodeInsert(atomSize2Store(config::atomSizePush), _reg, config::stackReg, toString(-pushParamMemorySize+offset));
+            ret.genCodeInsert(atomSize2Store(config::atomSizePush), _paramReg, config::stackReg, toString(-pushParamMemorySize + offset));
         }
         ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(-pushParamMemorySize));
     }
@@ -662,6 +662,28 @@ mips::ObjCodes mips::Mips::_compilePushOp(const inter::Quad &_quad)
 mips::ObjCodes mips::Mips::_compileParaOp(const inter::Quad &_quad)
 {
     mips::ObjCodes ret;
-
+    std::vector <std::string> _marks = splitMarks(_quad.out);
+    int pushParamMemorySize = config::atomSizePush * (int) (_marks.size() - config::paramRegCnt);
+    // reg form params
+    for (int i = 0; i < std::min((int) _marks.size(), config::paramRegCnt); ++i)
+    {
+        std::string _paramReg;
+        ret.mergeCodes(_toReg(_paramReg, _marks[i], true, false, {}, ""));
+        ret.genCodeInsert("move", _paramReg, "$a"+toString(i));
+        blockRegPool.markWriteBack(_paramReg);
+    }
+    // spilled parameters
+    if (_marks.size() > config::paramRegCnt)
+    {
+        for (int i = config::paramRegCnt; i < _marks.size(); ++i)
+        {
+            // $fp is already updated to the current stack frame bottom
+            const int offset = (i - config::paramRegCnt) * config::atomSizePush;
+            std::string _paramReg;
+            ret.mergeCodes(_toReg(_paramReg, _marks[i], true, false, {}, ""));
+            ret.genCodeInsert(atomSize2Load(config::atomSizePush), _paramReg, config::frameReg, toString(offset));
+            blockRegPool.markWriteBack(_paramReg);
+        }
+    }
     return ret;
 }

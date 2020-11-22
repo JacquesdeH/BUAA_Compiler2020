@@ -19,6 +19,7 @@ namespace inter
     private:
         bool isBlockForm;
         std::string procName;
+        ParasList parasList;
         MapDeclareChar localChars;
         MapDeclareInt localInts;
         std::vector<inter::Quad> lines;
@@ -29,6 +30,7 @@ namespace inter
 
     public:
         const string &queryProcName() const;
+        const ParasList &getParasList() const;
         const MapDeclareChar &queryLocalChars() const;
         const MapDeclareInt &queryLocalInts() const;
         const std::vector<inter::Quad> &queryLines() const;
@@ -36,6 +38,7 @@ namespace inter
 
     public:
         void assertBlockForm() const;
+        void addParam(const std::string &_name, const std::string &_type);
         void addLocalChar(const std::string & name, const InitChar & initChar);
         void addLocalInt(const std::string & name, const InitInt & initInt);
         void addQuad(const Quad & _quad);
