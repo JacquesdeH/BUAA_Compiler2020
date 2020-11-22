@@ -163,6 +163,7 @@ namespace config
     const int atomSizeInt = 4;
     const int atomSizeTemp = 4;
     const int atomSizePush = 4;
+    const int atomSizeReg = 4;
     const int bitsSLLInt = 2;
 
     const std::string tempHead = "___Temp__";
@@ -177,7 +178,7 @@ namespace config
     bool isTemp(const std::string & _str);
     bool isLabel(const std::string & _str);
     bool isString(const std::string & _str);
-    bool isFunc(const std::string & _str);
+    bool isProc(const std::string & _str);
     bool isGlobal(const std::string & _str);
     bool isLocal(const std::string & _str);
     bool isNumeric(const std::string & _str);
@@ -193,7 +194,7 @@ namespace config
     const std::string frameReg = "$fp";
 
     const std::string gpInit = "0x10010000";
-    const int paramRegCnt = 4;
+    const int paramRegCntLimit = 4;
 
     const int _readInt = 5;
     const int _readChar = 12;

@@ -640,21 +640,21 @@ mips::ObjCodes mips::Mips::_compilePushOp(const inter::Quad &_quad)
 {
     mips::ObjCodes ret;
     std::vector <std::string> _marks = splitMarks(_quad.out);
-    int pushParamMemorySize = config::atomSizePush * (int) (_marks.size() - config::paramRegCnt);
+    int pushParamMemorySize = config::atomSizePush * (int) (_marks.size() - config::paramRegCntLimit);
     // prepare reg form param first
-    for (int i = 0; i < std::min((int) _marks.size(), config::paramRegCnt); ++i)
+    for (int i = 0; i < std::min((int) _marks.size(), config::paramRegCntLimit); ++i)
     {
         std::string _paramReg;
         ret.mergeCodes(_toReg(_paramReg, _marks[i], true, true, {}, "$a"+toString(i)));
     }
     // spilled param regs to stack
-    if (_marks.size() > config::paramRegCnt)
+    if (_marks.size() > config::paramRegCntLimit)
     {
-        for (int i = config::paramRegCnt; i < _marks.size(); ++i)
+        for (int i = config::paramRegCntLimit; i < _marks.size(); ++i)
         {
             std::string _paramReg;
             ret.mergeCodes(_toReg(_paramReg, _marks[i], true, true, config::ParamRegs, ""));
-            int offset = (i - config::paramRegCnt) * config::atomSizePush;
+            int offset = (i - config::paramRegCntLimit) * config::atomSizePush;
             ret.genCodeInsert(atomSize2Store(config::atomSizePush), _paramReg, config::stackReg, toString(-pushParamMemorySize + offset));
         }
         ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(-pushParamMemorySize));
@@ -666,9 +666,9 @@ mips::ObjCodes mips::Mips::_compileParaOp(const inter::Quad &_quad)
 {
     mips::ObjCodes ret;
     std::vector <std::string> _marks = splitMarks(_quad.out);
-    int pushParamMemorySize = config::atomSizePush * (int) (_marks.size() - config::paramRegCnt);
+    int pushParamMemorySize = config::atomSizePush * (int) (_marks.size() - config::paramRegCntLimit);
     // reg form params
-    for (int i = 0; i < std::min((int) _marks.size(), config::paramRegCnt); ++i)
+    for (int i = 0; i < std::min((int) _marks.size(), config::paramRegCntLimit); ++i)
     {
         std::string _paramReg;
         ret.mergeCodes(_toReg(_paramReg, _marks[i], true, false, {}, ""));
@@ -676,12 +676,12 @@ mips::ObjCodes mips::Mips::_compileParaOp(const inter::Quad &_quad)
         blockRegPool.markWriteBack(_paramReg);
     }
     // spilled parameters
-    if (_marks.size() > config::paramRegCnt)
+    if (_marks.size() > config::paramRegCntLimit)
     {
-        for (int i = config::paramRegCnt; i < _marks.size(); ++i)
+        for (int i = config::paramRegCntLimit; i < _marks.size(); ++i)
         {
             // $fp is already updated to the current stack frame bottom
-            const int offset = (i - config::paramRegCnt) * config::atomSizePush;
+            const int offset = (i - config::paramRegCntLimit) * config::atomSizePush;
             std::string _paramReg;
             ret.mergeCodes(_toReg(_paramReg, _marks[i], true, false, {}, ""));
             ret.genCodeInsert(atomSize2Load(config::atomSizePush), _paramReg, config::frameReg, toString(offset));
@@ -695,9 +695,9 @@ mips::ObjCodes mips::Mips::_compileDepushOp(const inter::Quad &_quad)
 {
     mips::ObjCodes ret;
     int paramCount = str2int(_quad.out);
-    if (paramCount > config::paramRegCnt)
+    if (paramCount > config::paramRegCntLimit)
     {
-        int pushParamMemorySize = config::atomSizePush * (paramCount - config::paramRegCnt);
+        int pushParamMemorySize = config::atomSizePush * (paramCount - config::paramRegCntLimit);
         ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(+pushParamMemorySize));
     }
     return ret;

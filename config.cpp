@@ -32,7 +32,7 @@ namespace config
         return _str.find(config::stringHead) == 0;
     }
 
-    bool isFunc(const std::string &_str)
+    bool isProc(const std::string &_str)
     {
         return _str.find(config::procHead) == 0;
     }
