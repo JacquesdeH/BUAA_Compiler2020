@@ -33,6 +33,10 @@ void mips::ObjCodes::genCodeInsert(const std::string &op, const std::string &out
     {
         cmd = op + config::sep + out + config::sep + in2 + "(" + in1 + ")";
     }
+    else if (_isIn(op, {"beq", "bne", "blt", "bgt", "ble", "bge"}))
+    {
+        cmd = op + config::sep + in1 + config::sep + in2 + config::sep + out;
+    }
     else
     {
         cmd = op;
