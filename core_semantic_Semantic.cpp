@@ -199,6 +199,7 @@ std::vector<inter::Quad> semantic::Semantic::endRecording()
         return std::vector<inter::Quad>();
     if (!(this->_isRecording))
         std::cerr << "Not recording when terminating records !" << std::endl;
+    this->_isRecording = false;
     return this->_recorded;
 }
 
