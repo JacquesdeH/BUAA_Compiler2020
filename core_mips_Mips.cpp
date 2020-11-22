@@ -56,7 +56,7 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
             ret.mergeCodes(_compileCallOp(_quad));
             break;
         case config::RET_IR:
-            // TODO: compile
+            ret.mergeCodes(_compileRetOp(_quad));
             break;
         case config::MOVERET_IR:
             ret.mergeCodes(_compileMoveRetOp(_quad));
@@ -727,5 +727,19 @@ mips::ObjCodes mips::Mips::_compileMoveRetOp(const inter::Quad &_quad)
     ret.mergeCodes(_toReg(_reg, _quad.out, true, false, {}, ""));
     ret.genCodeInsert("move", _reg, "$v0");
     blockRegPool.markWriteBack(_reg);
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileRetOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    if (!_quad.out.empty())
+    {
+        std::string _reg;
+        ret.mergeCodes(_toReg(_reg, _quad.out, false, true, {}, ""));
+        ret.genCodeInsert("move", "$v0", _reg);
+    }
+    // jump back to caller
+    ret.genCodeInsert("jr", config::returnAddrReg);
     return ret;
 }

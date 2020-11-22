@@ -678,7 +678,7 @@ class ErrorManager
 | PUSH_IR     | names      |      |      | 传入实参列表                   | push #name1#name2         |
 | DEPUSH_IR   | paramcount |      |      | 弹栈参数个数占用空间           | depush 3                  |
 | CALL_IR     | funcname   |      |      | 调用函数                       | call calc                 |
-| RET_IR      | x          |      |      | 函数返回值语句                 | ret x                     |
+| RET_IR      | x          |      |      | 函数返回语句，空为无返回值     | ret x \| ret              |
 | MOVRET_IR   | b          |      |      | 将函数返回值放入指定变量       | b = RET                   |
 | READ_IR     | name       | type |      | 读入指定类型的变量             | read x int                |
 | WRITE_IR    | name       | type |      | 输出指定类型的值               | write x char              |
