@@ -87,6 +87,7 @@ mips::ObjCodes mips::Mips::_compileBlock(const inter::Block &_block)
         mips::ObjCodes tmp = _compileQuad(line);
         ret.mergeCodes(tmp);
     }
+    // TODO: specify blockRegSave time window
     ret.mergeCodes(this->blockRegPool.saveWriteBackRegs(mipsTable));
     return ret;
 }
