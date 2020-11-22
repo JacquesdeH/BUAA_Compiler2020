@@ -78,7 +78,7 @@ namespace syntactic
         void parseCaseSubStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT,
                                    config::DataType declaredDataType = config::DATA_DEFAULT);
         void parseDefault(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
-        void parseCondition();
+        void parseCondition(config::TokenCode &_operator, std::string &_exprL, std::string &_exprR);
         void parseStepLength(int& _step);
         // Const & Var
         void parseConstDeclaration(const bool & useGlobal = false);

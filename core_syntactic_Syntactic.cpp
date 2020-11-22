@@ -1181,6 +1181,8 @@ void syntactic::Syntactic::parseAssignStatement()
 
 void syntactic::Syntactic::parseConditionStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
+    std::string _label1 = semanticGenerator->genLabel();
+    std::string _label2 = semanticGenerator->genLabel();
     // if
     if (!_cur().isToken(config::IFTK))
     {
@@ -1194,7 +1196,12 @@ void syntactic::Syntactic::parseConditionStatement(bool & hasReturned, config::D
     }
     _printAndNext();
     // ＜条件＞
-    parseCondition();
+    config::TokenCode _operator;
+    std::string _exprL, _exprR;
+    semanticGenerator->startRecording();
+    parseCondition(_operator, _exprL, _exprR);
+    std::vector <inter::Quad> _records = semanticGenerator->endRecording();
+    semanticGenerator->addBranch(_operator, _exprL, _exprR, _label1, false);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1212,8 +1219,17 @@ void syntactic::Syntactic::parseConditionStatement(bool & hasReturned, config::D
     {
         // else
         _printAndNext();
+        // semantic
+        semanticGenerator->addMIR(config::JUMP_IR, _label2);
+        semanticGenerator->setLabel(_label1);
         // ＜语句＞
         parseStatement(hasReturned, insideFuncAndType);
+        // semantic
+        semanticGenerator->setLabel(_label2);
+    }
+    else
+    {
+        semanticGenerator->setLabel(_label1);
     }
 
     printer->printComponent("条件语句");
@@ -1237,6 +1253,8 @@ void syntactic::Syntactic::parseLoopStatement(bool & hasReturned, config::DataTy
 
 void syntactic::Syntactic::parseWhileStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
+    std::string _labelBegin = semanticGenerator->genLabel();
+    std::string _labelEnd = semanticGenerator->genLabel();
     // while
     if (!_cur().isToken(config::WHILETK))
     {
@@ -1250,7 +1268,12 @@ void syntactic::Syntactic::parseWhileStatement(bool & hasReturned, config::DataT
     }
     _printAndNext();
     // ＜条件＞
-    parseCondition();
+    config::TokenCode _operator;
+    std::string _exprL, _exprR;
+    semanticGenerator->startRecording();
+    parseCondition(_operator, _exprL, _exprR);
+    std::vector<inter::Quad> _records = semanticGenerator->endRecording();
+    semanticGenerator->addBranch(_operator, _exprL, _exprR, _labelEnd, false);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1262,11 +1285,17 @@ void syntactic::Syntactic::parseWhileStatement(bool & hasReturned, config::DataT
     else
         _printAndNext();
     // ＜语句＞
+    semanticGenerator->setLabel(_labelBegin);
     parseStatement(hasReturned, insideFuncAndType);
+    semanticGenerator->addRecord(_records);
+    semanticGenerator->addBranch(_operator, _exprL, _exprR, _labelBegin, true);
+    semanticGenerator->setLabel(_labelEnd);
 }
 
 void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
+    std::string _labelBegin = semanticGenerator->genLabel();
+    std::string _labelEnd = semanticGenerator->genLabel();
     // for
     if (!_cur().isToken(config::FORTK))
     {
@@ -1313,8 +1342,19 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     }
     else
         _printAndNext();
+    // semantic
+    if (semanticGenerator->noError())
+    {
+        semanticGenerator->addMIR(config::MOVE_IR, idenfr1.getTkvalue(), exprTemp);
+    }
     // ＜条件＞
-    parseCondition();
+    config::TokenCode _operator;
+    std::string _exprL, _exprR;
+    semanticGenerator->startRecording();
+    parseCondition(_operator, _exprL, _exprR);
+    std::vector<inter::Quad> _records = semanticGenerator->endRecording();
+    semanticGenerator->addBranch(_operator, _exprL, _exprR, _labelEnd, false);
+    semanticGenerator->setLabel(_labelBegin);
     // ;
     if (!_cur().isToken(config::SEMICN))
     {
@@ -1393,23 +1433,22 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
         _printAndNext();
     // ＜语句＞
     parseStatement(hasReturned, insideFuncAndType);
-    // semantic
     if (semanticGenerator->noError())
     {
-        // TODO: identify globals!
-//        const bool isGlobal = symbolManager->getInfoInAll(idenfr.getTkvalue()).isGlobal();
-//        const std::string ftName = isGlobal ? config::globalHead + idenfr.getTkvalue() : idenfr.getTkvalue();
+        semanticGenerator->addMIR((flag == 1) ? config::ADD_IR : config::MINUS_IR, idenfr3.getTkvalue(), idenfr3.getTkvalue(), toString(_step));
+        semanticGenerator->addRecord(_records);
+        semanticGenerator->addBranch(_operator, _exprL, _exprR, _labelBegin, true);
+        semanticGenerator->setLabel(_labelEnd);
     }
 }
 
-void syntactic::Syntactic::parseCondition()
+void syntactic::Syntactic::parseCondition(config::TokenCode &_operator, std::string &_exprL, std::string &_exprR)
 {
     config::DataType tmpDataType;
     Token tmpToken;
     // ＜表达式＞
     tmpToken = _cur();
-    string exprTempL;
-    tmpDataType = parseExpression(exprTempL);
+    tmpDataType = parseExpression(_exprL);
     if (tmpDataType != config::DataType::INT)
     {
         // ErrorManager with not INT of condition
@@ -1423,11 +1462,11 @@ void syntactic::Syntactic::parseCondition()
         // ErrorManager
     }
     Token cmpOp = _cur();
+    _operator = cmpOp.getTkcode();
     _printAndNext();
     // ＜表达式＞
     tmpToken = _cur();
-    string exprTempR;
-    tmpDataType = parseExpression(exprTempR);
+    tmpDataType = parseExpression(_exprR);
     if (tmpDataType != config::DataType::INT)
     {
         // ErrorManager with not INT of condition

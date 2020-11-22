@@ -19,6 +19,8 @@ namespace semantic
         int labelIdx;
         int stringIdx;
         inter::MIR mir;
+        std::vector<inter::Quad> _recorded;
+        bool _isRecording;
 
     public:
         Semantic();
@@ -35,8 +37,14 @@ namespace semantic
         std::string genLocalInt(const std::string & _name, const int & _count, const  std::vector<int> & _initValues = {});
         std::string generateExtended(const std::string & _name, const std::string & _type);
         void addMIR(const config::IRCode & _op, const std::string & _out = "", const std::string & _inl = "", const std::string & _inr = "");
+        void addBranch(const config::TokenCode &_operator, const std::string &_exprL, const std::string &_exprR,
+                       const std::string &_label, const bool &_branchCondition);
+        void setLabel(const std::string &_label);
         void newProc(const std::string & _procName);
         void doneGenerationToBlocks();
+        void startRecording();
+        std::vector<inter::Quad> endRecording();
+        void addRecord(const std::vector<inter::Quad> &_record);
 
         const inter::MIR &getMir() const;
     };

@@ -11,6 +11,8 @@ semantic::Semantic::Semantic()
     this->tempIdx = 0;
     this->labelIdx = 0;
     this->stringIdx = 0;
+    this->_isRecording = false;
+    this->_recorded.clear();
 }
 
 void semantic::Semantic::error()
@@ -28,7 +30,10 @@ void semantic::Semantic::addMIR(const config::IRCode &_op, const std::string &_o
 {
     if (this->errored)
         return;
-    mir.addQuad(inter::Quad(_op, _out, _inl, _inr));
+    inter::Quad tmp(_op, _out, _inl, _inr);
+    mir.addQuad(tmp);
+    if (this->_isRecording)
+        this->_recorded.push_back(tmp);
 }
 
 std::string semantic::Semantic::genTemp()
@@ -112,5 +117,98 @@ std::string semantic::Semantic::generateExtended(const string &_name, const stri
     else if (_type == "string")
         return config::stringHead + lowerName;
     return lowerName;
+}
+
+void semantic::Semantic::addBranch(const config::TokenCode &_operator, const string &_exprL, const string &_exprR,
+                                   const string &_label, const bool &_branchCondition)
+{
+    if (this->errored)
+        return;
+    config::TokenCode _finetunedOp;
+    if (_branchCondition == true)
+        _finetunedOp = _operator;
+    else
+        switch (_operator)
+        {
+            case config::EQL:
+                _finetunedOp = config::NEQ;
+                break;
+            case config::NEQ:
+                _finetunedOp = config::EQL;
+                break;
+            case config::LEQ:
+                _finetunedOp = config::GRE;
+                break;
+            case config::LSS:
+                _finetunedOp = config::GEQ;
+                break;
+            case config::GRE:
+                _finetunedOp = config::LEQ;
+                break;
+            case config::GEQ:
+                _finetunedOp = config::LSS;
+                break;
+            default:
+                _finetunedOp = config::EMPTY;
+        }
+    // branch on true condition now
+    switch (_finetunedOp)
+    {
+        case config::EQL:
+            addMIR(config::BEQ_IR, _label, _exprL, _exprR);
+            break;
+        case config::NEQ:
+            addMIR(config::BNE_IR, _label, _exprL, _exprR);
+            break;
+        case config::LEQ:
+            addMIR(config::BLE_IR, _label, _exprL, _exprR);
+            break;
+        case config::LSS:
+            addMIR(config::BLT_IR, _label, _exprL, _exprR);
+            break;
+        case config::GRE:
+            addMIR(config::BLT_IR, _label, _exprR, _exprL);
+            break;
+        case config::GEQ:
+            addMIR(config::BLE_IR, _label, _exprR, _exprL);
+            break;
+        default:
+            std::cerr << "Unexpected finetuned operator in addBranch !" << std::endl;
+    }
+}
+
+void semantic::Semantic::setLabel(const string &_label)
+{
+    if (this->errored)
+        return;
+    addMIR(config::SETLABEL_IR, _label);
+}
+
+void semantic::Semantic::startRecording()
+{
+    if (this->errored)
+        return;
+    if (this->_isRecording)
+        std::cerr << "Already has been recording !" << std::endl;
+    this->_isRecording = true;
+}
+
+std::vector<inter::Quad> semantic::Semantic::endRecording()
+{
+    if (this->errored)
+        return std::vector<inter::Quad>();
+    if (!(this->_isRecording))
+        std::cerr << "Not recording when terminating records !" << std::endl;
+    return this->_recorded;
+}
+
+void semantic::Semantic::addRecord(const std::vector<inter::Quad> &_record)
+{
+    if (this->errored)
+        return;
+    for (const auto &_quad : _record)
+    {
+        mir.addQuad(_quad);
+    }
 }
 
