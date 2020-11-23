@@ -92,3 +92,56 @@ int calcMemoryUse(const string &s, const bool &countEnd)
         ret ++;
     return ret;
 }
+
+string toString(const config::IRCode &_ircode)
+{
+    switch (_ircode)
+    {
+        case config::ADD_IR:
+            return "+";
+        case config::MINUS_IR:
+            return "-";
+        case config::MULT_IR:
+            return "*";
+        case config::DIV_IR:
+            return "/";
+        case config::LOAD_IR:
+            return "LD";
+        case config::STORE_IR:
+            return "SD";
+        case config::MOVE_IR:
+            return "MV";
+        case config::BEQ_IR:
+            return "?==";
+        case config::BNE_IR:
+            return "?!=";
+        case config::BLE_IR:
+            return "?<=";
+        case config::BLT_IR:
+            return "?<";
+        case config::JUMP_IR:
+            return "JP";
+        case config::PARA_IR:
+            return "Param";
+        case config::PUSH_IR:
+            return "Push";
+        case config::DEPUSH_IR:
+            return "DePush";
+        case config::CALL_IR:
+            return "Call";
+        case config::RET_IR:
+            return "Return";
+        case config::MOVERET_IR:
+            return "MoveRet";
+        case config::READ_IR:
+            return "Read";
+        case config::WRITE_IR:
+            return "Write";
+        case config::STRING_IR:
+            return "String";
+        case config::SETLABEL_IR:
+            return "Label";
+        default:
+            return "Error";
+    }
+}

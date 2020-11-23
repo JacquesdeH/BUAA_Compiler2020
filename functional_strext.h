@@ -19,6 +19,7 @@ string int2str(const int& _int);
 string toString(const config::DataType & type);
 string toString(const int & number);
 string toString(const char & character);
+string toString(const config::IRCode &_ircode);
 string deEscape(const string & s);
 int calcMemoryUse(const string & s, const bool & countEnd);
 

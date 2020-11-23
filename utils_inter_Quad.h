@@ -8,6 +8,7 @@
 #include <string>
 #include <map>
 #include <string>
+#include <fstream>
 
 #include "config.h"
 #include "core_mips_ObjCodes.h"
@@ -25,6 +26,9 @@ namespace inter
 
     public:
         Quad(const config::IRCode & _op, const std::string & _out, const std::string & _inl, const std::string & _inr);
+
+    public:
+        void print(std::ofstream &_fsOut) const;
     };
 }
 

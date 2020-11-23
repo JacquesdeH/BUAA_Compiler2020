@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <fstream>
 
 #include "utils_inter_MIR.h"
 #include "functional_strext.h"
@@ -101,4 +102,42 @@ void inter::MIR::declareLocalChar(const string &name, const inter::InitChar &ini
 void inter::MIR::declareLocalInt(const string &name, const inter::InitInt &initInt)
 {
     procedures.back().addLocalInt(name, initInt);
+}
+
+void inter::MIR::print(const string &_fOut) const
+{
+    std::ofstream fsOut;
+    fsOut.open(_fOut);
+    // globalStrings
+    fsOut << "# Global Strings :" << std::endl;
+    for (const auto &_entry : globalStrings)
+        fsOut << config::sep << _entry.first << " = \"" << _entry.second << "\";" << std::endl;
+    fsOut << std::endl;
+    // globalChars
+    fsOut << "# Global Chars :" << std::endl;
+    for (const auto &_entry : globalChars)
+    {
+        fsOut << config::sep << _entry.first << " = ";
+        for (const char &_ch : _entry.second.second)
+            fsOut << toString(_ch) + " ";
+        fsOut << ";" << std::endl;
+    }
+    fsOut << std::endl;
+    // globalInts
+    fsOut << "# Global Ints :" << std::endl;
+    for (const auto &_entry : globalInts)
+    {
+        fsOut << config::sep << _entry.first << " = ";
+        for (const int &_int : _entry.second.second)
+            fsOut << toString(_int) + " ";
+        fsOut << ";" << std::endl;
+    }
+    fsOut << std::endl;
+    // procedures
+    for (const auto &_proc : procedures)
+    {
+        _proc.print(fsOut);
+        fsOut << std::endl;
+    }
+    fsOut.close();
 }

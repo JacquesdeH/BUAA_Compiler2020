@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "utils_inter_Proc.h"
+#include "functional_strext.h"
 
 inter::Proc::Proc(const std::string & _procName, const bool &_isBlockForm)
 {
@@ -80,4 +81,39 @@ void inter::Proc::addParam(const string &_name, const string &_type)
 const inter::ParasList &inter::Proc::getParasList() const
 {
     return parasList;
+}
+
+void inter::Proc::print(std::ofstream &_fsOut) const
+{
+    _fsOut << procName << ":" << std::endl;
+    // paramList
+    _fsOut << config::sep << "Params:" << std::endl;
+    for (const auto &_entry : parasList)
+    {
+        _fsOut << config::sep << config::sep << "Para " << _entry.second << " " << _entry.first;
+    }
+    // localChars
+    _fsOut << config::sep << "LocalChars:" << std::endl;
+    for (const auto &_entry : localChars)
+    {
+        _fsOut << config::sep << config::sep << _entry.first << " = ";
+        for (const char &_ch : _entry.second.second)
+            _fsOut << toString(_ch) << " ";
+        _fsOut << ";" << std::endl;
+    }
+    // localInts
+    _fsOut << config::sep << "LocalInts:" << std::endl;
+    for (const auto &_entry : localInts)
+    {
+        _fsOut << config::sep << config::sep << _entry.first << " = ";
+        for (const int &_int : _entry.second.second)
+            _fsOut << toString(_int) << " ";
+        _fsOut << ";" << std::endl;
+    }
+    // blocks
+    _fsOut << config::sep << "Blocks:" << std::endl;
+    for (const auto &_block : blocks)
+    {
+        _block.print(_fsOut);
+    }
 }

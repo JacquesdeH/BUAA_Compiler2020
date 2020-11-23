@@ -8,6 +8,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <fstream>
 
 #include "utils_inter_Quad.h"
 #include "core_mips_ObjCodes.h"
@@ -24,6 +25,7 @@ namespace inter
 
     public:
         const std::vector<inter::Quad> & queryLines() const;
+        void print(std::ofstream &_fsOut) const;
     };
 }
 

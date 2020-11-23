@@ -16,3 +16,8 @@ inter::Quad::Quad(const config::IRCode &_op, const std::string & _out, const std
     this->inr = _inr;
 }
 
+void inter::Quad::print(std::ofstream &_fsOut) const
+{
+    _fsOut << config::sep << config::sep << toString(op) << config::sep << out << config::sep << inl << config::sep << inr << std::endl;
+}
+

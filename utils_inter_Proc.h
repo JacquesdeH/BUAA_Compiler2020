@@ -6,6 +6,7 @@
 #define PROJECT_UTILS_INTER_PROC_H
 
 #include <vector>
+#include <fstream>
 
 #include "utils_inter_typedef.h"
 #include "utils_inter_Quad.h"
@@ -43,6 +44,7 @@ namespace inter
         void addLocalInt(const std::string & name, const InitInt & initInt);
         void addQuad(const Quad & _quad);
         void buildBlocks();
+        void print(std::ofstream &_fsOut) const;
     };
 }
 

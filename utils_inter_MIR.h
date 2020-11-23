@@ -47,6 +47,7 @@ namespace inter
         void addQuad(const Quad & _quad);
         void assertNotSeal() const;
         void assertIsSeal() const;
+        void print(const std::string &_fOut) const;
     };
 }
 
