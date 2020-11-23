@@ -202,6 +202,8 @@ namespace config
     const int _printInt = 1;
     const int _printChar = 11;
     const int _printString = 4;
+
+    const int _printQuadWidth = 25;
 }
 
 #endif //PROJECT_CONFIG_H

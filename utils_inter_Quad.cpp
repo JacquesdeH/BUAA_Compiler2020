@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <iomanip>
 
 #include "utils_inter_Quad.h"
 #include "functional_strext.h"
@@ -18,6 +19,11 @@ inter::Quad::Quad(const config::IRCode &_op, const std::string & _out, const std
 
 void inter::Quad::print(std::ofstream &_fsOut) const
 {
-    _fsOut << config::sep << config::sep << toString(op) << config::sep << out << config::sep << inl << config::sep << inr << std::endl;
+    _fsOut << config::sep << config::sep;
+    _fsOut << std::left << std::setw(config::_printQuadWidth) << toString(op);
+    _fsOut << std::left << std::setw(config::_printQuadWidth) << out;
+    _fsOut << std::left << std::setw(config::_printQuadWidth) << inl;
+    _fsOut << std::left << std::setw(config::_printQuadWidth) << inr;
+    _fsOut << std::endl;
 }
 
