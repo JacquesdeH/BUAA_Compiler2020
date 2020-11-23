@@ -20,7 +20,10 @@ int main()
 
     errorManager.printAllErrors();
 
-    mips::Mips objDumper(semanticGenerator.getMir());
+    inter::MIR mir = semanticGenerator.getMir();
+    mir.print("mir.txt");
+
+    mips::Mips objDumper(mir);
     mips::ObjCodes objCodes = objDumper.compile();
     objCodes.print("mips.txt");
 
