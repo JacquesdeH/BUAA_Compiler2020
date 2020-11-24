@@ -21,6 +21,7 @@ namespace semantic
         inter::MIR mir;
         std::vector<inter::Quad> _recorded;
         bool _isRecording;
+        bool _actualAdding;
 
     public:
         Semantic();
@@ -43,10 +44,12 @@ namespace semantic
         void newProc(const std::string & _procName);
         void addParam(const std::string &_name, const std::string &_type);
         void doneGenerationToBlocks();
-        void startRecording();
+        void startRecording(const bool &_actual = true);
         std::vector<inter::Quad> endRecording();
         void addRecord(const std::vector<inter::Quad> &_record);
-
+        void addSwitch(const std::string &tempSwitch,
+                       const std::vector<std::pair<int, std::vector<inter::Quad> > > &subCaseRecordAll,
+                       const std::vector<inter::Quad> &defaultRecord);
         const inter::MIR &getMir() const;
     };
 }

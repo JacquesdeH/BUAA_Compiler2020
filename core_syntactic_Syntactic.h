@@ -73,11 +73,13 @@ namespace syntactic
         vector<config::DataType> parseParameterDeclarationList();
         vector<std::string> parseParameterValueList(const vector<config::DataType> & _paramDataTypeList);
         // Conditional component
-        void parseCaseList(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT,
-                           config::DataType declaredDataType = config::DATA_DEFAULT);
-        void parseCaseSubStatement(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT,
-                                   config::DataType declaredDataType = config::DATA_DEFAULT);
-        void parseDefault(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
+        std::vector<std::pair<int, std::vector<inter::Quad> > > parseCaseList(
+                bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT,
+                config::DataType declaredDataType = config::DATA_DEFAULT);
+        std::pair<int, std::vector<inter::Quad> > parseCaseSubStatement(
+                bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT,
+                config::DataType declaredDataType = config::DATA_DEFAULT);
+        std::vector<inter::Quad> parseDefault(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT);
         void parseCondition(config::TokenCode &_operator, std::string &_exprL, std::string &_exprR);
         void parseStepLength(int& _step);
         // Const & Var

@@ -737,20 +737,23 @@ void syntactic::Syntactic::parseConstant(int& _value, bool& _isInteger)
     printer->printComponent("常量");
 }
 
-void syntactic::Syntactic::parseCaseList(bool & hasReturned, config::DataType insideFuncAndType,
+std::vector<std::pair<int, std::vector<inter::Quad> > > syntactic::Syntactic::parseCaseList(bool & hasReturned, config::DataType insideFuncAndType,
                                          config::DataType declaredDataType)
 {
+    std::vector<std::pair<int, std::vector<inter::Quad> > > retRecordAll;
     // ＜情况子语句＞{＜情况子语句＞}
     do
     {
         // ＜情况子语句＞
-        parseCaseSubStatement(hasReturned, insideFuncAndType, declaredDataType);
+        std::pair<int, std::vector<inter::Quad> > subCaseRecord = parseCaseSubStatement(hasReturned, insideFuncAndType, declaredDataType);
+        retRecordAll.push_back(subCaseRecord);
     } while (_cur().isToken(config::CASETK));
 
     printer->printComponent("情况表");
+    return retRecordAll;
 }
 
-void syntactic::Syntactic::parseCaseSubStatement(bool & hasReturned, config::DataType insideFuncAndType,
+std::pair<int, std::vector<inter::Quad> > syntactic::Syntactic::parseCaseSubStatement(bool & hasReturned, config::DataType insideFuncAndType,
                                                  config::DataType declaredDataType)
 {
     // case
@@ -777,12 +780,15 @@ void syntactic::Syntactic::parseCaseSubStatement(bool & hasReturned, config::Dat
     }
     _printAndNext();
     // ＜语句＞
+    semanticGenerator->startRecording(false);
     parseStatement(hasReturned, insideFuncAndType);
+    std::vector<inter::Quad> _recordCase = semanticGenerator->endRecording();
 
     printer->printComponent("情况子语句");
+    return std::make_pair(_value, _recordCase);
 }
 
-void syntactic::Syntactic::parseDefault(bool & hasReturned, config::DataType insideFuncAndType)
+std::vector<inter::Quad> syntactic::Syntactic::parseDefault(bool & hasReturned, config::DataType insideFuncAndType)
 {
     // default
     if (!_cur().isToken(config::DEFAULTTK))
@@ -797,9 +803,12 @@ void syntactic::Syntactic::parseDefault(bool & hasReturned, config::DataType ins
     }
     _printAndNext();
     // ＜语句＞
+    semanticGenerator->startRecording(false);
     parseStatement(hasReturned, insideFuncAndType);
+    std::vector<inter::Quad> _recordDefault = semanticGenerator->endRecording();
 
     printer->printComponent("缺省");
+    return _recordDefault;
 }
 
 void syntactic::Syntactic::parseStatementList(bool & hasReturned, config::DataType insideFuncAndType)
@@ -982,9 +991,10 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
     }
     _printAndNext();
     // ＜情况表＞
-    // TODO: semantic
-    parseCaseList(hasReturned, insideFuncAndType, exprDataType);
+    std::vector<std::pair<int, std::vector<inter::Quad> > > subCaseRecordAll;
+    subCaseRecordAll = parseCaseList(hasReturned, insideFuncAndType, exprDataType);
     // ＜缺省＞
+    std::vector<inter::Quad> defaultRecord;
     if (!_cur().isToken(config::DEFAULTTK))
     {
         // ErrorManager
@@ -993,13 +1003,18 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
         // no skip
     }
     else
-        parseDefault(hasReturned, insideFuncAndType);
+        defaultRecord = parseDefault(hasReturned, insideFuncAndType);
     // }
     if (!_cur().isToken(config::RBRACE))
     {
         // ErrorManager
     }
     _printAndNext();
+    // semantic
+    if (semanticGenerator->noError())
+    {
+        semanticGenerator->addSwitch(exprTemp, subCaseRecordAll, defaultRecord);
+    }
 
     printer->printComponent("情况语句");
 }

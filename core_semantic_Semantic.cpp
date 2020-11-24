@@ -31,7 +31,8 @@ void semantic::Semantic::addMIR(const config::IRCode &_op, const std::string &_o
     if (this->errored)
         return;
     inter::Quad tmp(_op, _out, _inl, _inr);
-    mir.addQuad(tmp);
+    if (!_isRecording || (_isRecording && _actualAdding))
+        mir.addQuad(tmp);
     if (this->_isRecording)
         this->_recorded.push_back(tmp);
 }
@@ -184,13 +185,14 @@ void semantic::Semantic::setLabel(const string &_label)
     addMIR(config::SETLABEL_IR, _label);
 }
 
-void semantic::Semantic::startRecording()
+void semantic::Semantic::startRecording(const bool &_actual)
 {
     if (this->errored)
         return;
     if (this->_isRecording)
         std::cerr << "Already has been recording !" << std::endl;
     this->_isRecording = true;
+    this->_actualAdding = _actual;
 }
 
 std::vector<inter::Quad> semantic::Semantic::endRecording()
@@ -200,6 +202,7 @@ std::vector<inter::Quad> semantic::Semantic::endRecording()
     if (!(this->_isRecording))
         std::cerr << "Not recording when terminating records !" << std::endl;
     this->_isRecording = false;
+    this->_actualAdding = true;
     return this->_recorded;
 }
 
@@ -216,5 +219,40 @@ void semantic::Semantic::addRecord(const std::vector<inter::Quad> &_record)
 void semantic::Semantic::addParam(const string &_name, const string &_type)
 {
     mir.addParam(_name, _type);
+
 }
 
+void semantic::Semantic::addSwitch(const std::string &tempSwitch,
+                                   const std::vector<std::pair<int, std::vector<inter::Quad> > > &subCaseRecordAll,
+                                   const std::vector<inter::Quad> &defaultRecord)
+{
+    std::vector<std::string> branchLabels;
+    for (const auto &_entry : subCaseRecordAll)
+    {
+        const int &_key = _entry.first;
+        const std::vector<inter::Quad> &_record = _entry.second;
+        std::string _label = this->genLabel();
+        this->addBranch(config::EQL, tempSwitch, toString(_key), _label, true);
+        branchLabels.push_back(_label);
+    }
+    std::string exitLabel = this->genLabel();
+    if (subCaseRecordAll.size() != branchLabels.size())
+        std::cerr << "Labels and Branches count do not match !" << std::endl;
+    // default record
+    {
+        // no enter label required
+        this->addRecord(defaultRecord);
+        this->addMIR(config::JUMP_IR, exitLabel);
+    }
+    // sub case records
+    for (int i = 0; i < subCaseRecordAll.size(); ++i)
+    {
+        const std::string &_label = branchLabels[i];
+        const std::vector<inter::Quad> &_record = subCaseRecordAll[i].second;
+        this->setLabel(_label);
+        this->addRecord(_record);
+        this->addMIR(config::JUMP_IR, exitLabel);
+    }
+    // set exit label
+    this->setLabel(exitLabel);
+}
