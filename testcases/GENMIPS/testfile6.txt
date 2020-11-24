@@ -1,0 +1,10 @@
+char tmp[2][3] = { {'2','3','3'}, {'+','-','G'} };
+
+void main()
+{
+    int iter;
+    char ch = '+';
+    printf(ch);
+    ch = tmp[1][2];
+    printf(ch);
+}

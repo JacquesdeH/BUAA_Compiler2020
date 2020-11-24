@@ -1,0 +1,13 @@
+void main()
+{
+    int iter;
+    char ch = '+';
+    for (iter = 0; iter < 2; iter = iter + 1)
+    {
+        printf("Printing number: ", iter);
+        if (-5 <= -iter)
+        {
+            printf(ch);
+        }
+    }
+}

@@ -1,0 +1,4 @@
+Printing number: 0
++
+Printing number: 1
++
