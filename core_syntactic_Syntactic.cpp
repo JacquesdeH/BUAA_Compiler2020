@@ -1888,6 +1888,11 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     // ＜复合语句＞
     bool hasReturned = false;
     parseCompoundStatement(hasReturned, config::DataType::VOID);
+    // special case !
+    if (semanticGenerator->noError())
+    {
+        semanticGenerator->addMIR(config::RET_IR, "");
+    }
     // }
     if (!_cur().isToken(config::RBRACE))
     {
