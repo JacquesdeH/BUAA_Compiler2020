@@ -202,7 +202,7 @@ mips::ObjCodes mips::Mips::_compileGlobalChars(const inter::MapDeclareChar &mapG
         int memoryUse = _count*sizeBase;
         int addr = globalOffset;
         globalOffset += memoryUse;
-        mipsTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, memoryUse)));
+        mipsTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, config::atomSizeChar)));
     }
     return ret;
 }
@@ -235,7 +235,7 @@ mips::ObjCodes mips::Mips::_compileGlobalInts(const inter::MapDeclareInt &mapGlo
         int memoryUse = _count*sizeBase;
         int addr = globalOffset;
         globalOffset += memoryUse;
-        mipsTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, memoryUse)));
+        mipsTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, config::atomSizeInt)));
     }
     return ret;
 }
