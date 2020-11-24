@@ -167,8 +167,8 @@ bool symbol::Info::isGlobal() const
 
 int symbol::Info::queryDimLimAt(const int &_dim)
 {
-    if (!(1 <= _dim && _dim <= 2))
-        std::cerr << "Querying dim not 1 nor 2 at queryDimLimAt !" << std::endl;
+    if (!(0 <= _dim && _dim <= 1))
+        std::cerr << "Querying dim not 0 nor 1 at queryDimLimAt !" << std::endl;
     return dimLimit[_dim];
 }
 

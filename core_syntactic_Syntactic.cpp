@@ -1116,6 +1116,7 @@ void syntactic::Syntactic::parseAssignStatement()
     }
     _printAndNext();
     // '['＜表达式＞']' | '['＜表达式＞']''['＜表达式＞']'
+    std::vector<std::string> indexes;
     int dim = 0;
     while (_cur().isToken(config::LBRACK))
     {
@@ -1146,8 +1147,8 @@ void syntactic::Syntactic::parseAssignStatement()
         }
         else
             _printAndNext();
-        // semantic array assign
         // increase dim
+        indexes.push_back(exprTemp);
         dim++;
     }
     // ErrorManager with SymbolManager
@@ -1172,7 +1173,19 @@ void syntactic::Syntactic::parseAssignStatement()
         }
         else
         {
-            // TODO: semantic array use
+            std::string idxTemp = semanticGenerator->genTemp();
+            semanticGenerator->addMIR(config::MOVE_IR, idxTemp, indexes[0]);
+            if (dim == 2)
+            {
+                std::string newTemp = semanticGenerator->genTemp();
+                int _dimLim1 = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDimLimAt(1);
+                semanticGenerator->addMIR(config::MULT_IR, newTemp, idxTemp, toString(_dimLim1));
+                idxTemp = newTemp;
+                newTemp = semanticGenerator->genTemp();
+                semanticGenerator->addMIR(config::ADD_IR, newTemp, idxTemp, indexes[1]);
+                idxTemp = newTemp;
+            }
+            semanticGenerator->addMIR(config::STORE_IR, exprR, _mark, idxTemp);
         }
     }
 
