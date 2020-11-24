@@ -49,7 +49,7 @@ namespace syntactic
         void parseMainFunction();
         void parseFunctionValuedDeclaration();
         void parseFunctionVoidDeclaration();
-        void parseFunctionValuedCallStatement();
+        void parseFunctionValuedCallStatement(string & temp);
         void parseFunctionVoidCallStatement();
         config::DataType parseDeclarationHead(string& _idenfr);
         // Statement
@@ -71,7 +71,7 @@ namespace syntactic
         config::DataType parseFactor(string & temp);
         // Parameter
         vector<config::DataType> parseParameterDeclarationList();
-        void parseParameterValueList(const vector<config::DataType> & _paramDataTypeList);
+        vector<std::string> parseParameterValueList(const vector<config::DataType> & _paramDataTypeList);
         // Conditional component
         void parseCaseList(bool & hasReturned, config::DataType insideFuncAndType = config::DATA_DEFAULT,
                            config::DataType declaredDataType = config::DATA_DEFAULT);

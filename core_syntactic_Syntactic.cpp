@@ -1006,6 +1006,7 @@ void syntactic::Syntactic::parseSwitchStatement(bool & hasReturned, config::Data
 
 void syntactic::Syntactic::parseReturnStatement(bool & hasReturned, config::DataType insideFuncAndType)
 {
+    std::string retTemp;
     // return
     Token returnToken = _cur();
     if (!_cur().isToken(config::RETURNTK))
@@ -1059,6 +1060,7 @@ void syntactic::Syntactic::parseReturnStatement(bool & hasReturned, config::Data
                                           "Void func with valued return");
                 // no skip
             }
+            retTemp = exprTemp;
         }
         // )
         if (!_cur().isToken(config::RPARENT))
@@ -1082,7 +1084,12 @@ void syntactic::Syntactic::parseReturnStatement(bool & hasReturned, config::Data
             // no skip
         }
     }
-    // TODO: semantic
+    // semantic return based on empty string or exprTemp
+    if (semanticGenerator->noError())
+    {
+        // retTemp could be empty as for void function return
+        semanticGenerator->addMIR(config::RET_IR, retTemp);
+    }
 
     printer->printComponent("返回语句");
     hasReturned = true;
@@ -1504,6 +1511,7 @@ void syntactic::Syntactic::parseStepLength(int &_step)
 vector<config::DataType> syntactic::Syntactic::parseParameterDeclarationList()
 {
     vector<config::DataType> retParamDataTypeList;
+    vector<std::string> paramMarkList;
     // ＜空＞
     if (!_cur().isValuedType())
     {
@@ -1539,6 +1547,8 @@ vector<config::DataType> syntactic::Syntactic::parseParameterDeclarationList()
                 // ErrorManager
             }
             idenfr = _cur();
+            std::string _mark = semanticGenerator->generateExtended(idenfr.getTkvalue(), "local");
+            paramMarkList.push_back(_mark);
             _printAndNext();
             // update ret list of dataType
             retParamDataTypeList.push_back(dataType);
@@ -1553,16 +1563,28 @@ vector<config::DataType> syntactic::Syntactic::parseParameterDeclarationList()
             else
                 symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
                         config::SymbolType::VAR, dataType, idenfr.getRow()));
+            // semantic
+            if (semanticGenerator->noError())
+            {
+                semanticGenerator->addParam(_mark, toString(dataType));
+            }
+            // update
             isFirst = false;
         } while (_cur().isToken(config::COMMA));
+    }
+    // semantic
+    if (semanticGenerator->noError())
+    {
+        semanticGenerator->addMIR(config::PARA_IR, combineMarks(paramMarkList));
     }
 
     printer->printComponent("参数表");
     return retParamDataTypeList;
 }
 
-void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType> & _paramDataTypeList)
+std::vector<std::string> syntactic::Syntactic::parseParameterValueList(const vector<config::DataType> & _paramDataTypeList)
 {
+    std::vector<std::string> ret;
     int curIndexOfParam = 0;
     // ＜空＞ by next token after to be ')'
     if (!_isExprFirst())
@@ -1603,6 +1625,12 @@ void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType
                                           "Param Value type mismatch");
                 _skipUntil({config::COMMA, config::RPARENT}, config::stopwordsToken);
             }
+            // semantic
+            if (semanticGenerator->noError())
+            {
+                ret.push_back(exprTemp);
+            }
+            // update
             isFirst = false;
             curIndexOfParam++;
         } while (_cur().isToken(config::COMMA));
@@ -1617,6 +1645,7 @@ void syntactic::Syntactic::parseParameterValueList(const vector<config::DataType
     }
 
     printer->printComponent("值参数表");
+    return ret;
 }
 
 void syntactic::Syntactic::parseCompoundStatement(bool & hasReturned, config::DataType insideFuncAndType)
@@ -1748,6 +1777,7 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     // ＜声明头部＞
     string funcIdenfr;
     config::DataType funcDataType = parseDeclarationHead(funcIdenfr);
+    std::string funcMark = semanticGenerator->generateExtended(funcIdenfr, "proc");
     // (
     if (!_cur().isToken(config::LPARENT))
     {
@@ -1756,6 +1786,7 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     _printAndNext();
     // SymbolManager new scope
     symbolManager->pushNewScope();
+    semanticGenerator->newProc(funcMark);
     // ＜参数表＞
     const vector<config::DataType> paramDataTypeList = parseParameterDeclarationList();
     symbolManager->getInfoFromLastScope(funcIdenfr).logFuncParam(paramDataTypeList);
@@ -1812,6 +1843,7 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
         // ErrorManager
     }
     idenfr = _cur();
+    std::string funcMark = semanticGenerator->generateExtended(idenfr.getTkvalue(), "proc");
     _printAndNext();
     // update SymbolManager with Valued function declaration
     if (symbolManager->hasSymbolInScope(idenfr.getTkvalue()))
@@ -1833,6 +1865,7 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     _printAndNext();
     // SymbolManager new scope
     symbolManager->pushNewScope();
+    semanticGenerator->newProc(funcMark);
     // ＜参数表＞
     const vector<config::DataType> paramDataTypeList = parseParameterDeclarationList();
     symbolManager->getInfoFromLastScope(idenfr.getTkvalue()).logFuncParam(paramDataTypeList);
@@ -1867,8 +1900,9 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     printer->printComponent("无返回值函数定义");
 }
 
-void syntactic::Syntactic::parseFunctionValuedCallStatement()
+void syntactic::Syntactic::parseFunctionValuedCallStatement(std::string & temp)
 {
+    temp = semanticGenerator->genTemp();
     // ＜标识符＞
     Token idenfr;
     if (!_cur().isToken(config::IDENFR))
@@ -1876,6 +1910,7 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
         // ErrorManager
     }
     idenfr = _cur();
+    std::string _mark = semanticGenerator->generateExtended(idenfr.getTkvalue(), "proc");
     if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
     {
         // ErrorManager
@@ -1899,6 +1934,8 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
                                                           symbolManager->getInfoInAll(idenfr.getTkvalue()).queryParamDataTypeListOfFunction() :
                                                           vector<config::DataType>();
     parseParameterValueList(_paramDataTypeList);
+    std::vector<std::string> paramExprTemps = parseParameterValueList(_paramDataTypeList);
+    std::string combinedParamExprTemps = combineMarks(paramExprTemps);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1909,6 +1946,14 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement()
     }
     else
         _printAndNext();
+    // semantic valued functions
+    if (semanticGenerator->noError())
+    {
+        semanticGenerator->addMIR(config::PUSH_IR, combinedParamExprTemps);
+        semanticGenerator->addMIR(config::CALL_IR, _mark);
+        semanticGenerator->addMIR(config::DEPUSH_IR, toString((int) paramExprTemps.size()));
+        semanticGenerator->addMIR(config::MOVERET_IR, temp);
+    }
 
     printer->printComponent("有返回值函数调用语句");
 }
@@ -1922,6 +1967,7 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
         // ErrorManager
     }
     idenfr = _cur();
+    std::string _mark = semanticGenerator->generateExtended(idenfr.getTkvalue(), "proc");
     if (!symbolManager->hasSymbolInAll(idenfr.getTkvalue()))
     {
         // ErrorManager
@@ -1944,7 +1990,8 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     const vector<config::DataType> & _paramDataTypeList = (symbolManager->hasSymbolInAll(idenfr.getTkvalue())) ?
                                                           symbolManager->getInfoInAll(idenfr.getTkvalue()).queryParamDataTypeListOfFunction() :
                                                           vector<config::DataType>();
-    parseParameterValueList(_paramDataTypeList);
+    std::vector<std::string> paramExprTemps = parseParameterValueList(_paramDataTypeList);
+    std::string combinedParamExprTemps = combineMarks(paramExprTemps);
     // )
     if (!_cur().isToken(config::RPARENT))
     {
@@ -1955,6 +2002,13 @@ void syntactic::Syntactic::parseFunctionVoidCallStatement()
     }
     else
         _printAndNext();
+    // semantic void functions
+    if (semanticGenerator->noError())
+    {
+        semanticGenerator->addMIR(config::PUSH_IR, combinedParamExprTemps);
+        semanticGenerator->addMIR(config::CALL_IR, _mark);
+        semanticGenerator->addMIR(config::DEPUSH_IR, toString((int) paramExprTemps.size()));
+    }
 
     printer->printComponent("无返回值函数调用语句");
 }
@@ -2075,7 +2129,8 @@ void syntactic::Syntactic::parseStatement(bool & hasReturned, config::DataType i
                 if (symbolManager->getInfoInAll(idenfr.getTkvalue()).isValuedFunction())
                 {
                     // ＜有返回值函数调用语句＞
-                    parseFunctionValuedCallStatement();
+                    std::string retTemp;
+                    parseFunctionValuedCallStatement(retTemp);
                 }
                     // ＜无返回值函数调用语句＞
                 else if (symbolManager->getInfoInAll(idenfr.getTkvalue()).isVoidFunction())
@@ -2281,9 +2336,10 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
         if (queue->peek(2).isToken(config::LPARENT))
         {
             Token idenfr = _cur();
+            std::string retTemp;
             // ＜有返回值函数调用语句＞
             errorManager->watchErrors();
-            parseFunctionValuedCallStatement();
+            parseFunctionValuedCallStatement(retTemp);
             // return type based on function call
             if (errorManager->queryWatch())
                 hasError = true;
@@ -2291,7 +2347,7 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
                 hasError = true;
             else
                 retDataType = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDataType();
-            // TODO: valued function related push moveret temp
+            temp = retTemp;
         }
         // ＜标识符＞ ｜ ＜标识符＞'['＜表达式＞']' | ＜标识符＞'['＜表达式＞']''['＜表达式＞']'
         else
