@@ -165,3 +165,10 @@ bool symbol::Info::isGlobal() const
     return this->useGlobal;
 }
 
+int symbol::Info::queryDimLimAt(const int &_dim)
+{
+    if (!(1 <= _dim && _dim <= 2))
+        std::cerr << "Querying dim not 1 nor 2 at queryDimLimAt !" << std::endl;
+    return dimLimit[_dim];
+}
+

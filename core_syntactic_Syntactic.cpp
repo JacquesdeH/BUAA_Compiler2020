@@ -177,7 +177,7 @@ void syntactic::Syntactic::parseConstDeclaration(const bool & useGlobal)
             symbolManager->declareSymbol(idenfr.getTkvalue(), symbol::Info(
                     config::SymbolType::CONST, dataType, idenfr.getRow(), useGlobal));
         }
-        // semantic
+        // semantic with only non-array
         if (semanticGenerator->noError())
         {
             std::string _mark;
@@ -2285,6 +2285,7 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
         {
             Token idenfr;
             int dim = 0;
+            std::vector<std::string> indexes;
             // ＜标识符＞
             if (!_cur().isToken(config::IDENFR))
             {
@@ -2337,6 +2338,7 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
                 else
                     _printAndNext();
                 // increase dim
+                indexes.push_back(exprTemp);
                 dim++;
             }
             // retDataType based on idenfr type
@@ -2349,14 +2351,26 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
             {
                 const bool isGlobal = symbolManager->getInfoInAll(idenfr.getTkvalue()).isGlobal();
                 const std::string _mark = semanticGenerator->generateExtended(idenfr.getTkvalue(), isGlobal ? "global" : "local");
+                temp = semanticGenerator->genTemp();
                 if (dim == 0)
                 {
-                    temp = semanticGenerator->genTemp();
                     semanticGenerator->addMIR(config::MOVE_IR, temp, _mark);
                 }
                 else
                 {
-                    // TODO: array use related
+                    std::string idxTemp = semanticGenerator->genTemp();
+                    const int _dimLim1 = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDimLimAt(1);
+                    semanticGenerator->addMIR(config::MOVE_IR, idxTemp, indexes[0]);
+                    if (dim == 2)
+                    {
+                        std::string newTemp = semanticGenerator->genTemp();
+                        semanticGenerator->addMIR(config::MULT_IR, newTemp, idxTemp, toString(_dimLim1));
+                        idxTemp = newTemp;
+                        newTemp = semanticGenerator->genTemp();
+                        semanticGenerator->addMIR(config::ADD_IR, newTemp, idxTemp, indexes[1]);
+                        idxTemp = newTemp;
+                    }
+                    semanticGenerator->addMIR(config::LOAD_IR, temp, _mark, idxTemp);
                 }
             }
         }

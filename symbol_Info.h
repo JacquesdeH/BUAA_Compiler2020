@@ -56,6 +56,7 @@ namespace symbol
         config::DataType queryDataType() const;
         bool isDimOf(const int & _dims, const int & _dimLim0 = 0, const int & _dimLim1 = 0) const;
         int queryFuncParamCount() const;
+        int queryDimLimAt(const int &_dim);
         bool checkFuncParamMatchAt(const int & _index, const config::DataType & _dataType);
         vector<config::DataType> queryParamDataTypeListOfFunction() const;
         bool isGlobal() const;
