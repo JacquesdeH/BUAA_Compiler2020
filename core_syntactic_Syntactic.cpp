@@ -1786,7 +1786,7 @@ void syntactic::Syntactic::parseFunctionValuedDeclaration()
     _printAndNext();
     // SymbolManager new scope
     symbolManager->pushNewScope();
-    semanticGenerator->newProc(funcMark);
+    semanticGenerator->newProc(funcIdenfr);
     // ＜参数表＞
     const vector<config::DataType> paramDataTypeList = parseParameterDeclarationList();
     symbolManager->getInfoFromLastScope(funcIdenfr).logFuncParam(paramDataTypeList);
@@ -1865,7 +1865,7 @@ void syntactic::Syntactic::parseFunctionVoidDeclaration()
     _printAndNext();
     // SymbolManager new scope
     symbolManager->pushNewScope();
-    semanticGenerator->newProc(funcMark);
+    semanticGenerator->newProc(idenfr.getTkvalue());
     // ＜参数表＞
     const vector<config::DataType> paramDataTypeList = parseParameterDeclarationList();
     symbolManager->getInfoFromLastScope(idenfr.getTkvalue()).logFuncParam(paramDataTypeList);
