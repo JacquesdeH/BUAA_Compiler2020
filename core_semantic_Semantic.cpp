@@ -213,3 +213,8 @@ void semantic::Semantic::addRecord(const std::vector<inter::Quad> &_record)
     }
 }
 
+void semantic::Semantic::addParam(const string &_name, const string &_type)
+{
+    mir.addParam(_name, _type);
+}
+

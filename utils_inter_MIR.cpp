@@ -141,3 +141,8 @@ void inter::MIR::print(const string &_fOut) const
     }
     fsOut.close();
 }
+
+void inter::MIR::addParam(const string &_name, const string &_type)
+{
+    procedures.back().addParam(_name, _type);
+}

@@ -43,6 +43,7 @@ namespace inter
         void declareLocalChar(const std::string & name, const InitChar & initChar);
         void declareLocalInt(const std::string & name, const InitInt & initInt);
         void newProc(const std::string & _procName);
+        void addParam(const std::string &_name, const std::string &_type);
         void doneGenerationToBlocks();
         void addQuad(const Quad & _quad);
         void assertNotSeal() const;

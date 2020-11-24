@@ -41,6 +41,7 @@ namespace semantic
                        const std::string &_label, const bool &_branchCondition);
         void setLabel(const std::string &_label);
         void newProc(const std::string & _procName);
+        void addParam(const std::string &_name, const std::string &_type);
         void doneGenerationToBlocks();
         void startRecording();
         std::vector<inter::Quad> endRecording();

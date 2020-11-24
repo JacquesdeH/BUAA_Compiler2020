@@ -674,7 +674,7 @@ class ErrorManager
 | BLE_IR      | label      | exp1 | exp2 | 小于等于跳转                   | if exp1<=exp2 goto lable  |
 | BLT_IR      | label      | exp1 | exp2 | 小于跳转                       | if exp1<exp2 goto label   |
 | JUMP_IR     | label      |      |      | 无条件跳转                     | jump label                |
-| PARA_IR     | names      | type |      | 定义函数参数列表（#分隔参数）  | para #name1#name2 char    |
+| PARA_IR     | names      |      |      | 定义函数参数列表（#分隔参数）  | para #name1#name2         |
 | PUSH_IR     | names      |      |      | 传入实参列表                   | push #name1#name2         |
 | DEPUSH_IR   | paramcount |      |      | 弹栈参数个数占用空间           | depush 3                  |
 | CALL_IR     | funcname   |      |      | 调用函数                       | call calc                 |

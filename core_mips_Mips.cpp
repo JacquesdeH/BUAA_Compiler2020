@@ -99,6 +99,15 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
     MipsTable subTable;
     // pre alloc mem of local variables
     this->_resetStackOffset();
+    for (const auto & _entry : _proc.queryParasList())
+    {
+        int atomSize = (_entry.second == "int") ? config::atomSizeInt : config::atomSizeChar;
+        std::string _mark = _entry.first; // already defined as extended form
+        int addr = stackOffset;
+        stackOffset += 1 * config::atomSizePush;
+        subTable.insert(std::make_pair(_mark, mips::SymbolInfo(addr, atomSize))); // use as exact length
+    }
+    _alignStack("word");
     for (const auto & _entry : _proc.queryLocalChars())
     {
         const std::string & _mark = _entry.first;

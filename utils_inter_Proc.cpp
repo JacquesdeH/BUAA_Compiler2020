@@ -78,7 +78,7 @@ void inter::Proc::addParam(const string &_name, const string &_type)
     parasList.push_back(std::make_pair(_name, _type));
 }
 
-const inter::ParasList &inter::Proc::getParasList() const
+const inter::ParasList &inter::Proc::queryParasList() const
 {
     return parasList;
 }

@@ -31,7 +31,7 @@ namespace inter
 
     public:
         const string &queryProcName() const;
-        const ParasList &getParasList() const;
+        const ParasList &queryParasList() const;
         const MapDeclareChar &queryLocalChars() const;
         const MapDeclareInt &queryLocalInts() const;
         const std::vector<inter::Quad> &queryLines() const;
