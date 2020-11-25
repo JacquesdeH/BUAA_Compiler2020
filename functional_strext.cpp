@@ -141,6 +141,8 @@ string toString(const config::IRCode &_ircode)
             return "String";
         case config::SETLABEL_IR:
             return "Label";
+        case config::EXIT_IR:
+            return "Exit";
         default:
             return "Error";
     }
