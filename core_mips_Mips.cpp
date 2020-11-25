@@ -73,6 +73,8 @@ mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
         case config::SETLABEL_IR:
             ret.insertLabel(_quad.out);
             break;
+        case config::EXIT_IR:
+            ret.mergeCodes(_compileExitOp(_quad));
         default: ;
     }
     return ret;
@@ -766,5 +768,12 @@ mips::ObjCodes mips::Mips::_compileRetOp(const inter::Quad &_quad)
     // jump back to caller but r4cover stackOffset first
     ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(stackOffset));
     ret.genCodeInsert("jr", config::returnAddrReg);
+    return ret;
+}
+
+mips::ObjCodes mips::Mips::_compileExitOp(const inter::Quad &_quad)
+{
+    mips::ObjCodes ret;
+    ret.genCodeInsert("j", _quad.out);
     return ret;
 }

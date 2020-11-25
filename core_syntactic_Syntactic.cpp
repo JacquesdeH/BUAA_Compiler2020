@@ -1103,7 +1103,10 @@ void syntactic::Syntactic::parseReturnStatement(bool & hasReturned, config::Data
     if (semanticGenerator->noError())
     {
         // retTemp could be empty as for void function return
-        semanticGenerator->addMIR(config::RET_IR, retTemp);
+        if (!semanticGenerator->queryExitLabel().empty())
+            semanticGenerator->addMIR(config::EXIT_IR, semanticGenerator->queryExitLabel());
+        else
+            semanticGenerator->addMIR(config::RET_IR, retTemp);
     }
 
     printer->printComponent("返回语句");
@@ -1683,6 +1686,7 @@ void syntactic::Syntactic::parseCompoundStatement(bool & hasReturned, config::Da
 
 void syntactic::Syntactic::parseMainFunction()
 {
+    semanticGenerator->enterMainGenLabelExit();
     Token idenfr;
     // void
     if (!_cur().isToken(config::VOIDTK))
@@ -1746,6 +1750,9 @@ void syntactic::Syntactic::parseMainFunction()
     // SymbolManager recover to original scope
     symbolManager->popCurScope();
     // semantic
+    // no need to insert exit if not hasReturned
+    semanticGenerator->setLabel(semanticGenerator->queryExitLabel());
+    semanticGenerator->exitMainResetLabelExit();
 
     printer->printComponent("主函数");
 }

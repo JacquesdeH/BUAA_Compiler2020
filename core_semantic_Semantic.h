@@ -22,6 +22,7 @@ namespace semantic
         std::vector<inter::Quad> _recorded;
         bool _isRecording;
         bool _actualAdding;
+        std::string exitLabel;
 
     public:
         Semantic();
@@ -51,6 +52,9 @@ namespace semantic
                        const std::vector<std::pair<int, std::vector<inter::Quad> > > &subCaseRecordAll,
                        const std::vector<inter::Quad> &defaultRecord);
         const inter::MIR &getMir() const;
+        void enterMainGenLabelExit();
+        std::string queryExitLabel();
+        void exitMainResetLabelExit();
     };
 }
 

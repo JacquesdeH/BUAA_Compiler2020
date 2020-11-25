@@ -157,7 +157,8 @@ namespace config
         BEQ_IR, BNE_IR, BLE_IR, BLT_IR, JUMP_IR,
         PARA_IR, PUSH_IR, DEPUSH_IR, CALL_IR, RET_IR, MOVERET_IR,
         READ_IR, WRITE_IR, STRING_IR,
-        SETLABEL_IR
+        SETLABEL_IR,
+        EXIT_IR
     };
 
     const std::set<IRCode> blockOutIRCodes = {BEQ_IR, BNE_IR, BLE_IR, BLT_IR, JUMP_IR, CALL_IR, RET_IR};

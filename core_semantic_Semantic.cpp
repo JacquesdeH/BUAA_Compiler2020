@@ -13,6 +13,7 @@ semantic::Semantic::Semantic()
     this->stringIdx = 0;
     this->_isRecording = false;
     this->_recorded.clear();
+    this->exitLabel = "";
 }
 
 void semantic::Semantic::error()
@@ -255,4 +256,23 @@ void semantic::Semantic::addSwitch(const std::string &tempSwitch,
     }
     // set exit label
     this->setLabel(exitLabel);
+}
+
+void semantic::Semantic::enterMainGenLabelExit()
+{
+    if (!exitLabel.empty())
+        std::cerr << "Already set exitLabel once !" << std::endl;
+    exitLabel = this->genLabel();
+}
+
+std::string semantic::Semantic::queryExitLabel()
+{
+    return exitLabel;
+}
+
+void semantic::Semantic::exitMainResetLabelExit()
+{
+    if (exitLabel.empty())
+        std::cerr << "Empty exitLabel when clearing !" << std::endl;
+    exitLabel = "";
 }
