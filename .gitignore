@@ -3,4 +3,4 @@ cmake-build*
 release
 testbench/*
 !testbench/tester.py
-!testbench/Mars-jdk7-Re.jar
+!testbench/Mars-jdk7-Re*.jar

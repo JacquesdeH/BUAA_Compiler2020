@@ -1,9 +1,9 @@
 import os
 
 L = 1
-R = 8
+R = 3
 testfilePath = os.path.join("..", os.path.join("testcases", "GENMIPS"))
-mipsJar = os.path.join(".", "Mars-jdk7-Re.jar")
+mipsJar = os.path.join(".", "Mars-jdk7-Re-v5.jar")
 
 compilePath = os.path.join("..", "cmake-build-debug-compiler-course")
 exeFile = os.path.join(compilePath, os.path.join("Project.exe"))
