@@ -1,0 +1,26 @@
+char tmp[2][3] = { {'2','3','3'}, {'+','-','G'} };
+
+void calc()
+{
+    printf(tmp[1][1]);
+    printf(tmp[1][1]);
+    printf(tmp[1][1]);
+    return ;
+    printf(tmp[1][1]);
+
+}
+
+void main()
+{
+    int iter1, iter2;
+    char ch = '+';
+    printf(ch);
+    ch = tmp[1][2];
+    printf(ch);
+    iter1 = (tmp[0][1]);
+    iter2 = (tmp[0][0]);
+    printf(iter2-iter1);
+    calc();
+    tmp[0][0] = '9';
+    printf(tmp[0][0]-iter1);
+}

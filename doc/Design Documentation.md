@@ -684,7 +684,7 @@ class ErrorManager
 | WRITE_IR    | name       | type |      | 输出指定类型的值               | write x char              |
 | STRING_IR   | newname    |      |      | 输出字符串常量                 | STRING_IR \_\_String\_\_0 |
 | SETLABEL_IR | label      |      |      | 设置标签label                  | label_0:                  |
-|             |            |      |      |                                |                           |
+| EXIT_IR     | exitLabel  |      |      | 主函数中退出整个程序           | exit exitLabel            |
 |             |            |      |      |                                |                           |
 |             |            |      |      |                                |                           |
 
