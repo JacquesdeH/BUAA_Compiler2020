@@ -48,7 +48,8 @@ void inter::Proc::buildBlocks()
         const auto &_line = lines[i];
         if (lastIsBranchJumpCall)
             blockHeads.insert(i);
-        lastIsBranchJumpCall = config::isLabeledBranchJump(_line.op) || _line.op==config::CALL_IR;
+        lastIsBranchJumpCall = config::isLabeledBranchJump(_line.op) ||
+                _line.op==config::CALL_IR || _line.op==config::RET_IR || _line.op==config::EXIT_IR;
     }
     // divide blocks
     std::vector<inter::Quad> subBlock;
