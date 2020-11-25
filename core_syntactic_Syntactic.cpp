@@ -1751,7 +1751,8 @@ void syntactic::Syntactic::parseMainFunction()
     symbolManager->popCurScope();
     // semantic
     // no need to insert exit if not hasReturned
-    semanticGenerator->setLabel(semanticGenerator->queryExitLabel());
+    if (hasReturned)
+        semanticGenerator->setLabel(semanticGenerator->queryExitLabel());
     semanticGenerator->exitMainResetLabelExit();
 
     printer->printComponent("主函数");
