@@ -100,7 +100,8 @@ mips::ObjCodes mips::Mips::_compileBlock(const inter::Block &_block)
     if (blockOutIRcnt > 1)
         std::cerr << "Count of blockOutIR in one block is more than 1 !" << std::endl;
     ret.mergeCodes(this->blockRegPool.saveWriteBackRegs(mipsTable));
-    ret.mergeCodes(_compileQuad(_block.queryLines().back()));
+    if (config::isBlockOutIRCode(_block.queryLines().back().op))
+        ret.mergeCodes(_compileQuad(_block.queryLines().back()));
     return ret;
 }
 
