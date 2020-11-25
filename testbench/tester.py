@@ -1,8 +1,8 @@
 import os
 
 L = 1
-R = 3
-testfilePath = os.path.join("..", os.path.join("testcases", "GENMIPS"))
+R = 8
+testfilePath = os.path.join("..", os.path.join("testcases", os.path.join("PUBGEN", "1")))
 mipsJar = os.path.join(".", "Mars-jdk7-Re-v5.jar")
 
 compilePath = os.path.join("..", "cmake-build-debug-compiler-course")
