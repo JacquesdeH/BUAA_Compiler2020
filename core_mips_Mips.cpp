@@ -166,7 +166,8 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
         mips::ObjCodes tmp = _compileBlock(block);
         ret.mergeCodes(tmp);
     }
-    ret.genCodeInsert("addiu", "$sp", "$sp", toString(stackOffset));
+    // recover is set in return call statement
+    // ret.genCodeInsert("addiu", "$sp", "$sp", toString(stackOffset));
     for (const auto & entry : subTable)
     {
         const std::string & _name = entry.first;
@@ -761,7 +762,8 @@ mips::ObjCodes mips::Mips::_compileRetOp(const inter::Quad &_quad)
         ret.mergeCodes(_toReg(_reg, _quad.out, false, true, {}, ""));
         ret.genCodeInsert("move", "$v0", _reg);
     }
-    // jump back to caller
+    // jump back to caller but r4cover stackOffset first
+    ret.genCodeInsert("addiu", config::stackReg, config::stackReg, toString(stackOffset));
     ret.genCodeInsert("jr", config::returnAddrReg);
     return ret;
 }
