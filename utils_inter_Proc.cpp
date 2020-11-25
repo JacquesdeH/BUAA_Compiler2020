@@ -22,12 +22,56 @@ void inter::Proc::addQuad(const inter::Quad &_quad)
 
 void inter::Proc::buildBlocks()
 {
-    // TODO: build by control flows
-    // Building simply
+    std::set<int> blockHeads;
+    // Rule 1
+    blockHeads.insert(0);
+    // Rule 2
+    std::set<std::string> allLabels;
+    for (const auto &_quad : lines)
     {
-        Block _block(lines.begin(), lines.end());
-        blocks.push_back(_block);
+        if (config::isLabeledBranchJump(_quad.op))
+            allLabels.insert(_quad.out);
     }
+    for (int i = 0; i < lines.size(); ++i)
+    {
+        const auto &_line = lines[i];
+        if (_line.op == config::SETLABEL_IR)
+        {
+            if (allLabels.find(_line.out) != allLabels.end())
+                blockHeads.insert(i);
+        }
+    }
+    // Rule 3
+    bool lastIsBranchJumpCall = false;
+    for (int i = 0; i < lines.size(); ++i)
+    {
+        const auto &_line = lines[i];
+        if (lastIsBranchJumpCall)
+            blockHeads.insert(i);
+        lastIsBranchJumpCall = config::isLabeledBranchJump(_line.op) || _line.op==config::CALL_IR;
+    }
+    // divide blocks
+    std::vector<inter::Quad> subBlock;
+    for (int i = 0; i < lines.size(); ++i)
+    {
+        const auto &_line = lines[i];
+        if (blockHeads.find(i) != blockHeads.end())
+        {
+            if (!subBlock.empty())
+            {
+                blocks.emplace_back(subBlock.begin(), subBlock.end());
+            }
+            subBlock.clear();
+            subBlock.push_back(_line);
+        }
+        else
+        {
+            if (i == 0)
+                std::cerr << "Do not have a block yet before adding to a block !" << std::endl;
+            subBlock.push_back(_line);
+        }
+    }
+    // update status
     this->isBlockForm = true;
 }
 

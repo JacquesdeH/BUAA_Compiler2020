@@ -9,6 +9,7 @@
 #include <initializer_list>
 #include <unordered_set>
 #include <vector>
+#include <set>
 
 typedef unsigned int uint;
 
@@ -158,6 +159,12 @@ namespace config
         READ_IR, WRITE_IR, STRING_IR,
         SETLABEL_IR
     };
+
+    const std::set<IRCode> blockOutIRCodes = {BEQ_IR, BNE_IR, BLE_IR, BLT_IR, JUMP_IR, CALL_IR, RET_IR};
+    const std::set<IRCode> labeledBranchJump = {BEQ_IR, BNE_IR, BLE_IR, BLT_IR, JUMP_IR};
+
+    bool isBlockOutIRCode(const IRCode &_irCode);
+    bool isLabeledBranchJump(const IRCode &_ircode);
 
     const int atomSizeChar = 1;
     const int atomSizeInt = 4;

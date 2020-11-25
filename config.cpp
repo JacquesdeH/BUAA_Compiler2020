@@ -64,4 +64,14 @@ namespace config
         return _str.find(config::localHead) == 0;
     }
 
+    bool isBlockOutIRCode(const IRCode &_irCode)
+    {
+        return blockOutIRCodes.find(_irCode) != blockOutIRCodes.end();
+    }
+
+    bool isLabeledBranchJump(const IRCode &_ircode)
+    {
+        return labeledBranchJump.find(_ircode) != labeledBranchJump.end();
+    }
+
 }

@@ -82,13 +82,25 @@ mips::ObjCodes mips::Mips::_compileBlock(const inter::Block &_block)
 {
     mips::ObjCodes ret;
     _resetBlockRegPool();
+    int blockOutIRcnt = 0;
     for (const auto & line : _block.queryLines())
     {
-        mips::ObjCodes tmp = _compileQuad(line);
-        ret.mergeCodes(tmp);
+        if (config::isBlockOutIRCode(line.op))
+        {
+            blockOutIRcnt++;
+        }
+        else
+        {
+            if (blockOutIRcnt > 0)
+                std::cerr << "Already encountered blockOutIR when a non-blockOutIR is occurring !" << std::endl;
+            mips::ObjCodes tmp = _compileQuad(line);
+            ret.mergeCodes(tmp);
+        }
     }
-    // TODO: specify blockRegSave time window
+    if (blockOutIRcnt != 1)
+        std::cerr << "Count of blockOutIR in one block is not 1 !" << std::endl;
     ret.mergeCodes(this->blockRegPool.saveWriteBackRegs(mipsTable));
+    ret.mergeCodes(_compileQuad(_block.queryLines().back()));
     return ret;
 }
 
