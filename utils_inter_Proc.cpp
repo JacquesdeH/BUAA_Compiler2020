@@ -71,6 +71,10 @@ void inter::Proc::buildBlocks()
             subBlock.push_back(_line);
         }
     }
+    if (!subBlock.empty())
+    {
+        blocks.emplace_back(subBlock.begin(), subBlock.end());
+    }
     // update status
     this->isBlockForm = true;
 }
