@@ -204,7 +204,9 @@ std::vector<inter::Quad> semantic::Semantic::endRecording()
         std::cerr << "Not recording when terminating records !" << std::endl;
     this->_isRecording = false;
     this->_actualAdding = true;
-    return this->_recorded;
+    std::vector<inter::Quad> ret = this->_recorded;
+    this->_recorded.clear();
+    return ret;
 }
 
 void semantic::Semantic::addRecord(const std::vector<inter::Quad> &_record)
