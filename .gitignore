@@ -1,3 +1,6 @@
 cmake-build*
 .idea
 release
+testbench/*
+!testbench/tester.py
+!testbench/Mars-jdk7-Re.jar
