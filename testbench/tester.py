@@ -1,7 +1,7 @@
 import os
 
 L = 1
-R = 1
+R = 8
 testfilePath = os.path.join("..", os.path.join("testcases", "GENMIPS"))
 mipsJar = os.path.join(".", "Mars-jdk7-Re.jar")
 
@@ -10,6 +10,7 @@ exeFile = os.path.join(compilePath, os.path.join("Project.exe"))
 os.system("copy " + exeFile + " " + "Project.exe")
 
 for i in range(L, R+1):
+    print("Judging on testcase " + str(i))
     inputFile = os.path.join(testfilePath, os.path.join("input"+str(i)+".txt"))
     outputFile = os.path.join(testfilePath, os.path.join("output"+str(i)+".txt"))
     testFile = os.path.join(testfilePath, os.path.join("testfile"+str(i)+".txt"))
