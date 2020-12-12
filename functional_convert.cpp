@@ -147,6 +147,7 @@ std::vector<std::string> splitMarks(const string &_combined, const string &_sep)
         if (next == std::string::npos)
             next = _combined.size();
         ret.push_back(_combined.substr(pos+1, next-pos-1));
+        pos = next;
     }
     return ret;
 }

@@ -139,7 +139,7 @@ void inter::Proc::print(std::ofstream &_fsOut) const
     _fsOut << config::sep << "Params:" << std::endl;
     for (const auto &_entry : parasList)
     {
-        _fsOut << config::sep << config::sep << "Para " << _entry.second << " " << _entry.first;
+        _fsOut << config::sep << config::sep << "Para " << _entry.second << " " << _entry.first << std::endl;
     }
     // localChars
     _fsOut << config::sep << "LocalChars:" << std::endl;
