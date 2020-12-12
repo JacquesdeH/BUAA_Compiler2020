@@ -1,8 +1,11 @@
 import os
 
 L = 1
-R = 8
-testfilePath = os.path.join("..", os.path.join("testcases", os.path.join("PUBGEN", "1")))
+R = 1
+BENCH_NAME = "PUBGEN"
+BENCH_ID = 2
+
+testfilePath = os.path.join("..", os.path.join("testcases", os.path.join(BENCH_NAME, str(BENCH_ID))))
 mipsJar = os.path.join(".", "Mars-jdk7-Re-v5.jar")
 
 compilePath = os.path.join("..", "cmake-build-debug-compiler-course")
@@ -22,6 +25,6 @@ for i in range(L, R+1):
     os.system("java -jar " + mipsJar + " mips.txt" + " <stdin.txt 1>ansout.txt 2>anserr.txt")
     # beautify ansout.txt
     lines = open("ansout.txt").readlines()
-    open("ansout.txt", 'w').writelines(lines[2:])
+    open("ansout.txt", 'w').writelines(lines[2:-1])
     os.system("fc ansout.txt stdout.txt")
 
