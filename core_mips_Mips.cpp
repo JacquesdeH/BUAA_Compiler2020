@@ -671,7 +671,7 @@ mips::ObjCodes mips::Mips::_compilePushOp(const inter::Quad &_quad)
     for (int i = 0; i < std::min((int) _marks.size(), config::paramRegCntLimit); ++i)
     {
         std::string _paramReg;
-        ret.mergeCodes(_toReg(_paramReg, _marks[i], true, true, {}, "$a"+toString(i)));
+        ret.mergeCodes(_toReg(_paramReg, _marks[i], false, true, {}, "$a"+toString(i)));
     }
     // spilled param regs to stack
     if (_marks.size() > config::paramRegCntLimit)
