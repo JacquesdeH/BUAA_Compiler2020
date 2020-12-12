@@ -20,6 +20,8 @@ namespace config
     const bool PRINT_ERROR_TUPLE = true;
     const bool PRINT_DETAILED_ERROR = false & PRINT_ERROR_TUPLE;
 
+    const bool FORCE_UNCASED = true;
+
     const int BUFFER_SIZE = 0x10000;
 
     const int ROW_INIT = 0; // start with 1
@@ -32,6 +34,12 @@ namespace config
         MINU, MULT, DIV, LSS, LEQ, GRE, GEQ, EQL, NEQ, COLON,
         ASSIGN, SEMICN, COMMA, LPARENT, RPARENT, LBRACK, RBRACK, LBRACE, RBRACE,
         EMPTY
+    };
+
+    const std::set<TokenCode> uncasedTokenCodes = {
+            IDENFR,
+            CONSTTK, INTTK, CHARTK, VOIDTK, MAINTK, IFTK, ELSETK, SWITCHTK, CASETK, DEFAULTTK,
+            WHILETK, FORTK, SCANFTK, PRINTFTK, RETURNTK
     };
 
     const std::unordered_map<TokenCode, std::string> TOKEN2STR = {

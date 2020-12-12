@@ -82,7 +82,10 @@ void lexic::Lexic::_skipBlank()
 
 void lexic::Lexic::_logtoken(const config::TokenCode &tkcode, const string &value, const int &row, const int& column)
 {
-    this->queue->push(Token(tkcode, value, row, column));
+    string beautifiedValue = value;
+    if (config::FORCE_UNCASED && (config::uncasedTokenCodes.find(tkcode) != config::uncasedTokenCodes.end()))
+        beautifiedValue = toLower(beautifiedValue);
+    this->queue->push(Token(tkcode, beautifiedValue, row, column));
     this->printer->print(tkcode, value);
 }
 
