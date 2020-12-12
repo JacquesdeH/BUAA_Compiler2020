@@ -1961,7 +1961,6 @@ void syntactic::Syntactic::parseFunctionValuedCallStatement(std::string & temp)
     const vector<config::DataType> & _paramDataTypeList = (symbolManager->hasSymbolInAll(idenfr.getTkvalue())) ?
                                                           symbolManager->getInfoInAll(idenfr.getTkvalue()).queryParamDataTypeListOfFunction() :
                                                           vector<config::DataType>();
-    parseParameterValueList(_paramDataTypeList);
     std::vector<std::string> paramExprTemps = parseParameterValueList(_paramDataTypeList);
     std::string combinedParamExprTemps = combineMarks(paramExprTemps);
     // )
