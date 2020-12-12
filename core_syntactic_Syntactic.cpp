@@ -780,7 +780,7 @@ std::pair<int, std::vector<inter::Quad> > syntactic::Syntactic::parseCaseSubStat
     }
     _printAndNext();
     // ＜语句＞
-    semanticGenerator->startRecording(false);
+    semanticGenerator->startRecording();
     parseStatement(hasReturned, insideFuncAndType);
     std::vector<inter::Quad> _recordCase = semanticGenerator->endRecording();
 
@@ -803,7 +803,7 @@ std::vector<inter::Quad> syntactic::Syntactic::parseDefault(bool & hasReturned, 
     }
     _printAndNext();
     // ＜语句＞
-    semanticGenerator->startRecording(false);
+    semanticGenerator->startRecording();
     parseStatement(hasReturned, insideFuncAndType);
     std::vector<inter::Quad> _recordDefault = semanticGenerator->endRecording();
 
@@ -1239,6 +1239,7 @@ void syntactic::Syntactic::parseConditionStatement(bool & hasReturned, config::D
     semanticGenerator->startRecording();
     parseCondition(_operator, _exprL, _exprR);
     std::vector <inter::Quad> _records = semanticGenerator->endRecording();
+    semanticGenerator->addRecord(_records);
     semanticGenerator->addBranch(_operator, _exprL, _exprR, _label1, false);
     // )
     if (!_cur().isToken(config::RPARENT))
@@ -1311,6 +1312,7 @@ void syntactic::Syntactic::parseWhileStatement(bool & hasReturned, config::DataT
     semanticGenerator->startRecording();
     parseCondition(_operator, _exprL, _exprR);
     std::vector<inter::Quad> _records = semanticGenerator->endRecording();
+    semanticGenerator->addRecord(_records);
     semanticGenerator->addBranch(_operator, _exprL, _exprR, _labelEnd, false);
     // )
     if (!_cur().isToken(config::RPARENT))
@@ -1393,6 +1395,7 @@ void syntactic::Syntactic::parseForStatement(bool & hasReturned, config::DataTyp
     semanticGenerator->startRecording();
     parseCondition(_operator, _exprL, _exprR);
     std::vector<inter::Quad> _records = semanticGenerator->endRecording();
+    semanticGenerator->addRecord(_records);
     semanticGenerator->addBranch(_operator, _exprL, _exprR, _labelEnd, false);
     semanticGenerator->setLabel(_labelBegin);
     // ;
@@ -1584,7 +1587,7 @@ vector<config::DataType> syntactic::Syntactic::parseParameterDeclarationList()
             // semantic
             if (semanticGenerator->noError())
             {
-                semanticGenerator->addParam(_mark, toString(dataType));
+                semanticGenerator->addParamFromParamList(_mark, toString(dataType));
             }
             // update
             isFirst = false;

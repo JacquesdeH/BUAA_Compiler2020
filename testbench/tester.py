@@ -2,9 +2,9 @@ import os
 import sys
 
 L = 1
-R = 6
+R = 2
 BENCH_NAME = "PUBGEN"
-BENCH_ID = 6
+BENCH_ID = 8
 
 testfilePath = os.path.join("..", os.path.join("testcases", os.path.join(BENCH_NAME, str(BENCH_ID))))
 mipsJar = os.path.join(".", "Mars-jdk7-Re-v5.jar")

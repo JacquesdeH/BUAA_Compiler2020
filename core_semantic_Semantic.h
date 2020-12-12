@@ -19,9 +19,8 @@ namespace semantic
         int labelIdx;
         int stringIdx;
         inter::MIR mir;
-        std::vector<inter::Quad> _recorded;
-        bool _isRecording;
-        bool _actualAdding;
+        std::vector<std::vector<inter::Quad> > _recorded;
+        int _isRecording;
         std::string exitLabel;
 
     public:
@@ -43,9 +42,9 @@ namespace semantic
                        const std::string &_label, const bool &_branchCondition);
         void setLabel(const std::string &_label);
         void newProc(const std::string & _procName);
-        void addParam(const std::string &_name, const std::string &_type);
+        void addParamFromParamList(const std::string &_name, const std::string &_type);
         void doneGenerationToBlocks();
-        void startRecording(const bool &_actual = true);
+        void startRecording();
         std::vector<inter::Quad> endRecording();
         void addRecord(const std::vector<inter::Quad> &_record);
         void addSwitch(const std::string &tempSwitch,

@@ -11,7 +11,7 @@ semantic::Semantic::Semantic()
     this->tempIdx = 0;
     this->labelIdx = 0;
     this->stringIdx = 0;
-    this->_isRecording = false;
+    this->_isRecording = 0;
     this->_recorded.clear();
     this->exitLabel = "";
 }
@@ -32,10 +32,10 @@ void semantic::Semantic::addMIR(const config::IRCode &_op, const std::string &_o
     if (this->errored)
         return;
     inter::Quad tmp(_op, _out, _inl, _inr);
-    if (!_isRecording || (_isRecording && _actualAdding))
+    if (_isRecording == 0)
         mir.addQuad(tmp);
-    if (this->_isRecording)
-        this->_recorded.push_back(tmp);
+    if (this->_isRecording != 0)
+        this->_recorded.back().push_back(tmp);
 }
 
 std::string semantic::Semantic::genTemp()
@@ -186,26 +186,23 @@ void semantic::Semantic::setLabel(const string &_label)
     addMIR(config::SETLABEL_IR, _label);
 }
 
-void semantic::Semantic::startRecording(const bool &_actual)
+void semantic::Semantic::startRecording()
 {
     if (this->errored)
         return;
-    if (this->_isRecording)
-        std::cerr << "Already has been recording !" << std::endl;
-    this->_isRecording = true;
-    this->_actualAdding = _actual;
+    this->_isRecording += 1;
+    this->_recorded.emplace_back();
 }
 
 std::vector<inter::Quad> semantic::Semantic::endRecording()
 {
     if (this->errored)
         return std::vector<inter::Quad>();
-    if (!(this->_isRecording))
+    if (this->_isRecording <= 0)
         std::cerr << "Not recording when terminating records !" << std::endl;
-    this->_isRecording = false;
-    this->_actualAdding = true;
-    std::vector<inter::Quad> ret = this->_recorded;
-    this->_recorded.clear();
+    this->_isRecording -= 1;
+    std::vector<inter::Quad> ret = this->_recorded.back();
+    this->_recorded.pop_back();
     return ret;
 }
 
@@ -215,14 +212,14 @@ void semantic::Semantic::addRecord(const std::vector<inter::Quad> &_record)
         return;
     for (const auto &_quad : _record)
     {
-        mir.addQuad(_quad);
+        // should add through addMIR interface instead of straightly adding to mir
+        this->addMIR(_quad.op, _quad.out, _quad.inl, _quad.inr);
     }
 }
 
-void semantic::Semantic::addParam(const string &_name, const string &_type)
+void semantic::Semantic::addParamFromParamList(const string &_name, const string &_type)
 {
     mir.addParam(_name, _type);
-
 }
 
 void semantic::Semantic::addSwitch(const std::string &tempSwitch,
