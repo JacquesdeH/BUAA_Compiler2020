@@ -411,7 +411,7 @@ mips::ObjCodes mips::Mips::_compileBranchJumpOp(const inter::Quad &_quad)
         return ret;
     }
     std::string _regL, _regR;
-    // both non-numeric case
+    // both numeric case
     if (config::isNumeric(_quad.inl) && config::isNumeric(_quad.inr))
     {
         int L = str2int(_quad.inl);

@@ -122,17 +122,17 @@ std::string branchIR2Op(config::IRCode _code)
 std::string branch2oppo(const string &_op)
 {
     if (_op == "beq")
-        return "bne";
-    else if (_op == "bne")
         return "beq";
+    else if (_op == "bne")
+        return "bne";
     else if (_op == "blt")
-        return "bge";
-    else if (_op == "ble")
         return "bgt";
+    else if (_op == "ble")
+        return "bge";
     else if (_op == "bgt")
-        return "ble";
-    else if (_op == "bge")
         return "blt";
+    else if (_op == "bge")
+        return "ble";
     else
         return "";
 }
