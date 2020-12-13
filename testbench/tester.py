@@ -1,10 +1,10 @@
 import os
 import sys
 
-L = 1
-R = 10
+L = 2
+R = 2
 BENCH_NAME = "PUBGEN"
-BENCH_ID = 9
+BENCH_ID = 10
 
 testfilePath = os.path.join("..", os.path.join("testcases", os.path.join(BENCH_NAME, str(BENCH_ID)))) if BENCH_ID > 0 \
     else os.path.join("..", os.path.join("testcases", os.path.join(BENCH_NAME)))

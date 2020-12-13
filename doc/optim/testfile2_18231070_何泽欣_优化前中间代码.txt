@@ -1,0 +1,660 @@
+# Global Strings :
+	___String__1 = "-";
+
+# Global Chars :
+
+# Global Ints :
+	___Global__bigintarr = ;
+	___Global__bigintlength = ;
+	___Global__result = ;
+
+___Proc__min:
+	Params:
+		Para int ___Local__a
+		Para int ___Local__b
+	LocalChars:
+	LocalInts:
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                    #___Local__a#___Local__b                                                   
+		MV                       ___Temp__1               ___Local__a                                       
+		MV                       ___Temp__2               ___Local__b                                       
+		?<=                      ___Label__1              ___Temp__1               ___Temp__2               
+
+		**************************************** New Block ****************************************
+		MV                       ___Temp__3               ___Local__b                                       
+		Return                   ___Temp__3                                                                 
+
+		**************************************** New Block ****************************************
+		JP                       ___Label__2                                                                
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__1                                                                
+		MV                       ___Temp__4               ___Local__a                                       
+		Return                   ___Temp__4                                                                 
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__2                                                                
+
+
+___Proc__max:
+	Params:
+		Para int ___Local__a
+		Para int ___Local__b
+	LocalChars:
+	LocalInts:
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                    #___Local__a#___Local__b                                                   
+		MV                       ___Temp__5               ___Local__a                                       
+		MV                       ___Temp__6               ___Local__b                                       
+		?<=                      ___Label__3              ___Temp__5               ___Temp__6               
+
+		**************************************** New Block ****************************************
+		MV                       ___Temp__7               ___Local__a                                       
+		Return                   ___Temp__7                                                                 
+
+		**************************************** New Block ****************************************
+		JP                       ___Label__4                                                                
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__3                                                                
+		MV                       ___Temp__8               ___Local__b                                       
+		Return                   ___Temp__8                                                                 
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__4                                                                
+
+
+___Proc__compare:
+	Params:
+	LocalChars:
+	LocalInts:
+		___Local__i = 0 ;
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                                                                                               
+		SD                       0                        ___Local__i              0                        
+		MV                       ___Temp__9               0                                                 
+		MV                       ___Temp__11              ___Temp__9                                        
+		LD                       ___Temp__10              ___Global__bigintlength  ___Temp__11              
+		MV                       ___Temp__12              1                                                 
+		MV                       ___Temp__14              ___Temp__12                                       
+		LD                       ___Temp__13              ___Global__bigintlength  ___Temp__14              
+		?<=                      ___Label__5              ___Temp__10              ___Temp__13              
+
+		**************************************** New Block ****************************************
+		MV                       ___Temp__15              1                                                 
+		Return                   ___Temp__15                                                                
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__5                                                                
+		MV                       ___Temp__16              0                                                 
+		MV                       ___Temp__18              ___Temp__16                                       
+		LD                       ___Temp__17              ___Global__bigintlength  ___Temp__18              
+		MV                       ___Temp__19              1                                                 
+		MV                       ___Temp__21              ___Temp__19                                       
+		LD                       ___Temp__20              ___Global__bigintlength  ___Temp__21              
+		?<=                      ___Label__7              ___Temp__20              ___Temp__17              
+
+		**************************************** New Block ****************************************
+		MV                       ___Temp__22              1                                                 
+		-                        ___Temp__23              0                        ___Temp__22              
+		Return                   ___Temp__23                                                                
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__7                                                                
+		MV                       ___Temp__24              ___Local__i                                       
+		MV                       ___Temp__25              0                                                 
+		MV                       ___Temp__27              ___Temp__25                                       
+		LD                       ___Temp__26              ___Global__bigintlength  ___Temp__27              
+		?<=                      ___Label__10             ___Temp__26              ___Temp__24              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__9                                                                
+		MV                       ___Temp__28              0                                                 
+		MV                       ___Temp__29              ___Local__i                                       
+		MV                       ___Temp__31              ___Temp__28                                       
+		*                        ___Temp__32              ___Temp__31              100                      
+		+                        ___Temp__33              ___Temp__32              ___Temp__29              
+		LD                       ___Temp__30              ___Global__bigintarr     ___Temp__33              
+		MV                       ___Temp__34              1                                                 
+		MV                       ___Temp__35              ___Local__i                                       
+		MV                       ___Temp__37              ___Temp__34                                       
+		*                        ___Temp__38              ___Temp__37              100                      
+		+                        ___Temp__39              ___Temp__38              ___Temp__35              
+		LD                       ___Temp__36              ___Global__bigintarr     ___Temp__39              
+		?<=                      ___Label__11             ___Temp__30              ___Temp__36              
+
+		**************************************** New Block ****************************************
+		MV                       ___Temp__40              1                                                 
+		Return                   ___Temp__40                                                                
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__11                                                               
+		MV                       ___Temp__41              0                                                 
+		MV                       ___Temp__42              ___Local__i                                       
+		MV                       ___Temp__44              ___Temp__41                                       
+		*                        ___Temp__45              ___Temp__44              100                      
+		+                        ___Temp__46              ___Temp__45              ___Temp__42              
+		LD                       ___Temp__43              ___Global__bigintarr     ___Temp__46              
+		MV                       ___Temp__47              1                                                 
+		MV                       ___Temp__48              ___Local__i                                       
+		MV                       ___Temp__50              ___Temp__47                                       
+		*                        ___Temp__51              ___Temp__50              100                      
+		+                        ___Temp__52              ___Temp__51              ___Temp__48              
+		LD                       ___Temp__49              ___Global__bigintarr     ___Temp__52              
+		?<=                      ___Label__13             ___Temp__49              ___Temp__43              
+
+		**************************************** New Block ****************************************
+		MV                       ___Temp__53              1                                                 
+		-                        ___Temp__54              0                        ___Temp__53              
+		Return                   ___Temp__54                                                                
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__13                                                               
+		MV                       ___Temp__55              ___Local__i                                       
+		MV                       ___Temp__56              1                                                 
+		+                        ___Temp__57              ___Temp__55              ___Temp__56              
+		MV                       ___Local__i              ___Temp__57                                       
+		MV                       ___Temp__24              ___Local__i                                       
+		MV                       ___Temp__25              0                                                 
+		MV                       ___Temp__27              ___Temp__25                                       
+		LD                       ___Temp__26              ___Global__bigintlength  ___Temp__27              
+		?<                       ___Label__9              ___Temp__24              ___Temp__26              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__10                                                               
+		MV                       ___Temp__58              0                                                 
+		Return                   ___Temp__58                                                                
+
+
+___Proc__subtract:
+	Params:
+	LocalChars:
+	LocalInts:
+		___Local__a = ;
+		___Local__b = ;
+		___Local__c = ;
+		___Local__flag = ;
+		___Local__i = ;
+		___Local__j = ;
+		___Local__k = ;
+		___Local__l1 = ;
+		___Local__l2 = ;
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                                                                                               
+		MV                       ___Temp__59              0                                                 
+		MV                       ___Temp__61              ___Temp__59                                       
+		LD                       ___Temp__60              ___Global__bigintlength  ___Temp__61              
+		MV                       ___Local__l1             ___Temp__60                                       
+		MV                       ___Temp__62              1                                                 
+		MV                       ___Temp__64              ___Temp__62                                       
+		LD                       ___Temp__63              ___Global__bigintlength  ___Temp__64              
+		MV                       ___Local__l2             ___Temp__63                                       
+		MV                       ___Temp__66              ___Local__l1                                      
+		MV                       ___Temp__67              ___Local__l2                                      
+		Push                     #___Temp__66#___Temp__67                                                   
+		Call                     ___Proc__min                                                               
+
+		**************************************** New Block ****************************************
+		DePush                   2                                                                          
+		MoveRet                  ___Temp__65                                                                
+		MV                       ___Local__k              ___Temp__65                                       
+		MV                       ___Temp__69              ___Local__l1                                      
+		MV                       ___Temp__70              ___Local__l2                                      
+		Push                     #___Temp__69#___Temp__70                                                   
+		Call                     ___Proc__max                                                               
+
+		**************************************** New Block ****************************************
+		DePush                   2                                                                          
+		MoveRet                  ___Temp__68                                                                
+		MV                       ___Local__j              ___Temp__68                                       
+		Push                                                                                                
+		Call                     ___Proc__compare                                                           
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__71                                                                
+		MV                       ___Temp__72              0                                                 
+		?<                       ___Label__15             ___Temp__71              ___Temp__72              
+
+		**************************************** New Block ****************************************
+		MV                       ___Temp__73              0                                                 
+		MV                       ___Local__flag           ___Temp__73                                       
+		MV                       ___Temp__74              0                                                 
+		MV                       ___Local__i              ___Temp__74                                       
+		MV                       ___Temp__75              ___Local__i                                       
+		MV                       ___Temp__76              ___Local__l1                                      
+		?<=                      ___Label__18             ___Temp__76              ___Temp__75              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__17                                                               
+		MV                       ___Temp__77              ___Local__i                                       
+		MV                       ___Temp__78              0                                                 
+		MV                       ___Temp__79              ___Local__l1                                      
+		MV                       ___Temp__80              1                                                 
+		-                        ___Temp__81              ___Temp__79              ___Temp__80              
+		MV                       ___Temp__82              ___Local__i                                       
+		-                        ___Temp__83              ___Temp__81              ___Temp__82              
+		MV                       ___Temp__85              ___Temp__78                                       
+		*                        ___Temp__86              ___Temp__85              100                      
+		+                        ___Temp__87              ___Temp__86              ___Temp__83              
+		LD                       ___Temp__84              ___Global__bigintarr     ___Temp__87              
+		MV                       ___Temp__88              ___Temp__77                                       
+		SD                       ___Temp__84              ___Local__a              ___Temp__88              
+		MV                       ___Temp__89              ___Local__i                                       
+		MV                       ___Temp__90              1                                                 
+		+                        ___Temp__91              ___Temp__89              ___Temp__90              
+		MV                       ___Local__i              ___Temp__91                                       
+		MV                       ___Temp__75              ___Local__i                                       
+		MV                       ___Temp__76              ___Local__l1                                      
+		?<                       ___Label__17             ___Temp__75              ___Temp__76              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__18                                                               
+		MV                       ___Temp__92              0                                                 
+		MV                       ___Local__i              ___Temp__92                                       
+		MV                       ___Temp__93              ___Local__i                                       
+		MV                       ___Temp__94              ___Local__l2                                      
+		?<=                      ___Label__20             ___Temp__94              ___Temp__93              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__19                                                               
+		MV                       ___Temp__95              ___Local__i                                       
+		MV                       ___Temp__96              1                                                 
+		MV                       ___Temp__97              ___Local__l2                                      
+		MV                       ___Temp__98              1                                                 
+		-                        ___Temp__99              ___Temp__97              ___Temp__98              
+		MV                       ___Temp__100             ___Local__i                                       
+		-                        ___Temp__101             ___Temp__99              ___Temp__100             
+		MV                       ___Temp__103             ___Temp__96                                       
+		*                        ___Temp__104             ___Temp__103             100                      
+		+                        ___Temp__105             ___Temp__104             ___Temp__101             
+		LD                       ___Temp__102             ___Global__bigintarr     ___Temp__105             
+		MV                       ___Temp__106             ___Temp__95                                       
+		SD                       ___Temp__102             ___Local__b              ___Temp__106             
+		MV                       ___Temp__107             ___Local__i                                       
+		MV                       ___Temp__108             1                                                 
+		+                        ___Temp__109             ___Temp__107             ___Temp__108             
+		MV                       ___Local__i              ___Temp__109                                      
+		MV                       ___Temp__93              ___Local__i                                       
+		MV                       ___Temp__94              ___Local__l2                                      
+		?<                       ___Label__19             ___Temp__93              ___Temp__94              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__20                                                               
+		JP                       ___Label__16                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__15                                                               
+		MV                       ___Temp__110             1                                                 
+		MV                       ___Local__flag           ___Temp__110                                      
+		MV                       ___Temp__111             0                                                 
+		MV                       ___Local__i              ___Temp__111                                      
+		MV                       ___Temp__112             ___Local__i                                       
+		MV                       ___Temp__113             ___Local__l2                                      
+		?<=                      ___Label__22             ___Temp__113             ___Temp__112             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__21                                                               
+		MV                       ___Temp__114             ___Local__i                                       
+		MV                       ___Temp__115             1                                                 
+		MV                       ___Temp__116             ___Local__l2                                      
+		MV                       ___Temp__117             1                                                 
+		-                        ___Temp__118             ___Temp__116             ___Temp__117             
+		MV                       ___Temp__119             ___Local__i                                       
+		-                        ___Temp__120             ___Temp__118             ___Temp__119             
+		MV                       ___Temp__122             ___Temp__115                                      
+		*                        ___Temp__123             ___Temp__122             100                      
+		+                        ___Temp__124             ___Temp__123             ___Temp__120             
+		LD                       ___Temp__121             ___Global__bigintarr     ___Temp__124             
+		MV                       ___Temp__125             ___Temp__114                                      
+		SD                       ___Temp__121             ___Local__a              ___Temp__125             
+		MV                       ___Temp__126             ___Local__i                                       
+		MV                       ___Temp__127             1                                                 
+		+                        ___Temp__128             ___Temp__126             ___Temp__127             
+		MV                       ___Local__i              ___Temp__128                                      
+		MV                       ___Temp__112             ___Local__i                                       
+		MV                       ___Temp__113             ___Local__l2                                      
+		?<                       ___Label__21             ___Temp__112             ___Temp__113             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__22                                                               
+		MV                       ___Temp__129             0                                                 
+		MV                       ___Local__i              ___Temp__129                                      
+		MV                       ___Temp__130             ___Local__i                                       
+		MV                       ___Temp__131             ___Local__l1                                      
+		?<=                      ___Label__24             ___Temp__131             ___Temp__130             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__23                                                               
+		MV                       ___Temp__132             ___Local__i                                       
+		MV                       ___Temp__133             0                                                 
+		MV                       ___Temp__134             ___Local__l1                                      
+		MV                       ___Temp__135             1                                                 
+		-                        ___Temp__136             ___Temp__134             ___Temp__135             
+		MV                       ___Temp__137             ___Local__i                                       
+		-                        ___Temp__138             ___Temp__136             ___Temp__137             
+		MV                       ___Temp__140             ___Temp__133                                      
+		*                        ___Temp__141             ___Temp__140             100                      
+		+                        ___Temp__142             ___Temp__141             ___Temp__138             
+		LD                       ___Temp__139             ___Global__bigintarr     ___Temp__142             
+		MV                       ___Temp__143             ___Temp__132                                      
+		SD                       ___Temp__139             ___Local__b              ___Temp__143             
+		MV                       ___Temp__144             ___Local__i                                       
+		MV                       ___Temp__145             1                                                 
+		+                        ___Temp__146             ___Temp__144             ___Temp__145             
+		MV                       ___Local__i              ___Temp__146                                      
+		MV                       ___Temp__130             ___Local__i                                       
+		MV                       ___Temp__131             ___Local__l1                                      
+		?<                       ___Label__23             ___Temp__130             ___Temp__131             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__24                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__16                                                               
+		MV                       ___Temp__147             0                                                 
+		MV                       ___Local__i              ___Temp__147                                      
+		MV                       ___Temp__148             ___Local__i                                       
+		MV                       ___Temp__149             ___Local__k                                       
+		?<=                      ___Label__26             ___Temp__149             ___Temp__148             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__25                                                               
+		MV                       ___Temp__150             ___Local__i                                       
+		MV                       ___Temp__152             ___Temp__150                                      
+		LD                       ___Temp__151             ___Local__a              ___Temp__152             
+		MV                       ___Temp__153             ___Local__i                                       
+		MV                       ___Temp__155             ___Temp__153                                      
+		LD                       ___Temp__154             ___Local__b              ___Temp__155             
+		?<                       ___Label__27             ___Temp__151             ___Temp__154             
+
+		**************************************** New Block ****************************************
+		MV                       ___Temp__156             ___Local__i                                       
+		MV                       ___Temp__157             ___Local__i                                       
+		MV                       ___Temp__159             ___Temp__157                                      
+		LD                       ___Temp__158             ___Local__a              ___Temp__159             
+		MV                       ___Temp__160             ___Local__i                                       
+		MV                       ___Temp__162             ___Temp__160                                      
+		LD                       ___Temp__161             ___Local__b              ___Temp__162             
+		-                        ___Temp__163             ___Temp__158             ___Temp__161             
+		MV                       ___Temp__164             ___Temp__156                                      
+		SD                       ___Temp__163             ___Local__c              ___Temp__164             
+		JP                       ___Label__28                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__27                                                               
+		MV                       ___Temp__165             ___Local__i                                       
+		MV                       ___Temp__166             ___Local__i                                       
+		MV                       ___Temp__168             ___Temp__166                                      
+		LD                       ___Temp__167             ___Local__a              ___Temp__168             
+		MV                       ___Temp__169             10                                                
+		+                        ___Temp__170             ___Temp__167             ___Temp__169             
+		MV                       ___Temp__171             ___Local__i                                       
+		MV                       ___Temp__173             ___Temp__171                                      
+		LD                       ___Temp__172             ___Local__b              ___Temp__173             
+		-                        ___Temp__174             ___Temp__170             ___Temp__172             
+		MV                       ___Temp__175             ___Temp__165                                      
+		SD                       ___Temp__174             ___Local__c              ___Temp__175             
+		MV                       ___Temp__176             ___Local__i                                       
+		MV                       ___Temp__177             1                                                 
+		+                        ___Temp__178             ___Temp__176             ___Temp__177             
+		MV                       ___Temp__179             ___Local__i                                       
+		MV                       ___Temp__180             1                                                 
+		+                        ___Temp__181             ___Temp__179             ___Temp__180             
+		MV                       ___Temp__183             ___Temp__181                                      
+		LD                       ___Temp__182             ___Local__a              ___Temp__183             
+		MV                       ___Temp__184             1                                                 
+		-                        ___Temp__185             ___Temp__182             ___Temp__184             
+		MV                       ___Temp__186             ___Temp__178                                      
+		SD                       ___Temp__185             ___Local__a              ___Temp__186             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__28                                                               
+		MV                       ___Temp__187             ___Local__i                                       
+		MV                       ___Temp__188             1                                                 
+		+                        ___Temp__189             ___Temp__187             ___Temp__188             
+		MV                       ___Local__i              ___Temp__189                                      
+		MV                       ___Temp__148             ___Local__i                                       
+		MV                       ___Temp__149             ___Local__k                                       
+		?<                       ___Label__25             ___Temp__148             ___Temp__149             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__26                                                               
+		MV                       ___Temp__190             ___Local__i                                       
+		MV                       ___Temp__191             ___Local__j                                       
+		?<=                      ___Label__30             ___Temp__191             ___Temp__190             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__29                                                               
+		MV                       ___Temp__192             ___Local__i                                       
+		MV                       ___Temp__194             ___Temp__192                                      
+		LD                       ___Temp__193             ___Local__a              ___Temp__194             
+		MV                       ___Temp__195             0                                                 
+		?<                       ___Label__31             ___Temp__193             ___Temp__195             
+
+		**************************************** New Block ****************************************
+		MV                       ___Temp__196             ___Local__i                                       
+		MV                       ___Temp__197             ___Local__i                                       
+		MV                       ___Temp__199             ___Temp__197                                      
+		LD                       ___Temp__198             ___Local__a              ___Temp__199             
+		MV                       ___Temp__200             ___Temp__196                                      
+		SD                       ___Temp__198             ___Local__c              ___Temp__200             
+		JP                       ___Label__32                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__31                                                               
+		MV                       ___Temp__201             ___Local__i                                       
+		MV                       ___Temp__202             ___Local__i                                       
+		MV                       ___Temp__204             ___Temp__202                                      
+		LD                       ___Temp__203             ___Local__a              ___Temp__204             
+		MV                       ___Temp__205             10                                                
+		+                        ___Temp__206             ___Temp__203             ___Temp__205             
+		MV                       ___Temp__207             ___Temp__201                                      
+		SD                       ___Temp__206             ___Local__c              ___Temp__207             
+		MV                       ___Temp__208             ___Local__i                                       
+		MV                       ___Temp__209             1                                                 
+		+                        ___Temp__210             ___Temp__208             ___Temp__209             
+		MV                       ___Temp__211             ___Local__i                                       
+		MV                       ___Temp__212             1                                                 
+		+                        ___Temp__213             ___Temp__211             ___Temp__212             
+		MV                       ___Temp__215             ___Temp__213                                      
+		LD                       ___Temp__214             ___Local__a              ___Temp__215             
+		MV                       ___Temp__216             1                                                 
+		-                        ___Temp__217             ___Temp__214             ___Temp__216             
+		MV                       ___Temp__218             ___Temp__210                                      
+		SD                       ___Temp__217             ___Local__a              ___Temp__218             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__32                                                               
+		MV                       ___Temp__219             ___Local__i                                       
+		MV                       ___Temp__220             1                                                 
+		+                        ___Temp__221             ___Temp__219             ___Temp__220             
+		MV                       ___Local__i              ___Temp__221                                      
+		MV                       ___Temp__190             ___Local__i                                       
+		MV                       ___Temp__191             ___Local__j                                       
+		?<                       ___Label__29             ___Temp__190             ___Temp__191             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__30                                                               
+		MV                       ___Temp__222             ___Local__i                                       
+		MV                       ___Temp__223             1                                                 
+		-                        ___Temp__224             ___Temp__222             ___Temp__223             
+		MV                       ___Temp__226             ___Temp__224                                      
+		LD                       ___Temp__225             ___Local__c              ___Temp__226             
+		MV                       ___Temp__227             0                                                 
+		?!=                      ___Label__34             ___Temp__225             ___Temp__227             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__33                                                               
+		MV                       ___Temp__228             ___Local__i                                       
+		MV                       ___Temp__229             1                                                 
+		-                        ___Temp__230             ___Temp__228             ___Temp__229             
+		MV                       ___Local__i              ___Temp__230                                      
+		MV                       ___Temp__222             ___Local__i                                       
+		MV                       ___Temp__223             1                                                 
+		-                        ___Temp__224             ___Temp__222             ___Temp__223             
+		MV                       ___Temp__226             ___Temp__224                                      
+		LD                       ___Temp__225             ___Local__c              ___Temp__226             
+		MV                       ___Temp__227             0                                                 
+		?==                      ___Label__33             ___Temp__225             ___Temp__227             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__34                                                               
+		MV                       ___Temp__231             0                                                 
+		MV                       ___Local__j              ___Temp__231                                      
+		MV                       ___Temp__232             ___Local__flag                                    
+		MV                       ___Temp__233             1                                                 
+		?!=                      ___Label__35             ___Temp__232             ___Temp__233             
+
+		**************************************** New Block ****************************************
+		String                   ___String__1                                                               
+		Write                    10                       char                                              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__35                                                               
+		MV                       ___Temp__234             ___Local__i                                       
+		MV                       ___Temp__235             1                                                 
+		-                        ___Temp__236             ___Temp__234             ___Temp__235             
+		MV                       ___Local__k              ___Temp__236                                      
+		MV                       ___Temp__237             ___Local__k                                       
+		MV                       ___Temp__238             1                                                 
+		-                        ___Temp__239             0                        ___Temp__238             
+		?<=                      ___Label__38             ___Temp__237             ___Temp__239             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__37                                                               
+		MV                       ___Temp__240             ___Local__j                                       
+		MV                       ___Temp__241             ___Local__k                                       
+		MV                       ___Temp__243             ___Temp__241                                      
+		LD                       ___Temp__242             ___Local__c              ___Temp__243             
+		MV                       ___Temp__244             ___Temp__240                                      
+		SD                       ___Temp__242             ___Global__result        ___Temp__244             
+		MV                       ___Temp__245             ___Local__k                                       
+		MV                       ___Temp__246             1                                                 
+		-                        ___Temp__247             ___Temp__245             ___Temp__246             
+		MV                       ___Local__k              ___Temp__247                                      
+		MV                       ___Temp__248             ___Local__j                                       
+		MV                       ___Temp__249             1                                                 
+		+                        ___Temp__250             ___Temp__248             ___Temp__249             
+		MV                       ___Local__j              ___Temp__250                                      
+		MV                       ___Temp__237             ___Local__k                                       
+		MV                       ___Temp__238             1                                                 
+		-                        ___Temp__239             0                        ___Temp__238             
+		?<                       ___Label__37             ___Temp__239             ___Temp__237             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__38                                                               
+		MV                       ___Temp__251             ___Local__j                                       
+		Return                   ___Temp__251                                                               
+
+
+___Proc__main:
+	Params:
+	LocalChars:
+	LocalInts:
+		___Local__i = 0 ;
+		___Local__n = ;
+		___Local__tmp = ;
+	Blocks:
+		**************************************** New Block ****************************************
+		SD                       0                        ___Local__i              0                        
+		Read                     ___Local__n              int                                               
+		MV                       ___Temp__252             0                                                 
+		MV                       ___Temp__253             ___Local__n                                       
+		MV                       ___Temp__254             ___Temp__252                                      
+		SD                       ___Temp__253             ___Global__bigintlength  ___Temp__254             
+		MV                       ___Temp__255             ___Local__i                                       
+		MV                       ___Temp__256             ___Local__n                                       
+		?<=                      ___Label__41             ___Temp__256             ___Temp__255             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__40                                                               
+		Read                     ___Local__tmp            int                                               
+		MV                       ___Temp__257             0                                                 
+		MV                       ___Temp__258             ___Local__i                                       
+		MV                       ___Temp__259             ___Local__tmp                                     
+		MV                       ___Temp__260             ___Temp__257                                      
+		*                        ___Temp__261             ___Temp__260             100                      
+		+                        ___Temp__262             ___Temp__261             ___Temp__258             
+		SD                       ___Temp__259             ___Global__bigintarr     ___Temp__262             
+		MV                       ___Temp__263             ___Local__i                                       
+		MV                       ___Temp__264             1                                                 
+		+                        ___Temp__265             ___Temp__263             ___Temp__264             
+		MV                       ___Local__i              ___Temp__265                                      
+		MV                       ___Temp__255             ___Local__i                                       
+		MV                       ___Temp__256             ___Local__n                                       
+		?<                       ___Label__40             ___Temp__255             ___Temp__256             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__41                                                               
+		Read                     ___Local__n              int                                               
+		MV                       ___Temp__266             1                                                 
+		MV                       ___Temp__267             ___Local__n                                       
+		MV                       ___Temp__268             ___Temp__266                                      
+		SD                       ___Temp__267             ___Global__bigintlength  ___Temp__268             
+		MV                       ___Temp__269             0                                                 
+		MV                       ___Local__i              ___Temp__269                                      
+		MV                       ___Temp__270             ___Local__i                                       
+		MV                       ___Temp__271             ___Local__n                                       
+		?<=                      ___Label__43             ___Temp__271             ___Temp__270             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__42                                                               
+		Read                     ___Local__tmp            int                                               
+		MV                       ___Temp__272             1                                                 
+		MV                       ___Temp__273             ___Local__i                                       
+		MV                       ___Temp__274             ___Local__tmp                                     
+		MV                       ___Temp__275             ___Temp__272                                      
+		*                        ___Temp__276             ___Temp__275             100                      
+		+                        ___Temp__277             ___Temp__276             ___Temp__273             
+		SD                       ___Temp__274             ___Global__bigintarr     ___Temp__277             
+		MV                       ___Temp__278             ___Local__i                                       
+		MV                       ___Temp__279             1                                                 
+		+                        ___Temp__280             ___Temp__278             ___Temp__279             
+		MV                       ___Local__i              ___Temp__280                                      
+		MV                       ___Temp__270             ___Local__i                                       
+		MV                       ___Temp__271             ___Local__n                                       
+		?<                       ___Label__42             ___Temp__270             ___Temp__271             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__43                                                               
+		MV                       ___Temp__281             0                                                 
+		MV                       ___Local__i              ___Temp__281                                      
+		Push                                                                                                
+		Call                     ___Proc__subtract                                                          
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__282                                                               
+		MV                       ___Local__n              ___Temp__282                                      
+		MV                       ___Temp__283             ___Local__i                                       
+		MV                       ___Temp__284             ___Local__n                                       
+		?<=                      ___Label__45             ___Temp__284             ___Temp__283             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__44                                                               
+		MV                       ___Temp__285             ___Local__i                                       
+		MV                       ___Temp__287             ___Temp__285                                      
+		LD                       ___Temp__286             ___Global__result        ___Temp__287             
+		Write                    ___Temp__286             int                                               
+		Write                    10                       char                                              
+		MV                       ___Temp__288             ___Local__i                                       
+		MV                       ___Temp__289             1                                                 
+		+                        ___Temp__290             ___Temp__288             ___Temp__289             
+		MV                       ___Local__i              ___Temp__290                                      
+		MV                       ___Temp__283             ___Local__i                                       
+		MV                       ___Temp__284             ___Local__n                                       
+		?<                       ___Label__44             ___Temp__283             ___Temp__284             
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__45                                                               
+		Exit                     ___Label__39                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__39                                                               
+
+
