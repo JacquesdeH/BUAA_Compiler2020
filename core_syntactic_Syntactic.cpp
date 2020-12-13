@@ -1198,12 +1198,17 @@ void syntactic::Syntactic::parseAssignStatement()
         }
         else
         {
-            std::string idxTemp = semanticGenerator->genTemp();
+            std::string idxTemp;
+            /*
+            idxTemp = semanticGenerator->genTemp();
             semanticGenerator->addMIR(config::MOVE_IR, idxTemp, indexes[0]);
+             */
+            idxTemp = indexes[0];
             if (dim == 2)
             {
-                std::string newTemp = semanticGenerator->genTemp();
+                std::string newTemp;
                 int _dimLim1 = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDimLimAt(1);
+                newTemp = semanticGenerator->genTemp();
                 semanticGenerator->addMIR(config::MULT_IR, newTemp, idxTemp, toString(_dimLim1));
                 idxTemp = newTemp;
                 newTemp = semanticGenerator->genTemp();
@@ -2318,8 +2323,11 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
         // ＜字符＞
         char _ch = _cur().getTkvalue()[0];
         _printAndNext();
+        /*
         temp = semanticGenerator->genTemp();
         semanticGenerator->addMIR(config::MOVE_IR, temp, toString((int) _ch));
+         */
+        temp = toString((int) _ch);
         // CASE 1 of single CHARCON is a char
         retDataType = config::DataType::CHAR;
     }
@@ -2329,8 +2337,11 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
         // ＜整数＞
         int _int = 0;
         parseInteger(_int);
+        /*
         temp = semanticGenerator->genTemp();
         semanticGenerator->addMIR(config::MOVE_IR, temp, toString(_int));
+         */
+        temp = toString(_int);
         // not a char for sure
         retDataType = config::DataType::INT;
     }
@@ -2450,25 +2461,33 @@ config::DataType syntactic::Syntactic::parseFactor(string & temp)
             {
                 const bool isGlobal = symbolManager->getInfoInAll(idenfr.getTkvalue()).isGlobal();
                 const std::string _mark = semanticGenerator->generateExtended(idenfr.getTkvalue(), isGlobal ? "global" : "local");
-                temp = semanticGenerator->genTemp();
                 if (dim == 0)
                 {
+                    /*
                     semanticGenerator->addMIR(config::MOVE_IR, temp, _mark);
+                     */
+                    temp = _mark;
                 }
                 else
                 {
-                    std::string idxTemp = semanticGenerator->genTemp();
                     const int _dimLim1 = symbolManager->getInfoInAll(idenfr.getTkvalue()).queryDimLimAt(1);
+                    std::string idxTemp;
+                    /*
+                    idxTemp = semanticGenerator->genTemp();
                     semanticGenerator->addMIR(config::MOVE_IR, idxTemp, indexes[0]);
+                     */
+                    idxTemp = indexes[0];
                     if (dim == 2)
                     {
-                        std::string newTemp = semanticGenerator->genTemp();
+                        std::string newTemp;
+                        newTemp = semanticGenerator->genTemp();
                         semanticGenerator->addMIR(config::MULT_IR, newTemp, idxTemp, toString(_dimLim1));
                         idxTemp = newTemp;
                         newTemp = semanticGenerator->genTemp();
                         semanticGenerator->addMIR(config::ADD_IR, newTemp, idxTemp, indexes[1]);
                         idxTemp = newTemp;
                     }
+                    temp = semanticGenerator->genTemp();
                     semanticGenerator->addMIR(config::LOAD_IR, temp, _mark, idxTemp);
                 }
             }
