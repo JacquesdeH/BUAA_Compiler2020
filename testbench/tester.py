@@ -2,11 +2,12 @@ import os
 import sys
 
 L = 1
-R = 7
+R = 10
 BENCH_NAME = "PUBGEN"
-BENCH_ID = 1
+BENCH_ID = 9
 
-testfilePath = os.path.join("..", os.path.join("testcases", os.path.join(BENCH_NAME, str(BENCH_ID))))
+testfilePath = os.path.join("..", os.path.join("testcases", os.path.join(BENCH_NAME, str(BENCH_ID)))) if BENCH_ID > 0 \
+    else os.path.join("..", os.path.join("testcases", os.path.join(BENCH_NAME)))
 mipsJar = os.path.join(".", "Mars-jdk7-Re-v5.jar")
 
 compilePath = os.path.join("..", "cmake-build-debug-compiler-course")

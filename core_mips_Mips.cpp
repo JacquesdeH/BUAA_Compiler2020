@@ -565,11 +565,13 @@ mips::ObjCodes mips::Mips::_compileReadOp(const inter::Quad &_quad)
     ret.genCodeInsert("move", _regOut, "$v0");
     blockRegPool.markWriteBack(_regOut);
     // read '\n' only when char is read
+    /*
     if (_quad.inl == "char")
     {
         ret.genCodeInsert("li", "$v0", toString(config::_readChar));
         ret.genCodeInsert("syscall");
     }
+     */
     return ret;
 }
 
