@@ -109,6 +109,14 @@ mips::ObjCodes mips::BlockRegPool::saveWriteBackRegs(const std::map<std::string,
     mips::ObjCodes ret;
     while (!writebackRegs.empty())
     {
+        if (config::isTemp(*(writebackRegs.begin())))
+        {
+            std::string _reg = *(writebackRegs.begin());
+            std::string _mark = reg2mark[_reg];
+            _untieLinks(_reg);
+            writebackRegs.erase(_reg);
+        }
+        // only writeback when not a temp var
         mips::ObjCodes tmp = _writeBack(*(writebackRegs.begin()), mipsTable);
         ret.mergeCodes(tmp);
     }
