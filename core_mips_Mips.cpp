@@ -392,13 +392,14 @@ mips::ObjCodes mips::Mips::_compileMathOp(const inter::Quad &_quad)
     if (_quad.op == config::ADD_IR || _quad.op == config::MINUS_IR || _quad.op == config::MULT_IR)
     {
         ret.genCodeInsert(opcode, _regOut, _regInl, _regInr);
+        blockRegPool.markWriteBack(_regOut);
     }
     else if (_quad.op == config::DIV_IR)
     {
         ret.genCodeInsert(opcode, "", _regInl, _regInr);
         ret.genCodeInsert("mflo", _regOut);
+        blockRegPool.markWriteBack(_regOut);
     }
-    blockRegPool.markWriteBack(_regOut);
     return ret;
 }
 
@@ -481,22 +482,26 @@ mips::ObjCodes mips::Mips::_compileLoadOp(const inter::Quad &_quad)
         int totOffset = arrOffset + byteOffset;
         ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {}, ""));
         ret.genCodeInsert(cmdOp, _regOut, gpOrSp, toString(totOffset));
+        blockRegPool.markWriteBack(_regOut);
     }
     else if (config::isGlobal(_quad.inr) || config::isLocal(_quad.inr) || config::isTemp(_quad.inr))
     {
         std::string _regOffset;
         ret.mergeCodes(_toReg(_regOffset, _quad.inr, false, true, {}, ""));
         if (useSLL)
+        {
             ret.genCodeInsert("sll", _regOffset, _regOffset, toString(config::bitsSLLInt));
+            blockRegPool.markWriteBack(_regOffset);
+        }
         // c = arr[x] with x<<2 done, need $off+$gsp with offset of arr_relative
         ret.genCodeInsert("addu", _regOffset, _regOffset, gpOrSp);
+        blockRegPool.markWriteBack(_regOffset);
         ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regOffset}, ""));
         ret.genCodeInsert(cmdOp, _regOut, _regOffset, toString(arrOffset));
+        blockRegPool.markWriteBack(_regOut);
     }
     else
         std::cerr << "Unexpected quad.inr in compileLoadOp" << std::endl;
-    // update load _regOut
-    blockRegPool.markWriteBack(_regOut);
     return ret;
 }
 
@@ -523,9 +528,13 @@ mips::ObjCodes mips::Mips::_compileStoreOp(const inter::Quad &_quad)
         std::string _regOffset;
         ret.mergeCodes(_toReg(_regOffset, _quad.inr, false, true, {}, ""));
         if (useSLL)
+        {
             ret.genCodeInsert("sll", _regOffset, _regOffset, toString(config::bitsSLLInt));
+            blockRegPool.markWriteBack(_regOffset);
+        }
         // c = arr[x] with x<<2 done, need $off+$gsp with offset of arr_relative
         ret.genCodeInsert("addu", _regOffset, _regOffset, gpOrSp);
+        blockRegPool.markWriteBack(_regOffset);
         ret.mergeCodes(_toReg(_regOut, _quad.out, true, true, {_regOffset}, ""));
         ret.genCodeInsert(cmdOp, _regOut, _regOffset, toString(arrOffset));
         // update load _regOut
@@ -618,6 +627,10 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool 
         _reg = blockRegPool.queryMark2Reg(_mark);
         if (!_mustReg.empty() && _mustReg != _reg)
             ret.genCodeInsert("move", _mustReg, _reg);
+        else
+        {
+            ret.mergeCodes(blockRegPool.syncLink(_reg, _mark, _link, mipsTable));
+        }
         return ret;
     }
     // load to a new reg

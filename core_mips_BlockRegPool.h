@@ -45,6 +45,8 @@ namespace mips
         void markWriteBack(const std::string &_reg);
         mips::ObjCodes saveWriteBackRegs(const std::map<std::string, mips::SymbolInfo> & mipsTable);
         void updateInfo(const std::string & _reg, const std::string & _mark);
+        mips::ObjCodes syncLink(const std::string &_reg, const std::string &_mark, const bool &_link,
+                                const std::map<std::string, mips::SymbolInfo> & mipsTable);
     };
 }
 

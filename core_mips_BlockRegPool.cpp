@@ -96,6 +96,8 @@ void mips::BlockRegPool::updateInfo(const string &_reg, const string &_mark)
 
 void mips::BlockRegPool::markWriteBack(const string &_reg)
 {
+    if (reg2mark.find(_reg) == reg2mark.end())
+        return;
     if (config::isNumeric(reg2mark.at(_reg)))
         _untieLinks(_reg);
     else
@@ -169,4 +171,26 @@ void mips::BlockRegPool::_untieLinks(const string &_reg)
     std::string _mark = reg2mark.at(_reg);
     reg2mark.erase(_reg);
     mark2reg.erase(_mark);
+}
+
+mips::ObjCodes mips::BlockRegPool::syncLink(const string &_reg, const string &_mark, const bool &_link,
+                                            const std::map<std::string, mips::SymbolInfo> & mipsTable)
+{
+    mips::ObjCodes ret;
+    if (_link && !hasMark(_mark))
+    {
+        updateInfo(_reg, _mark);
+    }
+    else if (!_link && hasMark(_mark))
+    {
+        if (writebackRegs.find(_reg) != writebackRegs.end())
+        {
+            ret.mergeCodes(_writeBack(_reg, mipsTable));
+        }
+        else
+        {
+            _untieLinks(_reg);
+        }
+    }
+    return ret;
 }
