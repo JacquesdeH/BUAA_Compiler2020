@@ -74,4 +74,33 @@ namespace config
         return labeledBranchJump.find(_ircode) != labeledBranchJump.end();
     }
 
+    bool isAbsPower2(const int &_num)
+    {
+        int x = abs(_num);
+        if (x == 0)
+            return true;
+        while (x > 1)
+        {
+            int r = x % 2;
+            x /= 2;
+            if (r != 0)
+                return false;
+        }
+        return true;
+    }
+
+    int toAbsLog2(const int &_num)
+    {
+        int x = abs(_num);
+        if (x == 0)
+            return -INT_MAX;
+        int ret = 0;
+        while (x > 1)
+        {
+            ret ++;
+            x /= 2;
+        }
+        return ret;
+    }
+
 }

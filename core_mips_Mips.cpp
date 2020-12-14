@@ -379,23 +379,69 @@ void mips::Mips::_resetGlobalOffset()
 mips::ObjCodes mips::Mips::_compileMathOp(const inter::Quad &_quad)
 {
     mips::ObjCodes ret;
+    std::string _out, _inl, _inr;
+    _out = _quad.out;
+    _inl = _quad.inl;
+    _inr = _quad.inr;
     std::string _regOut, _regInl, _regInr;
-    ret.mergeCodes(_toReg(_regInl, _quad.inl, true, true, {}, ""));
-    ret.mergeCodes(_toReg(_regInr, _quad.inr, true, true, {_regInl}, ""));
-    ret.mergeCodes(_toReg(_regOut, _quad.out, true, false, {_regInl, _regInr}, ""));
     string opcode =
             (_quad.op == config::ADD_IR) ? "addu" :
             (_quad.op == config::MINUS_IR) ? "subu" :
             (_quad.op == config::MULT_IR) ? "mul" :
             (_quad.op == config::DIV_IR) ? "div" :
             "";
-    if (_quad.op == config::ADD_IR || _quad.op == config::MINUS_IR || _quad.op == config::MULT_IR)
+    if (_quad.op == config::ADD_IR || _quad.op == config::MINUS_IR)
     {
+        ret.mergeCodes(_toReg(_regInl, _inl, true, true, {}, ""));
+        ret.mergeCodes(_toReg(_regInr, _inr, true, true, {_regInl}, ""));
+        ret.mergeCodes(_toReg(_regOut, _out, true, false, {_regInl, _regInr}, ""));
         ret.genCodeInsert(opcode, _regOut, _regInl, _regInr);
         blockRegPool.markWriteBack(_regOut);
     }
+    else if (_quad.op == config::MULT_IR)
+    {
+        if (config::OPTIM_BACKEND_MULT_SHIFT && config::isNumeric(_inl) && config::isAbsPower2(str2int(_inl)))
+        {
+            std::string tmp = _inl;
+            _inl = _inr;
+            _inr = tmp;
+        }
+        // if needed to swap, has swapped if OPTIM_MULT
+        if (config::OPTIM_BACKEND_MULT_SHIFT && config::isNumeric(_inr) && config::isAbsPower2(str2int(_inr)))
+        {
+            int multer = str2int(_inr);
+            int logMulter = config::toAbsLog2(multer);
+            if (multer == 0)
+            {
+                ret.mergeCodes(_toReg(_regOut, _out, true, false, {}, ""));
+                ret.genCodeInsert("addu", _regOut, config::zeroReg, config::zeroReg);
+                blockRegPool.markWriteBack(_regOut);
+            }
+            else
+            {
+                ret.mergeCodes(_toReg(_regInl, _inl, true, true, {}, ""));
+                ret.mergeCodes(_toReg(_regOut, _out, true, false, {_regInl}, ""));
+                ret.genCodeInsert("sll", _regOut, _regInl, toString(logMulter));
+                if (multer < 0)
+                    ret.genCodeInsert("subu", _regOut, config::zeroReg, _regOut);
+                blockRegPool.markWriteBack(_regOut);
+            }
+        }
+        else
+        {
+            ret.mergeCodes(_toReg(_regInl, _inl, true, true, {}, ""));
+            ret.mergeCodes(_toReg(_regInr, _inr, true, true, {_regInl}, ""));
+            ret.mergeCodes(_toReg(_regOut, _out, true, false, {_regInl, _regInr}, ""));
+            ret.genCodeInsert(opcode, _regOut, _regInl, _regInr);
+            blockRegPool.markWriteBack(_regOut);
+        }
+    }
     else if (_quad.op == config::DIV_IR)
     {
+        // if - else
+        ret.mergeCodes(_toReg(_regInl, _inl, true, true, {}, ""));
+        ret.mergeCodes(_toReg(_regInr, _inr, true, true, {_regInl}, ""));
+        ret.mergeCodes(_toReg(_regOut, _out, true, false, {_regInl, _regInr}, ""));
         ret.genCodeInsert(opcode, "", _regInl, _regInr);
         ret.genCodeInsert("mflo", _regOut);
         blockRegPool.markWriteBack(_regOut);

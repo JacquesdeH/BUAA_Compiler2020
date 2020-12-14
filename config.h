@@ -22,6 +22,9 @@ namespace config
 
     const bool FORCE_UNCASED = true;
 
+    const bool OPTIM_BACKEND_MULT_SHIFT = true;
+    const bool OPTIM_BACKEND_DIV_MAGIC = true;
+
     const int BUFFER_SIZE = 0x10000;
 
     const int ROW_INIT = 0; // start with 1
@@ -199,6 +202,8 @@ namespace config
     bool isLocal(const std::string & _str);
     bool isNumeric(const std::string & _str);
     int toNumeric(const std::string & _str);
+    bool isAbsPower2(const int & _num);
+    int toAbsLog2(const int & _num);
 
     const std::string sep = "\t";
 
