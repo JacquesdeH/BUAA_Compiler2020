@@ -22,8 +22,9 @@ namespace config
 
     const bool FORCE_UNCASED = true;
 
+    const bool OPTIM_BACKEND_MATHOP_BOTH_CONSTANT = true;
     const bool OPTIM_BACKEND_MULT_SHIFT = true;
-    const bool OPTIM_BACKEND_DIV_MAGIC = true;
+    const bool OPTIM_BACKEND_DIV_SHIFT = true;
 
     const int BUFFER_SIZE = 0x10000;
 

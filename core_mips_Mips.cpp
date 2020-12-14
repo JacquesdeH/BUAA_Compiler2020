@@ -390,6 +390,36 @@ mips::ObjCodes mips::Mips::_compileMathOp(const inter::Quad &_quad)
             (_quad.op == config::MULT_IR) ? "mul" :
             (_quad.op == config::DIV_IR) ? "div" :
             "";
+    // special judge on both numeric numbers
+    if (config::OPTIM_BACKEND_MATHOP_BOTH_CONSTANT && config::isNumeric(_inl) && config::isNumeric(_inr))
+    {
+        int numL = str2int(_inl);
+        int numR = str2int(_inr);
+        int numOut;
+        switch (_quad.op)
+        {
+            case config::ADD_IR:
+                numOut = numL + numR;
+                break;
+            case config::MINUS_IR:
+                numOut = numL - numR;
+                break;
+            case config::MULT_IR:
+                numOut = numL * numR;
+                break;
+            case config::DIV_IR:
+                numOut = numL / numR;
+                break;
+            default:
+                numOut = -1;
+                std::cerr << "Unexpected quad operator occurred!!" << std::endl;
+        }
+        ret.mergeCodes(_toReg(_regOut, _out, true, false, {}, ""));
+        ret.genCodeInsert("li", _regOut, toString(numOut));
+        blockRegPool.markWriteBack(_regOut);
+        return ret;
+    }
+    // original method
     if (_quad.op == config::ADD_IR || _quad.op == config::MINUS_IR)
     {
         ret.mergeCodes(_toReg(_regInl, _inl, true, true, {}, ""));
