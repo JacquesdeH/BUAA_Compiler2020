@@ -93,7 +93,7 @@ namespace config
     {
         int x = abs(_num);
         if (x == 0)
-            return -INT_MAX;
+            return -config::INF;
         int ret = 0;
         while (x > 1)
         {

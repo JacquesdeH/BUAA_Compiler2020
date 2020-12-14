@@ -26,6 +26,8 @@ namespace config
     const bool OPTIM_BACKEND_MULT_SHIFT = true;
     const bool OPTIM_BACKEND_DIV_SHIFT = true;
 
+    const int INF = 0x3f3f3f3f;
+
     const int BUFFER_SIZE = 0x10000;
 
     const int ROW_INIT = 0; // start with 1
