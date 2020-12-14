@@ -378,6 +378,7 @@ void mips::Mips::_resetGlobalOffset()
 
 mips::ObjCodes mips::Mips::_compileMathOp(const inter::Quad &_quad)
 {
+    static int mathOpLabelNumber = 0;
     mips::ObjCodes ret;
     std::string _out, _inl, _inr;
     _out = _quad.out;
@@ -468,13 +469,33 @@ mips::ObjCodes mips::Mips::_compileMathOp(const inter::Quad &_quad)
     }
     else if (_quad.op == config::DIV_IR)
     {
-        // if - else
-        ret.mergeCodes(_toReg(_regInl, _inl, true, true, {}, ""));
-        ret.mergeCodes(_toReg(_regInr, _inr, true, true, {_regInl}, ""));
-        ret.mergeCodes(_toReg(_regOut, _out, true, false, {_regInl, _regInr}, ""));
-        ret.genCodeInsert(opcode, "", _regInl, _regInr);
-        ret.genCodeInsert("mflo", _regOut);
-        blockRegPool.markWriteBack(_regOut);
+        if (config::OPTIM_BACKEND_DIV_SHIFT && config::isNumeric(_inr) && config::isAbsPower2(str2int(_inr)))
+        {
+            int multer = str2int(_inr);
+            int logMulter = config::toAbsLog2(multer);
+            int addMagic = (int )(((unsigned int )1)<<((unsigned int ) logMulter)) - 1;
+            // guaranteed that divider is not zero
+            ret.mergeCodes(_toReg(_regInl, _inl, false, true, {}, ""));
+            string curDivLabel = "___Label__MathOp_" + toString(++mathOpLabelNumber);
+            ret.genCodeInsert("bge", curDivLabel, _regInl, config::zeroReg);
+            ret.genCodeInsert("addiu", _regInl, _regInl, toString(addMagic));
+            blockRegPool.markWriteBack(_regInl);
+            ret.insertLabel(curDivLabel);
+            ret.mergeCodes(_toReg(_regOut, _out, true, false, {_regInl}, ""));
+            ret.genCodeInsert("sra", _regOut, _regInl, toString(logMulter));
+            if (multer < 0)
+                ret.genCodeInsert("subu", _regOut, config::zeroReg, _regOut);
+            blockRegPool.markWriteBack(_regOut);
+        }
+        else
+        {
+            ret.mergeCodes(_toReg(_regInl, _inl, true, true, {}, ""));
+            ret.mergeCodes(_toReg(_regInr, _inr, true, true, {_regInl}, ""));
+            ret.mergeCodes(_toReg(_regOut, _out, true, false, {_regInl, _regInr}, ""));
+            ret.genCodeInsert(opcode, "", _regInl, _regInr);
+            ret.genCodeInsert("mflo", _regOut);
+            blockRegPool.markWriteBack(_regOut);
+        }
     }
     return ret;
 }
