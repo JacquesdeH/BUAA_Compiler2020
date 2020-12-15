@@ -2,7 +2,7 @@ import os
 import sys
 
 L = 1
-R = 3
+R = 1
 BENCH_NAME = "PUBGEN"
 BENCH_ID = 10
 

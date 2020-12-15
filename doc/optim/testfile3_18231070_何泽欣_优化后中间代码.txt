@@ -1,0 +1,602 @@
+# Global Strings :
+
+# Global Chars :
+
+# Global Ints :
+	___Global__a = ;
+	___Global__b = ;
+	___Global__kernelid = ;
+	___Global__max = 1073741824 ;
+
+___Proc__myscanf:
+	Params:
+	LocalChars:
+	LocalInts:
+		___Local__n = ;
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                                                                                               
+		Read                     ___Local__n              int                                               
+		Return                   ___Local__n                                                                
+
+
+___Proc__myprintf:
+	Params:
+		Para int ___Local__n
+	LocalChars:
+	LocalInts:
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                    #___Local__n                                                               
+		Write                    ___Local__n              int                                               
+		Write                    10                       char                                              
+		Return                                                                                              
+
+		**************************************** New Block ****************************************
+		Return                                                                                              
+
+
+___Proc__checkrange:
+	Params:
+		Para int ___Local__num
+	LocalChars:
+	LocalInts:
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                    #___Local__num                                                             
+		?<=                      ___Label__2              ___Local__num            ___Global__max           
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__1                                                                
+		-                        ___Temp__1               ___Local__num            ___Global__max           
+		MV                       ___Local__num            ___Temp__1                                        
+		?<                       ___Label__1              ___Global__max           ___Local__num            
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__2                                                                
+		?<=                      ___Label__4              0                        ___Local__num            
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__3                                                                
+		+                        ___Temp__2               ___Local__num            ___Global__max           
+		MV                       ___Local__num            ___Temp__2                                        
+		?<                       ___Label__3              ___Local__num            0                        
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__4                                                                
+		Return                   ___Local__num                                                              
+
+
+___Proc__reduce:
+	Params:
+		Para int ___Local__kernelid
+		Para int ___Local__x
+		Para int ___Local__y
+	LocalChars:
+	LocalInts:
+		___Local__i = ;
+		___Local__ret = ;
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                    #___Local__kernelid#___Local__x#___Local__y                                                  
+		?!=                      ___Label__5              ___Local__kernelid       0                        
+
+		**************************************** New Block ****************************************
+		+                        ___Temp__4               ___Local__x              ___Local__y              
+		Push                     #___Temp__4                                                                
+		Call                     ___Proc__checkrange                                                        
+
+		**************************************** New Block ****************************************
+		DePush                   1                                                                          
+		MoveRet                  ___Temp__3                                                                 
+		Return                   ___Temp__3                                                                 
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__5                                                                
+		?!=                      ___Label__7              ___Local__kernelid       1                        
+
+		**************************************** New Block ****************************************
+		MV                       ___Local__ret            0                                                 
+		MV                       ___Local__i              1                                                 
+		?<=                      ___Label__10             ___Global__max           ___Local__i              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__9                                                                
+		/                        ___Temp__5               ___Local__x              ___Local__i              
+		/                        ___Temp__6               ___Local__x              ___Local__i              
+		/                        ___Temp__7               ___Temp__6               2                        
+		*                        ___Temp__8               ___Temp__7               2                        
+		-                        ___Temp__9               ___Temp__5               ___Temp__8               
+		/                        ___Temp__10              ___Local__y              ___Local__i              
+		/                        ___Temp__11              ___Local__y              ___Local__i              
+		/                        ___Temp__12              ___Temp__11              2                        
+		*                        ___Temp__13              ___Temp__12              2                        
+		-                        ___Temp__14              ___Temp__10              ___Temp__13              
+		?!=                      ___Label__11             ___Temp__9               ___Temp__14              
+
+		**************************************** New Block ****************************************
+		*                        ___Temp__15              ___Local__ret            2                        
+		MV                       ___Local__ret            ___Temp__15                                       
+		JP                       ___Label__12                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__11                                                               
+		*                        ___Temp__16              ___Local__ret            2                        
+		+                        ___Temp__17              ___Temp__16              1                        
+		MV                       ___Local__ret            ___Temp__17                                       
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__12                                                               
+		*                        ___Temp__18              ___Local__i              2                        
+		MV                       ___Local__i              ___Temp__18                                       
+		?<                       ___Label__9              ___Local__i              ___Global__max           
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__10                                                               
+		Return                   ___Local__ret                                                              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__7                                                                
+		?!=                      ___Label__13             ___Local__kernelid       2                        
+
+		**************************************** New Block ****************************************
+		?<=                      ___Label__15             ___Local__x              ___Local__y              
+
+		**************************************** New Block ****************************************
+		Return                   ___Local__x                                                                
+
+		**************************************** New Block ****************************************
+		JP                       ___Label__16                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__15                                                               
+		Return                   ___Local__y                                                                
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__16                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__13                                                               
+		?!=                      ___Label__17             ___Local__kernelid       3                        
+
+		**************************************** New Block ****************************************
+		MV                       ___Local__ret            0                                                 
+		MV                       ___Local__i              1                                                 
+		?<=                      ___Label__20             ___Global__max           ___Local__i              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__19                                                               
+		/                        ___Temp__19              ___Local__x              ___Local__i              
+		/                        ___Temp__20              ___Local__x              ___Local__i              
+		/                        ___Temp__21              ___Temp__20              2                        
+		*                        ___Temp__22              ___Temp__21              2                        
+		-                        ___Temp__23              ___Temp__19              ___Temp__22              
+		?!=                      ___Label__21             ___Temp__23              1                        
+
+		**************************************** New Block ****************************************
+		*                        ___Temp__24              ___Local__ret            2                        
+		+                        ___Temp__25              ___Temp__24              1                        
+		MV                       ___Local__ret            ___Temp__25                                       
+		JP                       ___Label__22                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__21                                                               
+		/                        ___Temp__26              ___Local__y              ___Local__i              
+		/                        ___Temp__27              ___Local__y              ___Local__i              
+		/                        ___Temp__28              ___Temp__27              2                        
+		*                        ___Temp__29              ___Temp__28              2                        
+		-                        ___Temp__30              ___Temp__26              ___Temp__29              
+		?!=                      ___Label__23             ___Temp__30              1                        
+
+		**************************************** New Block ****************************************
+		*                        ___Temp__31              ___Local__ret            2                        
+		+                        ___Temp__32              ___Temp__31              1                        
+		MV                       ___Local__ret            ___Temp__32                                       
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__23                                                               
+		*                        ___Temp__33              ___Local__ret            2                        
+		MV                       ___Local__ret            ___Temp__33                                       
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__22                                                               
+		*                        ___Temp__34              ___Local__i              2                        
+		MV                       ___Local__i              ___Temp__34                                       
+		?<                       ___Label__19             ___Local__i              ___Global__max           
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__20                                                               
+		Return                   ___Local__ret                                                              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__17                                                               
+		?!=                      ___Label__25             ___Local__kernelid       4                        
+
+		**************************************** New Block ****************************************
+		MV                       ___Local__ret            0                                                 
+		MV                       ___Local__i              1                                                 
+		?<=                      ___Label__28             ___Global__max           ___Local__i              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__27                                                               
+		/                        ___Temp__35              ___Local__x              ___Local__i              
+		/                        ___Temp__36              ___Local__x              ___Local__i              
+		/                        ___Temp__37              ___Temp__36              2                        
+		*                        ___Temp__38              ___Temp__37              2                        
+		-                        ___Temp__39              ___Temp__35              ___Temp__38              
+		?!=                      ___Label__29             ___Temp__39              1                        
+
+		**************************************** New Block ****************************************
+		/                        ___Temp__40              ___Local__y              ___Local__i              
+		/                        ___Temp__41              ___Local__y              ___Local__i              
+		/                        ___Temp__42              ___Temp__41              2                        
+		*                        ___Temp__43              ___Temp__42              2                        
+		-                        ___Temp__44              ___Temp__40              ___Temp__43              
+		?!=                      ___Label__31             ___Temp__44              1                        
+
+		**************************************** New Block ****************************************
+		*                        ___Temp__45              ___Local__ret            2                        
+		+                        ___Temp__46              ___Temp__45              1                        
+		MV                       ___Local__ret            ___Temp__46                                       
+		JP                       ___Label__32                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__31                                                               
+		*                        ___Temp__47              ___Local__ret            2                        
+		MV                       ___Local__ret            ___Temp__47                                       
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__32                                                               
+		JP                       ___Label__30                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__29                                                               
+		*                        ___Temp__48              ___Local__ret            2                        
+		MV                       ___Local__ret            ___Temp__48                                       
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__30                                                               
+		*                        ___Temp__49              ___Local__i              2                        
+		MV                       ___Local__i              ___Temp__49                                       
+		?<                       ___Label__27             ___Local__i              ___Global__max           
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__28                                                               
+		Return                   ___Local__ret                                                              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__25                                                               
+		Return                   0                                                                          
+
+
+___Proc__getvalue:
+	Params:
+		Para int ___Local__n
+		Para int ___Local__m
+		Para int ___Local__x
+		Para int ___Local__y
+	LocalChars:
+	LocalInts:
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                    #___Local__n#___Local__m#___Local__x#___Local__y                                                  
+		?<=                      ___Label__33             0                        ___Local__x              
+
+		**************************************** New Block ****************************************
+		Return                   0                                                                          
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__33                                                               
+		?<=                      ___Label__35             0                        ___Local__y              
+
+		**************************************** New Block ****************************************
+		Return                   0                                                                          
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__35                                                               
+		?<                       ___Label__37             ___Local__x              ___Local__n              
+
+		**************************************** New Block ****************************************
+		Return                   0                                                                          
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__37                                                               
+		?<                       ___Label__39             ___Local__y              ___Local__m              
+
+		**************************************** New Block ****************************************
+		Return                   0                                                                          
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__39                                                               
+		*                        ___Temp__50              ___Local__x              ___Local__m              
+		+                        ___Temp__51              ___Temp__50              ___Local__y              
+		LD                       ___Temp__52              ___Global__a             ___Temp__51              
+		Return                   ___Temp__52                                                                
+
+
+___Proc__convn:
+	Params:
+		Para int ___Local__kernelid
+		Para int ___Local__n
+		Para int ___Local__m
+		Para int ___Local__c
+	LocalChars:
+	LocalInts:
+		___Local__curr = ;
+		___Local__flag1 = 1 ;
+		___Local__flag2 = 1 ;
+		___Local__flag3 = 1 ;
+		___Local__flag4 = 1 ;
+		___Local__i = 0 ;
+		___Local__j = 0 ;
+		___Local__x = ;
+		___Local__y = ;
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                    #___Local__kernelid#___Local__n#___Local__m#___Local__c                                                  
+		SD                       0                        ___Local__i              0                        
+		SD                       0                        ___Local__j              0                        
+		SD                       1                        ___Local__flag1          0                        
+		SD                       1                        ___Local__flag2          0                        
+		SD                       1                        ___Local__flag3          0                        
+		SD                       1                        ___Local__flag4          0                        
+		?!=                      ___Label__42             ___Local__flag1          1                        
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__41                                                               
+		MV                       ___Local__j              0                                                 
+		?!=                      ___Label__44             ___Local__flag2          1                        
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__43                                                               
+		MV                       ___Local__curr           0                                                 
+		/                        ___Temp__53              ___Local__c              2                        
+		-                        ___Temp__54              ___Local__i              ___Temp__53              
+		MV                       ___Local__x              ___Temp__54                                       
+		?!=                      ___Label__46             ___Local__flag3          1                        
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__45                                                               
+		/                        ___Temp__55              ___Local__c              2                        
+		-                        ___Temp__56              ___Local__j              ___Temp__55              
+		MV                       ___Local__y              ___Temp__56                                       
+		?!=                      ___Label__48             ___Local__flag4          1                        
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__47                                                               
+		Push                     #___Local__n#___Local__m#___Local__x#___Local__y                                                  
+		Call                     ___Proc__getvalue                                                          
+
+		**************************************** New Block ****************************************
+		DePush                   4                                                                          
+		MoveRet                  ___Temp__58                                                                
+		Push                     #___Local__kernelid#___Local__curr#___Temp__58                                                  
+		Call                     ___Proc__reduce                                                            
+
+		**************************************** New Block ****************************************
+		DePush                   3                                                                          
+		MoveRet                  ___Temp__57                                                                
+		MV                       ___Local__curr           ___Temp__57                                       
+		+                        ___Temp__59              ___Local__y              1                        
+		MV                       ___Local__y              ___Temp__59                                       
+		/                        ___Temp__60              ___Local__c              2                        
+		+                        ___Temp__61              ___Local__j              ___Temp__60              
+		?<                       ___Label__49             ___Local__y              ___Temp__61              
+
+		**************************************** New Block ****************************************
+		MV                       ___Local__flag4          0                                                 
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__49                                                               
+		?==                      ___Label__47             ___Local__flag4          1                        
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__48                                                               
+		MV                       ___Local__flag4          1                                                 
+		+                        ___Temp__62              ___Local__x              1                        
+		MV                       ___Local__x              ___Temp__62                                       
+		/                        ___Temp__63              ___Local__c              2                        
+		+                        ___Temp__64              ___Local__i              ___Temp__63              
+		?<                       ___Label__51             ___Local__x              ___Temp__64              
+
+		**************************************** New Block ****************************************
+		MV                       ___Local__flag3          0                                                 
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__51                                                               
+		?==                      ___Label__45             ___Local__flag3          1                        
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__46                                                               
+		MV                       ___Local__flag3          1                                                 
+		*                        ___Temp__65              ___Local__i              ___Local__m              
+		+                        ___Temp__66              ___Temp__65              ___Local__j              
+		SD                       ___Local__curr           ___Global__b             ___Temp__66              
+		+                        ___Temp__67              ___Local__j              1                        
+		MV                       ___Local__j              ___Temp__67                                       
+		?<                       ___Label__53             ___Local__j              ___Local__m              
+
+		**************************************** New Block ****************************************
+		MV                       ___Local__flag2          0                                                 
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__53                                                               
+		?==                      ___Label__43             ___Local__flag2          1                        
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__44                                                               
+		MV                       ___Local__flag2          1                                                 
+		+                        ___Temp__68              ___Local__i              1                        
+		MV                       ___Local__i              ___Temp__68                                       
+		?<                       ___Label__55             ___Local__i              ___Local__n              
+
+		**************************************** New Block ****************************************
+		MV                       ___Local__flag1          0                                                 
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__55                                                               
+		?==                      ___Label__41             ___Local__flag1          1                        
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__42                                                               
+		Return                   0                                                                          
+
+
+___Proc__mymemmove:
+	Params:
+		Para int ___Local__n
+	LocalChars:
+	LocalInts:
+		___Local__i = 0 ;
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                    #___Local__n                                                               
+		SD                       0                        ___Local__i              0                        
+		?<=                      ___Label__58             ___Local__n              ___Local__i              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__57                                                               
+		LD                       ___Temp__69              ___Global__b             ___Local__i              
+		SD                       ___Temp__69              ___Global__a             ___Local__i              
+		+                        ___Temp__70              ___Local__i              1                        
+		MV                       ___Local__i              ___Temp__70                                       
+		?<                       ___Label__57             ___Local__i              ___Local__n              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__58                                                               
+		Return                                                                                              
+
+
+___Proc__main:
+	Params:
+	LocalChars:
+	LocalInts:
+		___Local__arrlen = ;
+		___Local__c = ;
+		___Local__i = 0 ;
+		___Local__m = ;
+		___Local__n = ;
+		___Local__task = ;
+		___Local__tmp = ;
+	Blocks:
+		**************************************** New Block ****************************************
+		SD                       0                        ___Local__i              0                        
+		Push                                                                                                
+		Call                     ___Proc__myscanf                                                           
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__71                                                                
+		MV                       ___Local__c              ___Temp__71                                       
+		Push                                                                                                
+		Call                     ___Proc__myscanf                                                           
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__72                                                                
+		MV                       ___Local__n              ___Temp__72                                       
+		Push                                                                                                
+		Call                     ___Proc__myscanf                                                           
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__73                                                                
+		MV                       ___Local__m              ___Temp__73                                       
+		Push                                                                                                
+		Call                     ___Proc__myscanf                                                           
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__74                                                                
+		MV                       ___Local__arrlen         ___Temp__74                                       
+		?<=                      ___Label__61             ___Local__arrlen         ___Local__i              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__60                                                               
+		Push                                                                                                
+		Call                     ___Proc__myscanf                                                           
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__75                                                                
+		SD                       ___Temp__75              ___Global__a             ___Local__i              
+		+                        ___Temp__76              ___Local__i              1                        
+		MV                       ___Local__i              ___Temp__76                                       
+		?<                       ___Label__60             ___Local__i              ___Local__arrlen         
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__61                                                               
+		Push                                                                                                
+		Call                     ___Proc__myscanf                                                           
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__77                                                                
+		MV                       ___Local__task           ___Temp__77                                       
+		MV                       ___Local__i              0                                                 
+		?<=                      ___Label__63             ___Local__task           ___Local__i              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__62                                                               
+		Push                                                                                                
+		Call                     ___Proc__myscanf                                                           
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__78                                                                
+		SD                       ___Temp__78              ___Global__kernelid      ___Local__i              
+		+                        ___Temp__79              ___Local__i              1                        
+		MV                       ___Local__i              ___Temp__79                                       
+		?<                       ___Label__62             ___Local__i              ___Local__task           
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__63                                                               
+		MV                       ___Local__i              0                                                 
+		?<=                      ___Label__65             ___Local__task           ___Local__i              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__64                                                               
+		LD                       ___Temp__81              ___Global__kernelid      ___Local__i              
+		Push                     #___Temp__81#___Local__n#___Local__m#___Local__c                                                  
+		Call                     ___Proc__convn                                                             
+
+		**************************************** New Block ****************************************
+		DePush                   4                                                                          
+		MoveRet                  ___Temp__80                                                                
+		*                        ___Temp__82              ___Local__n              ___Local__m              
+		Push                     #___Temp__82                                                               
+		Call                     ___Proc__mymemmove                                                         
+
+		**************************************** New Block ****************************************
+		DePush                   1                                                                          
+		+                        ___Temp__83              ___Local__i              1                        
+		MV                       ___Local__i              ___Temp__83                                       
+		?<                       ___Label__64             ___Local__i              ___Local__task           
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__65                                                               
+		MV                       ___Local__i              0                                                 
+		*                        ___Temp__84              ___Local__n              ___Local__m              
+		?<=                      ___Label__67             ___Temp__84              ___Local__i              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__66                                                               
+		LD                       ___Temp__85              ___Global__a             ___Local__i              
+		Push                     #___Temp__85                                                               
+		Call                     ___Proc__myprintf                                                          
+
+		**************************************** New Block ****************************************
+		DePush                   1                                                                          
+		+                        ___Temp__86              ___Local__i              1                        
+		MV                       ___Local__i              ___Temp__86                                       
+		*                        ___Temp__84              ___Local__n              ___Local__m              
+		?<                       ___Label__66             ___Local__i              ___Temp__84              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__67                                                               
+		Exit                     ___Label__59                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__59                                                               
+
+

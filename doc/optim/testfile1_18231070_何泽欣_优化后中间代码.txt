@@ -1,0 +1,345 @@
+# Global Strings :
+
+# Global Chars :
+
+# Global Ints :
+	___Global__a = ;
+	___Global__seed = 19971231 19981013 1000000007 ;
+	___Global__staticvalue = 0 ;
+
+___Proc__myscanf:
+	Params:
+	LocalChars:
+	LocalInts:
+		___Local__n = ;
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                                                                                               
+		Read                     ___Local__n              int                                               
+		Return                   ___Local__n                                                                
+
+
+___Proc__myprintf:
+	Params:
+		Para int ___Local__n
+	LocalChars:
+	LocalInts:
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                    #___Local__n                                                               
+		Write                    ___Local__n              int                                               
+		Write                    10                       char                                              
+		Return                                                                                              
+
+		**************************************** New Block ****************************************
+		Return                                                                                              
+
+
+___Proc__set:
+	Params:
+		Para int ___Local__pos
+		Para int ___Local__d
+	LocalChars:
+	LocalInts:
+		___Local__i = 10 ;
+		___Local__v = 0 ;
+		___Local__x = ;
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                    #___Local__pos#___Local__d                                                  
+		SD                       10                       ___Local__i              0                        
+		SD                       0                        ___Local__v              0                        
+		SD                       1                        ___Local__x              0                        
+		LD                       ___Temp__1               ___Local__x              0                        
+		*                        ___Temp__2               ___Temp__1               2                        
+		SD                       ___Temp__2               ___Local__x              1                        
+		LD                       ___Temp__3               ___Local__x              1                        
+		*                        ___Temp__4               ___Temp__3               2                        
+		SD                       ___Temp__4               ___Local__x              2                        
+		LD                       ___Temp__5               ___Local__x              2                        
+		*                        ___Temp__6               ___Temp__5               2                        
+		SD                       ___Temp__6               ___Local__x              3                        
+		LD                       ___Temp__7               ___Local__x              3                        
+		*                        ___Temp__8               ___Temp__7               2                        
+		SD                       ___Temp__8               ___Local__x              4                        
+		LD                       ___Temp__9               ___Local__x              4                        
+		*                        ___Temp__10              ___Temp__9               2                        
+		SD                       ___Temp__10              ___Local__x              5                        
+		LD                       ___Temp__11              ___Local__x              5                        
+		*                        ___Temp__12              ___Temp__11              2                        
+		SD                       ___Temp__12              ___Local__x              6                        
+		LD                       ___Temp__13              ___Local__x              6                        
+		*                        ___Temp__14              ___Temp__13              2                        
+		SD                       ___Temp__14              ___Local__x              7                        
+		LD                       ___Temp__15              ___Local__x              7                        
+		*                        ___Temp__16              ___Temp__15              2                        
+		SD                       ___Temp__16              ___Local__x              8                        
+		LD                       ___Temp__17              ___Local__x              8                        
+		*                        ___Temp__18              ___Temp__17              2                        
+		SD                       ___Temp__18              ___Local__x              9                        
+		LD                       ___Temp__19              ___Local__x              9                        
+		*                        ___Temp__20              ___Temp__19              2                        
+		SD                       ___Temp__20              ___Local__x              10                       
+		?<=                      ___Label__2              30                       ___Local__i              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__1                                                                
+		+                        ___Temp__21              ___Local__i              1                        
+		MV                       ___Local__i              ___Temp__21                                       
+		-                        ___Temp__22              ___Local__i              1                        
+		LD                       ___Temp__23              ___Local__x              ___Temp__22              
+		*                        ___Temp__24              ___Temp__23              2                        
+		SD                       ___Temp__24              ___Local__x              ___Local__i              
+		?<                       ___Label__1              ___Local__i              30                       
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__2                                                                
+		/                        ___Temp__25              ___Local__pos            30                       
+		?<                       ___Label__3              ___Temp__25              1000                     
+
+		**************************************** New Block ****************************************
+		Return                   0                                                                          
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__3                                                                
+		/                        ___Temp__26              ___Local__pos            30                       
+		LD                       ___Temp__27              ___Global__a             ___Temp__26              
+		/                        ___Temp__28              ___Local__pos            30                       
+		*                        ___Temp__29              ___Temp__28              30                       
+		-                        ___Temp__30              ___Local__pos            ___Temp__29              
+		LD                       ___Temp__31              ___Local__x              ___Temp__30              
+		/                        ___Temp__32              ___Temp__27              ___Temp__31              
+		/                        ___Temp__33              ___Local__pos            30                       
+		LD                       ___Temp__34              ___Global__a             ___Temp__33              
+		/                        ___Temp__35              ___Local__pos            30                       
+		*                        ___Temp__36              ___Temp__35              30                       
+		-                        ___Temp__37              ___Local__pos            ___Temp__36              
+		LD                       ___Temp__38              ___Local__x              ___Temp__37              
+		/                        ___Temp__39              ___Temp__34              ___Temp__38              
+		/                        ___Temp__40              ___Temp__39              2                        
+		*                        ___Temp__41              ___Temp__40              2                        
+		-                        ___Temp__42              ___Temp__32              ___Temp__41              
+		?==                      ___Label__5              ___Temp__42              ___Local__d              
+
+		**************************************** New Block ****************************************
+		/                        ___Temp__43              ___Local__pos            30                       
+		LD                       ___Temp__44              ___Global__a             ___Temp__43              
+		/                        ___Temp__45              ___Local__pos            30                       
+		*                        ___Temp__46              ___Temp__45              30                       
+		-                        ___Temp__47              ___Local__pos            ___Temp__46              
+		LD                       ___Temp__48              ___Local__x              ___Temp__47              
+		/                        ___Temp__49              ___Temp__44              ___Temp__48              
+		/                        ___Temp__50              ___Local__pos            30                       
+		LD                       ___Temp__51              ___Global__a             ___Temp__50              
+		/                        ___Temp__52              ___Local__pos            30                       
+		*                        ___Temp__53              ___Temp__52              30                       
+		-                        ___Temp__54              ___Local__pos            ___Temp__53              
+		LD                       ___Temp__55              ___Local__x              ___Temp__54              
+		/                        ___Temp__56              ___Temp__51              ___Temp__55              
+		/                        ___Temp__57              ___Temp__56              2                        
+		*                        ___Temp__58              ___Temp__57              2                        
+		-                        ___Temp__59              ___Temp__49              ___Temp__58              
+		?!=                      ___Label__7              ___Temp__59              0                        
+
+		**************************************** New Block ****************************************
+		?!=                      ___Label__9              ___Local__d              1                        
+
+		**************************************** New Block ****************************************
+		/                        ___Temp__60              ___Local__pos            30                       
+		*                        ___Temp__61              ___Temp__60              30                       
+		-                        ___Temp__62              ___Local__pos            ___Temp__61              
+		LD                       ___Temp__63              ___Local__x              ___Temp__62              
+		MV                       ___Local__v              ___Temp__63                                       
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__9                                                                
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__7                                                                
+		/                        ___Temp__64              ___Local__pos            30                       
+		LD                       ___Temp__65              ___Global__a             ___Temp__64              
+		/                        ___Temp__66              ___Local__pos            30                       
+		*                        ___Temp__67              ___Temp__66              30                       
+		-                        ___Temp__68              ___Local__pos            ___Temp__67              
+		LD                       ___Temp__69              ___Local__x              ___Temp__68              
+		/                        ___Temp__70              ___Temp__65              ___Temp__69              
+		/                        ___Temp__71              ___Local__pos            30                       
+		LD                       ___Temp__72              ___Global__a             ___Temp__71              
+		/                        ___Temp__73              ___Local__pos            30                       
+		*                        ___Temp__74              ___Temp__73              30                       
+		-                        ___Temp__75              ___Local__pos            ___Temp__74              
+		LD                       ___Temp__76              ___Local__x              ___Temp__75              
+		/                        ___Temp__77              ___Temp__72              ___Temp__76              
+		/                        ___Temp__78              ___Temp__77              2                        
+		*                        ___Temp__79              ___Temp__78              2                        
+		-                        ___Temp__80              ___Temp__70              ___Temp__79              
+		?!=                      ___Label__11             ___Temp__80              1                        
+
+		**************************************** New Block ****************************************
+		?!=                      ___Label__13             ___Local__d              0                        
+
+		**************************************** New Block ****************************************
+		/                        ___Temp__81              ___Local__pos            30                       
+		*                        ___Temp__82              ___Temp__81              30                       
+		-                        ___Temp__83              ___Local__pos            ___Temp__82              
+		LD                       ___Temp__84              ___Local__x              ___Temp__83              
+		-                        ___Temp__85              ___Local__v              ___Temp__84              
+		MV                       ___Local__v              ___Temp__85                                       
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__13                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__11                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__5                                                                
+		/                        ___Temp__86              ___Local__pos            30                       
+		/                        ___Temp__87              ___Local__pos            30                       
+		LD                       ___Temp__88              ___Global__a             ___Temp__87              
+		+                        ___Temp__89              ___Temp__88              ___Local__v              
+		SD                       ___Temp__89              ___Global__a             ___Temp__86              
+		Return                   0                                                                          
+
+
+___Proc__rand:
+	Params:
+	LocalChars:
+	LocalInts:
+	Blocks:
+		**************************************** New Block ****************************************
+		Param                                                                                               
+		LD                       ___Temp__90              ___Global__seed          0                        
+		*                        ___Temp__91              ___Global__staticvalue   ___Temp__90              
+		LD                       ___Temp__92              ___Global__seed          1                        
+		+                        ___Temp__93              ___Temp__91              ___Temp__92              
+		MV                       ___Global__staticvalue   ___Temp__93                                       
+		LD                       ___Temp__94              ___Global__seed          2                        
+		/                        ___Temp__95              ___Global__staticvalue   ___Temp__94              
+		LD                       ___Temp__96              ___Global__seed          2                        
+		*                        ___Temp__97              ___Temp__95              ___Temp__96              
+		-                        ___Temp__98              ___Global__staticvalue   ___Temp__97              
+		MV                       ___Global__staticvalue   ___Temp__98                                       
+		?<=                      ___Label__15             0                        ___Global__staticvalue   
+
+		**************************************** New Block ****************************************
+		LD                       ___Temp__99              ___Global__seed          2                        
+		+                        ___Temp__100             ___Temp__99              ___Global__staticvalue   
+		MV                       ___Global__staticvalue   ___Temp__100                                      
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__15                                                               
+		Return                   ___Global__staticvalue                                                     
+
+
+___Proc__main:
+	Params:
+	LocalChars:
+	LocalInts:
+		___Local__i = 0 ;
+		___Local__j = 0 ;
+		___Local__n = ;
+		___Local__tmp = 0 ;
+		___Local__x = ;
+		___Local__y = ;
+		___Local__z = ;
+	Blocks:
+		**************************************** New Block ****************************************
+		SD                       0                        ___Local__tmp            0                        
+		SD                       0                        ___Local__i              0                        
+		SD                       0                        ___Local__j              0                        
+		?<=                      ___Label__19             1000                     ___Local__j              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__18                                                               
+		SD                       0                        ___Global__a             ___Local__j              
+		+                        ___Temp__101             ___Local__j              1                        
+		MV                       ___Local__j              ___Temp__101                                      
+		?<                       ___Label__18             ___Local__j              1000                     
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__19                                                               
+		Push                                                                                                
+		Call                     ___Proc__myscanf                                                           
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__102                                                               
+		MV                       ___Local__n              ___Temp__102                                      
+		Push                                                                                                
+		Call                     ___Proc__myscanf                                                           
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__103                                                               
+		MV                       ___Global__staticvalue   ___Temp__103                                      
+		?<=                      ___Label__21             ___Local__n              0                        
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__20                                                               
+		-                        ___Temp__104             ___Local__n              1                        
+		MV                       ___Local__n              ___Temp__104                                      
+		Push                                                                                                
+		Call                     ___Proc__rand                                                              
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__105                                                               
+		MV                       ___Local__z              ___Temp__105                                      
+		/                        ___Temp__106             ___Local__z              300000                   
+		*                        ___Temp__107             ___Temp__106             300000                   
+		-                        ___Temp__108             ___Local__z              ___Temp__107             
+		MV                       ___Local__x              ___Temp__108                                      
+		Push                                                                                                
+		Call                     ___Proc__rand                                                              
+
+		**************************************** New Block ****************************************
+		DePush                   0                                                                          
+		MoveRet                  ___Temp__109                                                               
+		MV                       ___Local__z              ___Temp__109                                      
+		/                        ___Temp__110             ___Local__z              2                        
+		*                        ___Temp__111             ___Temp__110             2                        
+		-                        ___Temp__112             ___Local__z              ___Temp__111             
+		MV                       ___Local__y              ___Temp__112                                      
+		Push                     #___Local__x#___Local__y                                                   
+		Call                     ___Proc__set                                                               
+
+		**************************************** New Block ****************************************
+		DePush                   2                                                                          
+		MoveRet                  ___Temp__113                                                               
+		?<                       ___Label__20             0                        ___Local__n              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__21                                                               
+		?<=                      ___Label__23             1000                     ___Local__i              
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__22                                                               
+		LD                       ___Temp__114             ___Global__a             ___Local__i              
+		LD                       ___Temp__115             ___Global__a             ___Local__i              
+		/                        ___Temp__116             ___Temp__115             100000                   
+		*                        ___Temp__117             ___Temp__116             100000                   
+		-                        ___Temp__118             ___Temp__114             ___Temp__117             
+		+                        ___Temp__119             ___Local__tmp            ___Temp__118             
+		MV                       ___Local__tmp            ___Temp__119                                      
+		/                        ___Temp__120             ___Local__tmp            100000                   
+		*                        ___Temp__121             ___Temp__120             100000                   
+		-                        ___Temp__122             ___Local__tmp            ___Temp__121             
+		MV                       ___Local__tmp            ___Temp__122                                      
+		+                        ___Temp__123             ___Local__i              1                        
+		MV                       ___Local__i              ___Temp__123                                      
+		?<                       ___Label__22             ___Local__i              1000                     
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__23                                                               
+		Push                     #___Local__tmp                                                             
+		Call                     ___Proc__myprintf                                                          
+
+		**************************************** New Block ****************************************
+		DePush                   1                                                                          
+		Exit                     ___Label__17                                                               
+
+		**************************************** New Block ****************************************
+		Label                    ___Label__17                                                               
+
+
