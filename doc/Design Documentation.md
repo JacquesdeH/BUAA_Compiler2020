@@ -688,7 +688,328 @@ class ErrorManager
 |             |            |      |      |                                |                           |
 |             |            |      |      |                                |                           |
 
+#### 中间代码数据结构
 
+为了便于中间代码层面的优化，以及后续目标代码生成工作，此处采用 **程序 - 函数 - 基本块 - 中间代码** 的层次结构进行中间代码储存结构设计，其中**程序**记录了全局量和程序中的所有字符串以及包括main的若干个函数，**函数**则记录了参数表、函数名和基本块信息，**基本块**则由若干四元组中间代码组成。
+
+##### 程序-MIR
+
+顶层中间代码数据结构包含全局的常量、变量、待输出的字符串，以及若干函数单元。
+
+中间代码最外层程序数据结构的设计包括**存储和添加信息与查询内容**等接口，具体接口如下：
+
+```cpp
+class MIR
+    {
+    private:
+        bool sealed;
+        MapDeclareString globalStrings; // strName -> strValue
+        MapDeclareChar globalChars; // name -> initList
+        MapDeclareInt globalInts; // name -> initList
+        std::vector<inter::Proc> procedures; // no global proc used
+
+    public:
+        MIR(const bool & _sealed = false);
+
+    public:
+        const MapDeclareString &queryGlobalStrings() const;
+        const MapDeclareChar &queryGlobalChars() const;
+        const MapDeclareInt &queryGlobalInts() const;
+        std::vector<inter::Proc> queryFunctions() const;
+        const inter::Proc &queryMainProc() const;
+
+    public:
+        void declareGlobalString(const std::string & _strName, const std::string & _strContent);
+        void declareGlobalChar(const std::string & _name, const int & _count, const std::vector<char> & _initValues = {});
+        void declareGlobalInt(const std::string & _name, const int & _count, const std::vector<int> & _initValues = {});
+        void declareLocalChar(const std::string & name, const InitChar & initChar);
+        void declareLocalInt(const std::string & name, const InitInt & initInt);
+        void newProc(const std::string & _procName);
+        void addParam(const std::string &_name, const std::string &_type);
+        void doneGenerationToBlocks();
+        void addQuad(const Quad & _quad);
+        void assertNotSeal() const;
+        void assertIsSeal() const;
+        void print(const std::string &_fOut) const;
+    };
+```
+
+##### 函数-Proc
+
+函数作为**程序**的子模块，对包括Main函数在内的函数进行管理，其中包括参数具体信息的记录、声明的局部变量的记录、以及根据记录完成的四元组序列生成基本块的功能。
+
+在实现上，采用了在语义分析中直接把四元组插入到当前函数的四元组序列中，并在添加完毕后设置不可变标记，并生成相应的不可变基本块数据结构；同时包含输出整个函数的中间代码信息的接口，相应的接口如下所示：
+
+```cpp
+class Proc
+    {
+    private:
+        bool isBlockForm;
+        std::string procName;
+        ParasList parasList;
+        MapDeclareChar localChars;
+        MapDeclareInt localInts;
+        std::vector<inter::Quad> lines;
+        std::vector<inter::Block> blocks;
+
+    public:
+        Proc(const std::string & _procName, const bool & _isBlockForm = false);
+
+    public:
+        const string &queryProcName() const;
+        const ParasList &queryParasList() const;
+        const MapDeclareChar &queryLocalChars() const;
+        const MapDeclareInt &queryLocalInts() const;
+        const std::vector<inter::Quad> &queryLines() const;
+        const std::vector<inter::Block> &queryBlocks() const;
+
+    public:
+        void assertBlockForm() const;
+        void addParam(const std::string &_name, const std::string &_type);
+        void addLocalChar(const std::string & name, const InitChar & initChar);
+        void addLocalInt(const std::string & name, const InitInt & initInt);
+        void addQuad(const Quad & _quad);
+        void buildBlocks();
+        void print(std::ofstream &_fsOut) const;
+    };
+```
+
+##### 基本块-Block
+
+程序由若干个基本块组成，基本块中由若干四元组序列组成，其中基本块中间不包含跳转到其他基本块的中间代码。
+
+在程序实现上，包含输出中间代码的接口，由以下接口构成：
+
+```cpp
+class Block
+    {
+    private:
+        std::vector<inter::Quad> lines;
+
+    public:
+        Block(std::vector<inter::Quad>::iterator _begin, std::vector<inter::Quad>::iterator _end);
+
+    public:
+        const std::vector<inter::Quad> & queryLines() const;
+        void print(std::ofstream &_fsOut) const;
+    };
+```
+
+##### 四元组-Quad
+
+四元组是最基本的中间代码单元，并且设计了输出中间代码的接口：
+
+```cpp
+class Quad
+    {
+    public:
+        config::IRCode op;
+        std::string out;
+        std::string inl;
+        std::string inr;
+
+    public:
+        Quad(const config::IRCode & _op, const std::string & _out, const std::string & _inl, const std::string & _inr);
+
+    public:
+        void print(std::ofstream &_fsOut) const;
+    };
+```
+
+#### 中间代码生成
+
+在语义分析单元中插入属性翻译模块，所有的中间代码生成通过操作该属性翻译单元的接口进行实现。
+
+##### 全局序号管理功能
+
+由于在中间代码生成的过程中，需要在全局层面上引入标签计数、临时变量计数、全局字符串计数等支持，因此在属性翻译模块中设计标签、临时变量和字符串的标识符生成功能。例如，程序中的第二个标签为**\_\_\_Label\_\_2**，第五个临时变量为**\_\_\_Temp\_\_5**，在需要时进行扩张后的标识符生成和管理。
+
+在程序实现上，通过如下几个函数对全局序号进行记录和生成：
+
+```cpp
+std::string semantic::Semantic::genTemp()
+{
+    tempIdx++;
+    return config::tempHead + toString(tempIdx);
+}
+
+std::string semantic::Semantic::genLabel()
+{
+    labelIdx++;
+    return config::labelHead + toString(labelIdx);
+}
+
+std::string semantic::Semantic::genGlobalString(const std::string & _strContent)
+{
+    stringIdx++;
+    string name = config::stringHead + toString(stringIdx);
+    mir.declareGlobalString(name, _strContent);
+    return name;
+}
+```
+
+##### 递归录制功能
+
+在生成如**for**、**while**、**switch**等结构的中间代码时，涉及到将一部分分支的中间代码进行录制，并需要支持一整块中间代码的插入功能，例如，**switch**的生成中，通过对每个case和default分支的录制操作，能够对整个switch语句块进行全局的管理，合理调配生成的顺序以及标签的插入；同时，这种录制的策略便于后续优化的实现，包括改变while等语句块的翻译方法，减少1个跳转指令等优化。
+
+需要注意的点在于递归录制的支持，例如在switch语句块内部嵌套了另一个switch语句块，直接通过**是否在录制**的记录并不能有效还原录制的中间代码，因此采用多层的记录方式，每次开始录制时都在中间代码块的记录栈中压入一个空的中间代码块，即开始一层新的中间代码录制，结束当前层次的录制时，弹出顶层的中间代码块；相应在插入一整块中间代码时则判断栈是否为空，只有在栈为空时才插入到实际生成的中间代码MIR中，否则插入的中间代码块加入到栈顶的中间代码块之中，即返还到上一层的录制中。
+
+程序实现上，通过以下属性记录递归录制的状态：
+
+```cpp
+std::vector<std::vector<inter::Quad> > _recorded;
+int _isRecording; // 记录当前录制的层数，与_recorded中代码块的个数对应，为0时表示当前不在录制状态下，可以直接对生成的中间代码进行操作
+```
+
+通过如下两个函数进行递归录制的新建一层和结束当前层的操作
+
+```cpp
+void semantic::Semantic::startRecording()
+{
+    if (this->errored)
+        return;
+    this->_isRecording += 1;
+    this->_recorded.emplace_back();
+}
+
+std::vector<inter::Quad> semantic::Semantic::endRecording()
+{
+    if (this->errored)
+        return std::vector<inter::Quad>();
+    if (this->_isRecording <= 0)
+        std::cerr << "Not recording when terminating records !" << std::endl;
+    this->_isRecording -= 1;
+    std::vector<inter::Quad> ret = this->_recorded.back();
+    this->_recorded.pop_back();
+    return ret;
+}
+```
+
+##### 短路机制
+
+为了增强鲁棒性，在属性翻译模块中与错误处理模块连接，记录当前是否存在错误，若有错误，则属性翻译模块中所有函数都将进行短路操作，即不实际生成代码，直接返回上层逻辑。这种短路机制的引入主要是为了避免错误处理测试中，由于输入程序的错误导致编译器本身发生错误，最终导致运行时错误或死循环等。
+
+以函数$$endRecording$$为例，短路机制的实现如下：
+
+```cpp
+std::vector<inter::Quad> semantic::Semantic::endRecording()
+{
+    // 此处通过errored记录目前是否存在错误，若存在错误则直接以安全的状态返回
+    if (this->errored)
+        return std::vector<inter::Quad>();
+    if (this->_isRecording <= 0)
+        std::cerr << "Not recording when terminating records !" << std::endl;
+    this->_isRecording -= 1;
+    std::vector<inter::Quad> ret = this->_recorded.back();
+    this->_recorded.pop_back();
+    return ret;
+}
+```
+
+#### 中间代码输出示例
+
+<img src="image/image-20201215203220658.png" alt="image-20201215203220658" style="zoom: 50%;" />
+
+<img src="image/image-20201215203428331.png" alt="image-20201215203428331" style="zoom:50%;" />
+
+<img src="image/image-20201215203638565.png" alt="image-20201215203638565" style="zoom:50%;" />
+
+### 目标代码生成部分
+
+设计目标代码生成器，输入为中间代码数据结构，输出为目标代码序列。
+
+#### 数据段
+
+在全局数据段的设计中，整体上的设计方案为：
+
+- 常量与变量一视同仁，仅在语法分析和错误处理阶段通过符号表进行检查，在生成阶段无需区分
+- 单一变量和数组一视同仁
+  - char型：
+    - 有初始化：使用**.byte**指令进行初始化
+    - 无初始化：使用**.space**开辟内存空间
+  - int型：
+    - 有初始化：使用**.word**指令进行初始化
+    - 无初始化：使用**.space**开辟内存空间
+
+- 具体实现上，需要每种类型初始化前进行相应的**内存对齐操作**
+
+#### 代码段
+
+##### 环境初始化与函数布局
+
+初始化需要对全局指针**$gp**进行设置，便于后续通过全局数据段的指针与全局变量的相对偏移进行访问。
+
+将代码段中各函数生成的代码依次排列，main函数放在最后，通过开始时的一个无条件跳转转向main，能避免main执行完毕后多余代码对结果造成影响；即**数据段——.text——环境的初始化——j main——各函数——main函数**的布局结构。
+
+具体生成效果如下：
+
+```assembly
+.text
+li	$gp	0x10010000
+j	___Proc__main
+```
+
+##### 函数内代码生成
+
+在函数开始处，通过对参数寄存器$$\$ai$$和上一个栈帧中传入参数的获取进行参数传递，并统计函数中声明的局部变量和临时变量，对其分配栈空间。
+
+值得注意的是，在这种设计中，对每个临时变量都分配了内存空间对其进行储存，虽然大部分都能在临时寄存器分配过程中进行处理，这种设计能够保证需要溢出时快速找到相应地址进行保存与恢复。
+
+##### 寄存器分配策略
+
+###### 临时寄存器分配
+
+采用寄存器池对临时寄存器进行分配，核心为对临时寄存器与标识符变量之间对应关系的记录，以及是否修改过的记录；在生成过程中，需要及时主动标记有修改过的并且需要写回的寄存器；在每个基本块末尾，需要对修改过的非临时变量在内存中的值进行更新。
+
+具体实现上，通过专门的临时寄存器池模块进行管理，在目标代码生成模块中向临时寄存器池发出寄存器申请与更新请求，具体的模块接口如下：
+
+```cpp
+class BlockRegPool
+    {
+    private:
+        std::queue <std::string> freePool;
+        std::queue <std::string> allocPool;
+        std::set <std::string> writebackRegs;
+        std::unordered_map<std::string, std::string> reg2mark;
+        std::unordered_map<std::string, std::string> mark2reg;
+
+    public:
+        BlockRegPool();
+
+    private:
+        mips::ObjCodes _writeBack(const std::string & _reg, const std::map<std::string, mips::SymbolInfo> & mipsTable);
+        void _untieLinks(const std::string & _reg);
+
+    public:
+        void reset();
+        bool hasFree() const;
+        void insertFree(const std::string & _reg);
+        std::string queryReg2Mark(const std::string & _reg);
+        std::string queryMark2Reg(const std::string & _mark);
+        bool hasMark(const std::string & _mark) const;
+        mips::ObjCodes allocBlockReg(std::string & _reg, const std::map<std::string, mips::SymbolInfo> & mipsTable,
+                                     const std::set<std::string> & _excludeRegs = {});
+        void markWriteBack(const std::string &_reg);
+        mips::ObjCodes saveWriteBackRegs(const std::map<std::string, mips::SymbolInfo> & mipsTable);
+        void updateInfo(const std::string & _reg, const std::string & _mark);
+        mips::ObjCodes syncLink(const std::string &_reg, const std::string &_mark, const bool &_link,
+                                const std::map<std::string, mips::SymbolInfo> & mipsTable);
+    };
+```
+
+###### 全局寄存器分配
+
+在临时寄存器池的基础上，对变量分配寄存器时增加对是否已经分配全局寄存器的判断，若有则只需要直接使用全局寄存器；具体的分配策略采用图着色法进行分配，启发式选取溢出变量时选择所在循环层数最少的节点进行溢出，这样能尽可能保证溢出节点的代价较小。
+
+##### 函数调用栈设计
+
+以从上到下内存地址递减，栈增加的方向表示，函数调用时的内存布局如下所示：
+
+![calling_convention](image/calling_convention.png)
+
+其中运行时执行过程为：
+
+**压入值参数——在运行栈中保存调用方的\$fp与\$ra——function\-call跳转到被调用方——分配局部变量区和临时变量区——更新\$fp与\$sp——从运行栈中取出参数**
 
 ## 优化方案
 
