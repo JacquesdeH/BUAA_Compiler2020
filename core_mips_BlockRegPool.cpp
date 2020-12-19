@@ -109,13 +109,14 @@ mips::ObjCodes mips::BlockRegPool::saveWriteBackRegs(const std::map<std::string,
     while (!writebackRegs.empty())
     {
         // only writeback when not a temp var， included below
-        mips::ObjCodes tmp = _writeBack(*(writebackRegs.begin()), mipsTable);
+        mips::ObjCodes tmp = _writeBack(*(writebackRegs.begin()), mipsTable, true);
         ret.mergeCodes(tmp);
     }
     return ret;
 }
 
-mips::ObjCodes mips::BlockRegPool::_writeBack(const string &_reg, const std::map<std::string, mips::SymbolInfo> &mipsTable)
+mips::ObjCodes mips::BlockRegPool::_writeBack(const string &_reg, const std::map<std::string, mips::SymbolInfo> &mipsTable,
+                                              const bool &_readonly)
 {
     // write back DO include map update of erase and need of writeback set
     if (writebackRegs.find(_reg) == writebackRegs.end())
@@ -125,7 +126,8 @@ mips::ObjCodes mips::BlockRegPool::_writeBack(const string &_reg, const std::map
     // special early exit when writing back a temp reg
     if (config::isTemp(_mark))
     {
-        _untieLinks(_reg);
+        if (!_readonly)
+            _untieLinks(_reg);
         writebackRegs.erase(_reg);
         return ret;
     }
@@ -143,7 +145,8 @@ mips::ObjCodes mips::BlockRegPool::_writeBack(const string &_reg, const std::map
             std::cerr << "Unexpected _mark in _writeBack !" << std::endl;
     }
     // update
-    _untieLinks(_reg);
+    if (!_readonly)
+        _untieLinks(_reg);
     writebackRegs.erase(_reg);
     return ret;
 }
