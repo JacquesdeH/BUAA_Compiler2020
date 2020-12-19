@@ -50,7 +50,6 @@ std::string mips::BlockRegPool::queryMark2Reg(const string &_mark)
 mips::ObjCodes mips::BlockRegPool::allocBlockReg(std::string & _reg, const std::map<std::string, mips::SymbolInfo> & mipsTable,
                                                  const std::set<std::string> & _excludeRegs)
 {
-    // TODO: mips new alloc strategies required
     mips::ObjCodes objCodes;
     bool writeback;
     if (!freePool.empty())
@@ -109,14 +108,7 @@ mips::ObjCodes mips::BlockRegPool::saveWriteBackRegs(const std::map<std::string,
     mips::ObjCodes ret;
     while (!writebackRegs.empty())
     {
-        if (config::isTemp(*(writebackRegs.begin())))
-        {
-            std::string _reg = *(writebackRegs.begin());
-            std::string _mark = reg2mark[_reg];
-            _untieLinks(_reg);
-            writebackRegs.erase(_reg);
-        }
-        // only writeback when not a temp var
+        // only writeback when not a temp var， included below
         mips::ObjCodes tmp = _writeBack(*(writebackRegs.begin()), mipsTable);
         ret.mergeCodes(tmp);
     }
@@ -130,6 +122,13 @@ mips::ObjCodes mips::BlockRegPool::_writeBack(const string &_reg, const std::map
         std::cerr << "Writing back not needed reg !" << std::endl;
     mips::ObjCodes ret;
     std::string _mark = reg2mark[_reg];
+    // special early exit when writing back a temp reg
+    if (config::isTemp(_reg))
+    {
+        _untieLinks(_reg);
+        writebackRegs.erase(_reg);
+        return ret;
+    }
     // gen write back code
     if (config::isGlobal(_mark) || config::isLocal(_mark) || config::isTemp(_mark))
     {
