@@ -123,7 +123,7 @@ mips::ObjCodes mips::BlockRegPool::_writeBack(const string &_reg, const std::map
     mips::ObjCodes ret;
     std::string _mark = reg2mark[_reg];
     // special early exit when writing back a temp reg
-    if (config::isTemp(_reg))
+    if (config::isTemp(_mark))
     {
         _untieLinks(_reg);
         writebackRegs.erase(_reg);

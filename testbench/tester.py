@@ -1,8 +1,8 @@
 import os
 import sys
 
-L = 1
-R = 8
+L = 6
+R = 6
 BENCH_NAME = "PUBGEN"
 BENCH_ID = 1
 
