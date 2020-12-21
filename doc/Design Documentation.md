@@ -1013,10 +1013,120 @@ class BlockRegPool
 
 ## 优化方案
 
-### Optim1
+### 寄存器分配
 
-pass
+采用全局寄存器分配策略和临时寄存器池策略进行优化。
 
-### Optim2
+#### 临时寄存器池
 
-pass
+对每一个中间代码中的变量，包括局部变量和临时变量，一旦使用则进行尝试分配一个临时寄存器，并记录当前活跃的临时寄存器与标识符之间的映射关系，以便于在下一次分配时考察当前标识符是否已经存在对应的临时寄存器。
+
+同时，需要在基本块结束时将满足以下条件的寄存器写回内存中相应地址：
+
+- 寄存器仅在当前基本块使用，不需要跨基本块
+- 寄存器在分配后有相应的修改标记
+
+在实现上，设计相应的标记分配接口和标记接口，并在每个函数开始时预判断并记录哪些是跨基本块的变量，临时寄存器池接口如下
+
+```cpp
+class BlockRegPool
+    {
+    private:
+        std::queue <std::string> freePool;
+        std::queue <std::string> allocPool;
+        std::set <std::string> writebackRegs;
+        std::unordered_map<std::string, std::string> reg2mark;
+        std::unordered_map<std::string, std::string> mark2reg;
+        ProcRegBook *procRegBook;
+
+    public:
+        BlockRegPool();
+
+    private:
+        mips::ObjCodes _writeBack(const std::string & _reg, const std::map<std::string, mips::SymbolInfo> & mipsTable,
+                                  const bool &_readonly = false);
+        void _untieLinks(const std::string & _reg);
+        bool _canEarlyStopInWriteBack(const std::string &_mark);
+
+    public:
+        void reset();
+        bool hasFree() const;
+        void insertFree(const std::string & _reg);
+        std::string queryReg2Mark(const std::string & _reg);
+        std::string queryMark2Reg(const std::string & _mark);
+        bool hasMark(const std::string & _mark) const;
+        mips::ObjCodes allocBlockReg(std::string & _reg, const std::map<std::string, mips::SymbolInfo> & mipsTable,
+                                     const std::set<std::string> & _excludeRegs = {});
+        void markWriteBack(const std::string &_reg);
+        mips::ObjCodes saveWriteBackRegs(const std::map<std::string, mips::SymbolInfo> & mipsTable);
+        void updateInfo(const std::string & _reg, const std::string & _mark);
+        mips::ObjCodes syncLink(const std::string &_reg, const std::string &_mark, const bool &_link,
+                                const std::map<std::string, mips::SymbolInfo> & mipsTable);
+        void initLinkWithProcRegBook(ProcRegBook *_procRegBook);
+    };
+```
+
+#### 全局寄存器分配
+
+在临时寄存器池的基础上，采用引用计数法对函数中跨基本块的变量进行全局寄存器分配。
+
+在具体实现上，只需在分配临时寄存器之前特判是否在预分配的全局寄存器表中找到相应标识符，并且后续基本块结束判断是否需要写回时跳过对全局寄存器的写回。
+
+### 数学运算优化
+
+#### 常数优化
+
+如果运算的两边都是常数，直接用一条指令代替产生相应结果。
+
+#### 乘法优化
+
+特别地，首先判断是否有任意乘数为0或1，这种乘法运算直接生成一条赋值指令即可。
+
+对于任意乘数为2的幂次方，采用位运算优化减少乘法指令的使用，需要注意乘数为2的幂次方的负数时，需要加一条取反指令，但总体能够优化1-2个周期。
+
+实现上，优化部分如下
+
+```cpp
+			int multer = str2int(_inr);
+            int logMulter = config::toAbsLog2(multer);
+            if (multer == 0)
+            {
+                ret.mergeCodes(_toReg(_regOut, _out, true, false, {}, ""));
+                ret.genCodeInsert("addu", _regOut, config::zeroReg, config::zeroReg);
+                blockRegPool.markWriteBack(_regOut);
+            }
+            else
+            {
+                ret.mergeCodes(_toReg(_regInl, _inl, true, true, {}, ""));
+                ret.mergeCodes(_toReg(_regOut, _out, true, false, {_regInl}, ""));
+                ret.genCodeInsert("sll", _regOut, _regInl, toString(logMulter));
+                if (multer < 0)
+                    ret.genCodeInsert("subu", _regOut, config::zeroReg, _regOut);
+                blockRegPool.markWriteBack(_regOut);
+            }
+```
+
+#### 除法优化
+
+除法的优化较为麻烦，此优化涉及到除数为2的幂次方的情形，需要判断被除数是否为负数；
+
+对于正数的情况能够直接一个位运算解决，但负数需要采用如下计算方法，用分支判断被除数的符号：
+
+```cpp
+			int multer = str2int(_inr);
+            int logMulter = config::toAbsLog2(multer);
+            int addMagic = (int )(((unsigned int )1)<<((unsigned int ) logMulter)) - 1;
+            // guaranteed that divider is not zero
+            ret.mergeCodes(_toReg(_regInl, _inl, false, true, {}, ""));
+            string curDivLabel = "___Label__MathOp_" + toString(++mathOpLabelNumber);
+            ret.genCodeInsert("bge", curDivLabel, _regInl, config::zeroReg);
+            ret.genCodeInsert("addiu", _regInl, _regInl, toString(addMagic));
+            blockRegPool.markWriteBack(_regInl);
+            ret.insertLabel(curDivLabel);
+            ret.mergeCodes(_toReg(_regOut, _out, true, false, {_regInl}, ""));
+            ret.genCodeInsert("sra", _regOut, _regInl, toString(logMulter));
+            if (multer < 0)
+                ret.genCodeInsert("subu", _regOut, config::zeroReg, _regOut);
+            blockRegPool.markWriteBack(_regOut);
+```
+
