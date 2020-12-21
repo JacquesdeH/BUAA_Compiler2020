@@ -163,11 +163,16 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
     }
     // **************************** log all cross block procWideMarks **********************************
     _resetProcRegBook();
-    for (const auto &_curBlock : _proc.queryBlocks())
+    const auto& allBlocks = _proc.queryBlocks();
+    for (int i = 0; i < allBlocks.size(); ++i)
     {
+        const auto& _curBlock = allBlocks[i];
         std::set<std::string> curBlockMarks = _curBlock.queryMarks();
-        for (const auto &_otherBlock : _proc.queryBlocks())
+        for (int j = 0; j < allBlocks.size(); ++j)
         {
+            if (i == j)
+                continue;
+            const auto& _otherBlock = allBlocks[j];
             std::set<std::string> otherBlockMarks = _otherBlock.queryMarks();
             std::set<std::string> intersection = setIntersection(curBlockMarks, otherBlockMarks);
             procRegBook.insertMarksAsProcWide(intersection);
