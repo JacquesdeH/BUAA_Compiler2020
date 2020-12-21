@@ -5,13 +5,14 @@
 #include "config.h"
 #include "core_mips_Mips.h"
 #include "functional_strext.h"
+#include "functional_setext.h"
 
-#include <initializer_list>
-#include <cmath>
+#include <set>
 
 mips::Mips::Mips(const inter::MIR & _mir)
 {
     this->mir = _mir;
+    this->blockRegPool.initLinkWithProcRegBook(&procRegBook);
 }
 
 mips::ObjCodes mips::Mips::_compileQuad(const inter::Quad &_quad)
@@ -156,6 +157,18 @@ mips::ObjCodes mips::Mips::_compileProc(const inter::Proc &_proc)
                 stackOffset += config::atomSizeTemp;
                 subTable.insert(std::make_pair(temp, mips::SymbolInfo(addr, config::atomSizeTemp)));
             }
+        }
+    }
+    // **************************** log all cross block procWideMarks **********************************
+    _resetProcRegBook();
+    for (const auto &_curBlock : _proc.queryBlocks())
+    {
+        std::set<std::string> curBlockMarks = _curBlock.queryMarks();
+        for (const auto &_otherBlock : _proc.queryBlocks())
+        {
+            std::set<std::string> otherBlockMarks = _otherBlock.queryMarks();
+            std::set<std::string> intersection = setIntersection(curBlockMarks, otherBlockMarks);
+            procRegBook.insertMarksAsProcWide(intersection);
         }
     }
     // **************************** objCodeRet modification begin **************************************
@@ -888,4 +901,9 @@ mips::ObjCodes mips::Mips::_compileExitOp(const inter::Quad &_quad)
     mips::ObjCodes ret;
     ret.genCodeInsert("j", _quad.out);
     return ret;
+}
+
+void mips::Mips::_resetProcRegBook()
+{
+    this->procRegBook.reset();
 }

@@ -24,6 +24,7 @@ namespace mips
         inter::MIR mir;
         MipsTable mipsTable; // no reset but update at each proc
         BlockRegPool blockRegPool; // reset every block
+        ProcRegBook procRegBook;
         int stackOffset; // reset every proc
         int globalOffset; // no reset for $gp use
 
@@ -34,6 +35,7 @@ namespace mips
         void _resetStackOffset();
         void _resetGlobalOffset();
         void _resetBlockRegPool();
+        void _resetProcRegBook();
         mips::ObjCodes _alignStack(const std::string & _type);
         mips::ObjCodes _alignData(const std::string & _type);
         mips::ObjCodes _toReg(std::string & _reg, const std::string &_mark, const bool &_link, const bool &_init,

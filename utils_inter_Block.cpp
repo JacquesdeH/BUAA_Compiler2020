@@ -26,3 +26,15 @@ void inter::Block::print(std::ofstream &_fsOut) const
     }
     _fsOut << std::endl;
 }
+
+std::set<std::string> inter::Block::queryMarks() const
+{
+    std::set<std::string> ret;
+    for (const auto &_line : lines)
+    {
+        ret.insert(_line.out);
+        ret.insert(_line.inl);
+        ret.insert(_line.inr);
+    }
+    return ret;
+}

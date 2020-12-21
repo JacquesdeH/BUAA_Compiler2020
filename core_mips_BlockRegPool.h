@@ -14,6 +14,7 @@
 #include "core_mips_ObjCodes.h"
 #include "core_mips_SymbolInfo.h"
 #include "functional_convert.h"
+#include "core_mips_ProcRegBook.h"
 
 namespace mips
 {
@@ -25,6 +26,7 @@ namespace mips
         std::set <std::string> writebackRegs;
         std::unordered_map<std::string, std::string> reg2mark;
         std::unordered_map<std::string, std::string> mark2reg;
+        ProcRegBook *procRegBook;
 
     public:
         BlockRegPool();
@@ -33,6 +35,7 @@ namespace mips
         mips::ObjCodes _writeBack(const std::string & _reg, const std::map<std::string, mips::SymbolInfo> & mipsTable,
                                   const bool &_readonly = false);
         void _untieLinks(const std::string & _reg);
+        bool _canEarlyStopInWriteBack(const std::string &_mark);
 
     public:
         void reset();
@@ -48,6 +51,7 @@ namespace mips
         void updateInfo(const std::string & _reg, const std::string & _mark);
         mips::ObjCodes syncLink(const std::string &_reg, const std::string &_mark, const bool &_link,
                                 const std::map<std::string, mips::SymbolInfo> & mipsTable);
+        void initLinkWithProcRegBook(ProcRegBook *_procRegBook);
     };
 }
 

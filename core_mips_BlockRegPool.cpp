@@ -124,7 +124,7 @@ mips::ObjCodes mips::BlockRegPool::_writeBack(const string &_reg, const std::map
     mips::ObjCodes ret;
     std::string _mark = reg2mark[_reg];
     // special early exit when writing back a temp reg
-    if (config::isTemp(_mark))
+    if (_canEarlyStopInWriteBack(_mark))
     {
         if (!_readonly)
             _untieLinks(_reg);
@@ -203,4 +203,18 @@ mips::ObjCodes mips::BlockRegPool::syncLink(const string &_reg, const string &_m
         }
     }
     return ret;
+}
+
+void mips::BlockRegPool::initLinkWithProcRegBook(mips::ProcRegBook *_procRegBook)
+{
+    this->procRegBook = _procRegBook;
+}
+
+bool mips::BlockRegPool::_canEarlyStopInWriteBack(const string &_mark)
+{
+    if (!config::isTemp(_mark))
+        return false;
+    if (procRegBook->isProcWide(_mark))
+        return false;
+    return true;
 }

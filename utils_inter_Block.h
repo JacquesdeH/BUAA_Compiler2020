@@ -25,6 +25,7 @@ namespace inter
 
     public:
         const std::vector<inter::Quad> & queryLines() const;
+        std::set<std::string> queryMarks() const;
         void print(std::ofstream &_fsOut) const;
     };
 }
