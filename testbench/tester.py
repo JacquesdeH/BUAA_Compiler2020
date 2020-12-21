@@ -3,8 +3,8 @@ import sys
 
 L = 1
 R = 3
-BENCH_NAME = "PUBGEN"
-BENCH_ID = 10
+BENCH_NAME = "MYGENMIPS"
+BENCH_ID = 0
 
 testfilePath = os.path.join("..", os.path.join("testcases", os.path.join(BENCH_NAME, str(BENCH_ID)))) if BENCH_ID > 0 \
     else os.path.join("..", os.path.join("testcases", os.path.join(BENCH_NAME)))

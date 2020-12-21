@@ -32,9 +32,12 @@ std::set<std::string> inter::Block::queryMarks() const
     std::set<std::string> ret;
     for (const auto &_line : lines)
     {
-        ret.insert(_line.out);
-        ret.insert(_line.inl);
-        ret.insert(_line.inr);
+        const std::string attrs[3] = {_line.out, _line.inl, _line.inr};
+        for (const auto & attr : attrs)
+        {
+            if (config::isTemp(attr) || config::isLocal(attr) || config::isGlobal(attr))
+                ret.insert(attr);
+        }
     }
     return ret;
 }
