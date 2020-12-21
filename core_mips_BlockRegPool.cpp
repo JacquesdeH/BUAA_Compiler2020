@@ -31,7 +31,8 @@ std::string mips::BlockRegPool::queryReg2Mark(const string &_reg)
 {
     if (reg2mark.find(_reg) == reg2mark.end())
     {
-        std::cerr << "Unable to find key in regs2var!" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Unable to find key in regs2var!" << std::endl;
         return "";
     }
     return reg2mark.at(_reg);
@@ -41,7 +42,8 @@ std::string mips::BlockRegPool::queryMark2Reg(const string &_mark)
 {
     if (mark2reg.find(_mark) == mark2reg.end())
     {
-        std::cerr << "Unable to find key in var2regs!" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Unable to find key in var2regs!" << std::endl;
         return "";
     }
     return mark2reg.at(_mark);
@@ -60,7 +62,8 @@ mips::ObjCodes mips::BlockRegPool::allocBlockReg(std::string & _reg, const std::
         allocPool.push(_reg);
         if (writebackRegs.find(_reg) != writebackRegs.end())
         {
-            std::cerr << "Unexpected writeback status for register " + _reg << std::endl;
+            if (config::USE_STDERR)
+                std::cerr << "Unexpected writeback status for register " + _reg << std::endl;
         }
     }
     else
@@ -120,7 +123,8 @@ mips::ObjCodes mips::BlockRegPool::_writeBack(const string &_reg, const std::map
 {
     // write back DO include map update of erase and need of writeback set
     if (writebackRegs.find(_reg) == writebackRegs.end())
-        std::cerr << "Writing back not needed reg !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Writing back not needed reg !" << std::endl;
     mips::ObjCodes ret;
     std::string _mark = reg2mark[_reg];
     // special early exit when writing back a temp reg
@@ -141,7 +145,7 @@ mips::ObjCodes mips::BlockRegPool::_writeBack(const string &_reg, const std::map
             ret.genCodeInsert(atomSize2Store(atomSize), _reg, config::globalReg, toString(memOff));
         else if (config::isLocal(_mark) || config::isTemp(_mark))
             ret.genCodeInsert(atomSize2Store(atomSize), _reg, config::stackReg, toString(memOff));
-        else
+        else if (config::USE_STDERR)
             std::cerr << "Unexpected _mark in _writeBack !" << std::endl;
     }
     // update

@@ -62,14 +62,16 @@ void symbol::Info::assertDeclared() const
 {
     if (checkDeclared())
         return;
-    std::cerr << "Assertion error on assertDeclared()" << std::endl;
+    if (config::USE_STDERR)
+        std::cerr << "Assertion error on assertDeclared()" << std::endl;
 }
 
 void symbol::Info::assertAddressed() const
 {
     if (checkAddressed())
         return;
-    std::cerr << "Assertion error on assertAddressed()" << std::endl;
+    if (config::USE_STDERR)
+        std::cerr << "Assertion error on assertAddressed()" << std::endl;
 }
 
 bool symbol::Info::isFunction() const
@@ -113,7 +115,8 @@ bool symbol::Info::isDimOf(const int &_dims, const int & _dimLim0, const int & _
         case 1: return dimLimit[0] == _dimLim0;
         case 2: return (dimLimit[0] == _dimLim0) && (dimLimit[1] == _dimLim1);
         default:
-            std::cerr << "Unexpected dim counts in isDimOf" << std::endl;
+            if (config::USE_STDERR)
+                std::cerr << "Unexpected dim counts in isDimOf" << std::endl;
             return false;
     }
 }
@@ -135,7 +138,8 @@ int symbol::Info::queryFuncParamCount() const
 bool symbol::Info::checkFuncParamMatchAt(const int &_index, const config::DataType &_dataType)
 {
     if (_index < 0)
-        std::cerr << "Encountered negative index in checkFuncParamMatchAt" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Encountered negative index in checkFuncParamMatchAt" << std::endl;
     if (_index >= funcParamDataTypeList.size())
         return false;
     return _dataType == funcParamDataTypeList[_index];
@@ -145,13 +149,15 @@ void symbol::Info::assertParamFilled() const
 {
     if (ctrlParamListFilled)
         return;
-    std::cerr << "Assertion error on assertParamFilled()" << std::endl;
+    if (config::USE_STDERR)
+        std::cerr << "Assertion error on assertParamFilled()" << std::endl;
 }
 
 vector<config::DataType> symbol::Info::queryParamDataTypeListOfFunction() const
 {
     if (!isFunction())
-        std::cerr << "Not a function when call queryParamDataTypeList" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Not a function when call queryParamDataTypeList" << std::endl;
     return funcParamDataTypeList;
 }
 
@@ -168,7 +174,8 @@ bool symbol::Info::isGlobal() const
 int symbol::Info::queryDimLimAt(const int &_dim)
 {
     if (!(0 <= _dim && _dim <= 1))
-        std::cerr << "Querying dim not 0 nor 1 at queryDimLimAt !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Querying dim not 0 nor 1 at queryDimLimAt !" << std::endl;
     return dimLimit[_dim];
 }
 

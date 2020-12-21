@@ -175,7 +175,8 @@ void semantic::Semantic::addBranch(const config::TokenCode &_operator, const str
             addMIR(config::BLE_IR, _label, _exprR, _exprL);
             break;
         default:
-            std::cerr << "Unexpected finetuned operator in addBranch !" << std::endl;
+            if (config::USE_STDERR)
+                std::cerr << "Unexpected finetuned operator in addBranch !" << std::endl;
     }
 }
 
@@ -199,7 +200,8 @@ std::vector<inter::Quad> semantic::Semantic::endRecording()
     if (this->errored)
         return std::vector<inter::Quad>();
     if (this->_isRecording <= 0)
-        std::cerr << "Not recording when terminating records !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Not recording when terminating records !" << std::endl;
     this->_isRecording -= 1;
     std::vector<inter::Quad> ret = this->_recorded.back();
     this->_recorded.pop_back();
@@ -237,7 +239,8 @@ void semantic::Semantic::addSwitch(const std::string &tempSwitch,
     }
     std::string exitLabel = this->genLabel();
     if (subCaseRecordAll.size() != branchLabels.size())
-        std::cerr << "Labels and Branches count do not match !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Labels and Branches count do not match !" << std::endl;
     // default record
     {
         // no enter label required
@@ -260,7 +263,8 @@ void semantic::Semantic::addSwitch(const std::string &tempSwitch,
 void semantic::Semantic::enterMainGenLabelExit()
 {
     if (!exitLabel.empty())
-        std::cerr << "Already set exitLabel once !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Already set exitLabel once !" << std::endl;
     exitLabel = this->genLabel();
 }
 
@@ -272,6 +276,7 @@ std::string semantic::Semantic::queryExitLabel()
 void semantic::Semantic::exitMainResetLabelExit()
 {
     if (exitLabel.empty())
-        std::cerr << "Empty exitLabel when clearing !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Empty exitLabel when clearing !" << std::endl;
     exitLabel = "";
 }

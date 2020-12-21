@@ -55,7 +55,8 @@ string toString(const config::DataType &type)
             ret = "void";
             break;
         default:
-            std::cerr << "Unexpected dataType in toString!" << std::endl;
+            if (config::USE_STDERR)
+                std::cerr << "Unexpected dataType in toString!" << std::endl;
     }
     return ret;
 }

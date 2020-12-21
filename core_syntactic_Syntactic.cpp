@@ -661,7 +661,8 @@ void syntactic::Syntactic::parseVarDeclarationInitialized(const bool & useGlobal
         }
             break;
         default:
-            std::cerr << "Unexpected dim in parseVarDeclarationInitialized() with dim = " << dim << std::endl;
+            if (config::USE_STDERR)
+                std::cerr << "Unexpected dim in parseVarDeclarationInitialized() with dim = " << dim << std::endl;
     }
     ArrayInitDimSwitchEnd:
     // Update SymbolManager

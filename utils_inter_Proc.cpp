@@ -16,7 +16,8 @@ inter::Proc::Proc(const std::string & _procName, const bool &_isBlockForm)
 void inter::Proc::addQuad(const inter::Quad &_quad)
 {
     if (isBlockForm)
-        std::cerr << "Should not modify Proc contents with block form !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Should not modify Proc contents with block form !" << std::endl;
     lines.push_back(_quad);
 }
 
@@ -68,7 +69,8 @@ void inter::Proc::buildBlocks()
         else
         {
             if (i == 0)
-                std::cerr << "Do not have a block yet before adding to a block !" << std::endl;
+                if (config::USE_STDERR)
+                    std::cerr << "Do not have a block yet before adding to a block !" << std::endl;
             subBlock.push_back(_line);
         }
     }
@@ -83,7 +85,8 @@ void inter::Proc::buildBlocks()
 void inter::Proc::assertBlockForm() const
 {
     if (!isBlockForm)
-        std::cerr << "Not a block form procedure !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Not a block form procedure !" << std::endl;
 }
 
 const std::vector<inter::Quad> &inter::Proc::queryLines() const

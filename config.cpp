@@ -53,7 +53,8 @@ namespace config
     {
         if (!isNumeric(_str))
         {
-            std::cerr << "Not a numeric when converting to numeric!" << std::endl;
+            if (config::USE_STDERR)
+                std::cerr << "Not a numeric when converting to numeric!" << std::endl;
         }
         char *p = nullptr;
         return strtol(_str.c_str(), &p, 10);

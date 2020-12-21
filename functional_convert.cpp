@@ -20,7 +20,8 @@ config::TokenCode text2token(const string& original)
     string token = toLower(original);
     if (config::STR2TOKEN.end() == config::STR2TOKEN.find(token))
     {
-        std::cerr << "Error branch in convert::text2token!" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Error branch in convert::text2token!" << std::endl;
         return config::EMPTY; // EMPTY
     }
     return config::STR2TOKEN.at(token);
@@ -35,7 +36,8 @@ string errorType2Code(const config::ErrorType &errorType)
                 return entry.first;
     }
     // not found errorType
-    std::cerr << "Unexpected ErrorType occurred!" << std::endl;
+    if (config::USE_STDERR)
+        std::cerr << "Unexpected ErrorType occurred!" << std::endl;
     return "GeneralError";
 }
 

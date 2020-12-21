@@ -37,7 +37,8 @@ bool symbol::SymbolManager::declareSymbol(const string& symbol, const symbol::In
     string lowerSymbol = toLower(symbol);
     if (hasSymbolInScope(lowerSymbol))
     {
-        std::cerr << "Declaring existing idenfr in scope dup definition" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Declaring existing idenfr in scope dup definition" << std::endl;
         return false;
     }
     tables[curTable].insertRecord(lowerSymbol, info);
@@ -61,7 +62,8 @@ symbol::Info& symbol::SymbolManager::getInfoInAll(const string &symbol) const
     if (pTable < 0)
     {
         // Error!
-        std::cerr << "Unable to find " << symbol << " in getInfoInAll() " << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Unable to find " << symbol << " in getInfoInAll() " << std::endl;
     }
     return ret;
 }
@@ -95,7 +97,8 @@ symbol::Info &symbol::SymbolManager::getInfoFromLastScope(const string &symbol) 
     if (pTable < 0)
     {
         // Error!
-        std::cerr << "Unable to find " << symbol << " in getInfoFromLastScope() " << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Unable to find " << symbol << " in getInfoFromLastScope() " << std::endl;
     }
     return ret;
 }

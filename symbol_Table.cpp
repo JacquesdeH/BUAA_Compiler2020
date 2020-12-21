@@ -31,7 +31,8 @@ symbol::Info& symbol::Table::getInfo(const string &key) const
 {
     if (!hasKey(key))
     {
-        std::cerr << "Missing key of " << key << " in Table::getInfo()!" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Missing key of " << key << " in Table::getInfo()!" << std::endl;
     }
     return const_cast<Info &>(data.at(key));
 }

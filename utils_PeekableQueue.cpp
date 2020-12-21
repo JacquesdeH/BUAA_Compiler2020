@@ -19,6 +19,7 @@ void PeekableQueue::push(const Token &tkpair)
 Token PeekableQueue::peek(const int &k) const
 {
     if (k <= 0)
+        if (config::USE_STDERR)
             std::cerr << "Assert PeekableQueue::peek(" << k << ")" << std::endl;
     if (k > queue.size())
         return Token(config::EMPTY);
@@ -28,9 +29,11 @@ Token PeekableQueue::peek(const int &k) const
 void PeekableQueue::pop(const int &k)
 {
     if (k <= 0)
-        std::cerr << "Assert PeekableQueue::pop(" << k << ") for k <= 0" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Assert PeekableQueue::pop(" << k << ") for k <= 0" << std::endl;
     if (k > queue.size())
-        std::cerr << "Assert PeekableQueue::pop(" << k << ") for k > queue.size()" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Assert PeekableQueue::pop(" << k << ") for k > queue.size()" << std::endl;
     queue.erase(queue.begin(), queue.begin() + k);
 }
 

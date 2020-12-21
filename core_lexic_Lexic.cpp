@@ -275,7 +275,7 @@ bool lexic::Lexic::_parseTk()
                 // log ErrorManager with dangling char '!'
             }
         }
-        else
+        else if (config::USE_STDERR)
             std::cerr << "Unexpected in Lexic 2-letter defined chars" << std::endl;
         // common behaviors
         buffer[p] = '\0';

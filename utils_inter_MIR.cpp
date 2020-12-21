@@ -40,7 +40,8 @@ void inter::MIR::addQuad(const inter::Quad &_quad)
     assertNotSeal();
     if (procedures.empty())
     {
-        std::cerr << "No sub procedures allowed before addQuad is called !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "No sub procedures allowed before addQuad is called !" << std::endl;
     }
     this->procedures.back().addQuad(_quad);
 }
@@ -48,13 +49,15 @@ void inter::MIR::addQuad(const inter::Quad &_quad)
 void inter::MIR::assertNotSeal() const
 {
     if (this->sealed)
-        std::cerr << "Modifying sealed MIR !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Modifying sealed MIR !" << std::endl;
 }
 
 void inter::MIR::assertIsSeal() const
 {
     if (!(this->sealed))
-        std::cerr << "GenObjCode on not sealed MIR !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "GenObjCode on not sealed MIR !" << std::endl;
 }
 
 void inter::MIR::declareGlobalChar(const std::string &_name, const int & _count, const std::vector<char> &_initValues)

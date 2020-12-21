@@ -15,6 +15,8 @@ typedef unsigned int uint;
 
 namespace config
 {
+    const bool USE_STDERR = false;
+
     const bool PRINT_LEXIC = false;
     const bool PRINT_SYNTACTIC = false;
     const bool PRINT_ERROR_TUPLE = true;

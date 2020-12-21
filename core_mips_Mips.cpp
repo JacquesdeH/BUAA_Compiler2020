@@ -95,13 +95,15 @@ mips::ObjCodes mips::Mips::_compileBlock(const inter::Block &_block)
         else
         {
             if (blockOutIRcnt > 0)
-                std::cerr << "Already encountered blockOutIR when a non-blockOutIR is occurring !" << std::endl;
+                if (config::USE_STDERR)
+                    std::cerr << "Already encountered blockOutIR when a non-blockOutIR is occurring !" << std::endl;
             mips::ObjCodes tmp = _compileQuad(line);
             ret.mergeCodes(tmp);
         }
     }
     if (blockOutIRcnt > 1)
-        std::cerr << "Count of blockOutIR in one block is more than 1 !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Count of blockOutIR in one block is more than 1 !" << std::endl;
     ret.mergeCodes(this->blockRegPool.saveWriteBackRegs(mipsTable));
     if (config::isBlockOutIRCode(_block.queryLines().back().op))
         ret.mergeCodes(_compileQuad(_block.queryLines().back()));
@@ -357,7 +359,8 @@ mips::ObjCodes mips::Mips::_alignData(const string &_type)
             (_type == "word") ? 2 :
             -1;
     if (alignWidth == 0)
-        std::cerr << "Unexpected align type in _alignData" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Unexpected align type in _alignData" << std::endl;
     mips::ObjCodes ret;
     ret.insertCode(".align " + toString(alignCode));
     while (globalOffset % alignWidth != 0)
@@ -373,7 +376,8 @@ mips::ObjCodes mips::Mips::_alignStack(const string &_type)
             (_type == "word") ? 4 :
             0;
     if (alignWidth == 0)
-        std::cerr << "Unexpected align type in _alignStack" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Unexpected align type in _alignStack" << std::endl;
     while (stackOffset % alignWidth != 0)
         stackOffset ++;
     return mips::ObjCodes();
@@ -426,7 +430,8 @@ mips::ObjCodes mips::Mips::_compileMathOp(const inter::Quad &_quad)
                 break;
             default:
                 numOut = -1;
-                std::cerr << "Unexpected quad operator occurred!!" << std::endl;
+                if (config::USE_STDERR)
+                    std::cerr << "Unexpected quad operator occurred!!" << std::endl;
         }
         ret.mergeCodes(_toReg(_regOut, _out, true, false, {}, ""));
         ret.genCodeInsert("li", _regOut, toString(numOut));
@@ -550,7 +555,8 @@ mips::ObjCodes mips::Mips::_compileBranchJumpOp(const inter::Quad &_quad)
             _inr = tmp;
         }
         if (config::isNumeric(_inl) || !config::isNumeric(_inr))
-            std::cerr << "Still a numeric or right is not numeric when swapped from inl to inr !" << std::endl;
+            if (config::USE_STDERR)
+                std::cerr << "Still a numeric or right is not numeric when swapped from inl to inr !" << std::endl;
         ret.mergeCodes(_toReg(_regR, _inr, true, true, {}, ""));
         ret.mergeCodes(_toReg(_regL, _inl, true, true, {_regR}, ""));
         ret.genCodeInsert(_op, _quad.out, _regL, _regR);
@@ -572,7 +578,7 @@ mips::ObjCodes mips::Mips::_compileLoadStoreOp(const inter::Quad &_quad)
         ret.mergeCodes(_compileLoadOp(_quad));
     else if (_quad.op == config::IRCode::STORE_IR)
         ret.mergeCodes(_compileStoreOp(_quad));
-    else
+    else if (config::USE_STDERR)
         std::cerr << "Unexpected quad op in LoadStoreOp !" << std::endl;
     return ret;
 }
@@ -610,7 +616,7 @@ mips::ObjCodes mips::Mips::_compileLoadOp(const inter::Quad &_quad)
         ret.genCodeInsert(cmdOp, _regOut, _regOffset, toString(arrOffset));
         blockRegPool.markWriteBack(_regOut);
     }
-    else
+    else if (config::USE_STDERR)
         std::cerr << "Unexpected quad.inr in compileLoadOp" << std::endl;
     return ret;
 }
@@ -650,7 +656,7 @@ mips::ObjCodes mips::Mips::_compileStoreOp(const inter::Quad &_quad)
         // update load _regOut
         // blockRegPool.markWriteBack(_regOut);
     }
-    else
+    else if (config::USE_STDERR)
         std::cerr << "Unexpected quad.inr in compileStoreOp" << std::endl;
     return ret;
 }
@@ -712,7 +718,8 @@ mips::ObjCodes mips::Mips::_compileStringOp(const inter::Quad &_quad)
 {
     mips::ObjCodes ret;
     if (!config::isString(_quad.out))
-        std::cerr << "Not a string in Write String Op !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Not a string in Write String Op !" << std::endl;
     // addr of string use $gp with offset addiu
     ret.genCodeInsert("addiu", "$a0", config::globalReg,
                       toString(mipsTable.at(_quad.out).getMemOffset()));
@@ -749,7 +756,8 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool 
     else
     {
         if (_link)
-            std::cerr << "Should not link when selected register !" << std::endl;
+            if (config::USE_STDERR)
+                std::cerr << "Should not link when selected register !" << std::endl;
         _reg = _mustReg;
     }
     // begin toReg
@@ -777,9 +785,10 @@ mips::ObjCodes mips::Mips::_toReg(string &_reg, const string &_mark, const bool 
     }
     else if (config::isLabel(_mark))
     {
-        std::cerr << "Encountered labels in _toReg !" << std::endl;
+        if (config::USE_STDERR)
+            std::cerr << "Encountered labels in _toReg !" << std::endl;
     }
-    else
+    else if (config::USE_STDERR)
         std::cerr << "Encountered String or Proc or nothing at all in _toReg !" << std::endl;
     // update links
     if (_link)
